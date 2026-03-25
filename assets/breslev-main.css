@@ -615,17 +615,22 @@ a:hover {
 .navbar__nav {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   list-style: none;
   flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.navbar__nav::-webkit-scrollbar { display: none; }
 
 .navbar__nav-link {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   transition: color var(--transition-base);
   white-space: nowrap;
+  padding: 0.4rem 0.3rem;
 }
 
 .navbar__nav-link:hover {

@@ -231,6 +231,7 @@ app.post(
 
 const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
+app.use(express.static(path.join(__dirname, "public"), staticOpts));
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
 app.use(
   "/images/books",
