@@ -1084,3 +1084,9 @@ a:hover {
       - Critical CSS: Inline les styles above-the-fold
 
    ═══════════════════════════════════════════════════════════════ */
+
+/* FORCE CONSISTENCY — book covers never cut off */
+.book-cover, .book-cover-container img, .product-image img {
+  object-fit: contain !important;
+  background: #f8f7f4;
+}

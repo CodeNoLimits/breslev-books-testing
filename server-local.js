@@ -66,10 +66,11 @@ const upload = multer({
 });
 
 // Admin auth middleware
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "esther2026breslev";
-const ADMIN_TOKEN = crypto.createHash("sha256").update(ADMIN_PASSWORD).digest("hex").slice(0, 32);
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_TOKEN = ADMIN_PASSWORD ? crypto.createHash("sha256").update(ADMIN_PASSWORD).digest("hex").slice(0, 32) : null;
 
 function requireAdmin(req, res, next) {
+  if (!ADMIN_TOKEN) return res.status(401).send("Non autorisé — ADMIN_PASSWORD non configuré");
   const token = req.headers["x-admin-token"] || req.query.token || req.cookies?.admin_token;
   if (token === ADMIN_TOKEN) return next();
   res.status(401).send("Non autorisé");
@@ -184,7 +185,7 @@ app.post(
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       if (supabase && session.client_reference_id) {
-        const planType = session.amount_total === 27900 ? "annuel" : "mensuel";
+        const planType = session.amount_total === 99000 ? "annuel" : "mensuel";
         const { error } = await supabase.from("subscriptions").insert([
           {
             user_id: session.client_reference_id,
@@ -205,7 +206,7 @@ app.post(
       // Send order confirmation email (fire-and-forget)
       const customerEmail = session.customer_details?.email || session.customer_email;
       const customerName = session.customer_details?.name || 'Client';
-      const amountFormatted = session.amount_total ? (session.amount_total / 100).toFixed(2) + ' €' : '';
+      const amountFormatted = session.amount_total ? (session.amount_total / 100).toFixed(2) + '₪' : '';
       if (customerEmail) {
         sendEmail({
           to: customerEmail,
@@ -601,8 +602,8 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
   const { plan, email, user_id } = req.body; // plan: 'monthly' ou 'annual'
 
   const prices = {
-    monthly: { amount: 2900, trial_days: 7, name: "Abonnement Mensuel" },
-    annual: { amount: 27900, trial_days: 14, name: "Abonnement Annuel" },
+    monthly: { amount: 9900, trial_days: 7, name: "Abonnement Mensuel" },
+    annual: { amount: 99000, trial_days: 14, name: "Abonnement Annuel" },
   };
 
   const selectedPlan = prices[plan];
@@ -616,7 +617,7 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "eur",
+            currency: "ils",
             product_data: {
               name: selectedPlan.name,
               description:
@@ -1913,7 +1914,7 @@ app.get("/pages/abonnement", (req, res) => {
         <div style="background: var(--color-bg-card); border: 2px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 3rem; text-align: center; transition: transform 0.3s ease;">
           <h3 class="mb-4">Mensuel</h3>
           <p class="text-muted mb-6">Flexibilité maximale</p>
-          <div class="mb-6"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">29€</span><span class="text-muted">/mois</span></div>
+          <div class="mb-6"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">99₪</span><span class="text-muted">/mois</span></div>
           <ul style="text-align: left; margin-bottom: 2rem; list-style: none; padding: 0;">
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Accès aux 30+ titres numériques</li>
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Nouveautés incluses automatiquement</li>
@@ -1930,8 +1931,8 @@ app.get("/pages/abonnement", (req, res) => {
           <div style="position: absolute; top: -12px; right: 20px; background: var(--color-gold); color: #000; padding: 4px 12px; font-weight: bold; font-size: 0.8rem; border-radius: 4px;">Économisez 20%</div>
           <h3 class="mb-4">Annuel</h3>
           <p class="text-muted mb-6">Le meilleur rapport qualité-prix</p>
-          <div class="mb-2"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">279€</span><span class="text-muted">/an</span></div>
-          <div class="text-muted mb-6" style="text-decoration: line-through;">Au lieu de 348€</div>
+          <div class="mb-2"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">990₪</span><span class="text-muted">/an</span></div>
+          <div class="text-muted mb-6" style="text-decoration: line-through;">Au lieu de 1188₪</div>
           <ul style="text-align: left; margin-bottom: 2rem; list-style: none; padding: 0;">
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Tous les avantages du mensuel</li>
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-star" style="color: var(--color-gold); margin-right: 10px;"></i><strong>2 mois GRATUITS</strong></li>
@@ -2166,33 +2167,155 @@ app.get("/cart", (req, res) => {
   res.send(getLayout(content, "Panier & Checkout"));
 });
 
-// Route pour le lecteur FlipHTML5 (Likouté Moharan Tome 1)
+// Route pour le lecteur numerique (page-flip local)
 app.get("/reader/:bookSlug", (req, res) => {
   const { bookSlug } = req.params;
-  const { generateFlipHTML5Iframe } = require("./assets/fliphtml5-reader.js");
+  const book = catalog.find(b => (b.slug || b.id) === bookSlug || b.id == bookSlug);
+  const bookTitle = book ? (book.title_fr || book.title || bookSlug) : bookSlug;
+  const bookAuthor = book ? (book.author || '') : '';
+  const pdfFile = book ? (book.pdf_file || '') : '';
+  const coverImage = book ? (book.cover_image || FALLBACK_COVER) : FALLBACK_COVER;
 
   const content = `
-    <link rel="stylesheet" href="/checkout-styles.css">
-    <script src="/fliphtml5-reader.js"></script>
-    
+    <link rel="stylesheet" href="/flipbook-styles.css">
+    <script src="/page-flip.browser.js"></script>
+
     <div class="container mt-12 mb-12">
-      <div style="max-width: 1200px; margin: 0 auto;">
-        <div id="fliphtml5-reader"></div>
-        
-        <script>
-          loadFlipHTML5Reader('fliphtml5-reader', '${bookSlug}');
-        </script>
-        
+      <div style="max-width: 1000px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); padding: 1.5rem 2rem; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 1rem;">
+          <i class="fas fa-book-open" style="color: #D4AF37; font-size: 1.5rem;"></i>
+          <div>
+            <h2 style="color: #D4AF37; margin: 0; font-family: Cinzel, serif; font-size: 1.3rem;">${bookTitle}</h2>
+            ${bookAuthor ? '<p style="color: rgba(255,255,255,0.7); margin: 0.25rem 0 0; font-size: 0.9rem;">' + bookAuthor + '</p>' : ''}
+          </div>
+        </div>
+
+        <div id="reader-container" style="background: #f8f6f3; border: 1px solid rgba(212,175,55,0.2); border-top: none; border-radius: 0 0 12px 12px; padding: 2rem; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+          <div id="page-flip-book" style="margin: 0 auto;"></div>
+          <div id="reader-fallback" style="display:none; width:100%; text-align:center;">
+            <div id="fallback-gallery" style="display:flex; flex-direction:column; align-items:center; gap:1rem;"></div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+          <button onclick="if(window.pageFlip) window.pageFlip.flipPrev()" class="btn btn-outline" style="border-color:#D4AF37;color:#D4AF37;">
+            <i class="fas fa-chevron-left"></i> Page precedente
+          </button>
+          <span id="page-indicator" style="display:flex;align-items:center;color:#6B7280;font-size:0.9rem;">Page 1</span>
+          <button onclick="if(window.pageFlip) window.pageFlip.flipNext()" class="btn btn-outline" style="border-color:#D4AF37;color:#D4AF37;">
+            Page suivante <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
         <div style="margin-top: 2rem; text-align: center;">
-          <a href="/products/1" class="btn btn-primary">
+          <a href="/products/${book ? book.id : 1}" class="btn btn-primary">
             <i class="fas fa-shopping-cart"></i> Acheter ce livre
           </a>
         </div>
       </div>
     </div>
+
+    <script>
+      (function() {
+        var pdfFile = '${pdfFile}';
+        var coverImage = '${coverImage}';
+        var container = document.getElementById('page-flip-book');
+        var fallbackDiv = document.getElementById('reader-fallback');
+        var fallbackGallery = document.getElementById('fallback-gallery');
+        var indicator = document.getElementById('page-indicator');
+
+        // Build page images: use cover as first page, then PDF pages if available
+        var pageImages = [coverImage];
+        if (pdfFile) {
+          // Convention: PDF pages stored as /images/pages/SLUG-1.jpg, SLUG-2.jpg, etc.
+          for (var i = 1; i <= 20; i++) {
+            pageImages.push('/images/pages/${bookSlug}-' + i + '.jpg');
+          }
+        }
+
+        function initPageFlip() {
+          try {
+            if (typeof St === 'undefined' && typeof StPageFlip === 'undefined') throw new Error('StPageFlip not loaded');
+            var PageFlipClass = (typeof StPageFlip !== 'undefined') ? StPageFlip.PageFlip : St.PageFlip;
+
+            window.pageFlip = new PageFlipClass(container, {
+              width: 400,
+              height: 560,
+              size: 'stretch',
+              minWidth: 280,
+              maxWidth: 600,
+              minHeight: 400,
+              maxHeight: 840,
+              showCover: true,
+              drawShadow: true,
+              flippingTime: 600,
+              usePortrait: true,
+              startZIndex: 0,
+              autoSize: true,
+              maxShadowOpacity: 0.5,
+              mobileScrollSupport: true
+            });
+
+            var pagesLoaded = 0;
+            pageImages.forEach(function(src) {
+              var img = new Image();
+              img.onload = function() {
+                pagesLoaded++;
+                if (pagesLoaded === 1 || pagesLoaded === pageImages.length) {
+                  tryRender();
+                }
+              };
+              img.onerror = function() { pagesLoaded++; };
+              img.src = src;
+            });
+
+            function tryRender() {
+              var validPages = [];
+              pageImages.forEach(function(src) {
+                validPages.push('<div class="page-content" style="background:#fff;display:flex;align-items:center;justify-content:center;"><img src="' + src + '" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.parentElement.style.display=\\'none\\'"></div>');
+              });
+              if (validPages.length > 0) {
+                container.innerHTML = validPages.join('');
+                window.pageFlip.loadFromHTML(container.querySelectorAll('.page-content'));
+                window.pageFlip.on('flip', function(e) {
+                  indicator.textContent = 'Page ' + (e.data + 1);
+                });
+              }
+            }
+
+            // Start rendering after a short delay for image loading
+            setTimeout(tryRender, 1500);
+
+          } catch(err) {
+            console.warn('PageFlip init failed, using fallback gallery:', err);
+            showFallback();
+          }
+        }
+
+        function showFallback() {
+          container.style.display = 'none';
+          fallbackDiv.style.display = 'block';
+          pageImages.forEach(function(src, i) {
+            var img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Page ' + (i + 1);
+            img.style.cssText = 'max-width:100%;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-bottom:1rem;';
+            img.loading = 'lazy';
+            img.onerror = function() { this.style.display = 'none'; };
+            fallbackGallery.appendChild(img);
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initPageFlip);
+        } else {
+          initPageFlip();
+        }
+      })();
+    </script>
   `;
 
-  res.send(getLayout(content, "Lecteur numérique"));
+  res.send(getLayout(content, "Lecteur - " + bookTitle));
 });
 
 // PayPal: Créer commande
@@ -2264,7 +2387,7 @@ app.get("/subscription-success", async (req, res) => {
       const session = await stripe.checkout.sessions.retrieve(session_id);
       subscriptionInfo = {
         email: session.customer_email,
-        plan: session.amount_total === 27900 ? "annuel" : "mensuel",
+        plan: session.amount_total === 99000 ? "annuel" : "mensuel",
       };
 
       // Sauvegarder l'abonnement dans Supabase
@@ -2344,7 +2467,7 @@ app.get("/search", (req, res) => {
         '<div style="font-family:Cinzel,serif;font-size:1.1rem;color:#1a1a2e;margin-bottom:0.3rem;">' + (b.title_fr || b.title || '') + '</div>' +
         '<div style="color:#92400e;font-weight:600;">' + (b.price_physical || '') + '₪</div></div></a>';
     }).join('')
-    : (q ? '<div style="text-align:center;padding:3rem;color:#6B7280;"><p style="font-size:1.2rem;">Aucun résultat pour "' + q.replace(/</g,'&lt;') + '"</p><a href="/collections/all" style="color:#D4AF37;">Voir tous les livres</a></div>' : '');
+    : (q ? '<div style="text-align:center;padding:3rem;color:#6B7280;"><p style="font-size:1.2rem;">Aucun résultat pour "' + q.replace(/</g,'&lt;') + '"</p><a href="/collections/all" style="color:#D4AF37;">Voir tous les livres</a></div>' : '<div style="text-align:center;padding:2rem 0;"><p style="color:#6B7280;font-size:1.1rem;margin-bottom:1.5rem;">Tapez un titre, un auteur ou un mot-cl\u00e9 pour trouver un livre.</p><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.75rem;"><a href="/search?q=Likout%C3%A9" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Likout\u00e9 Moharan</a><a href="/search?q=Nachman" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Rabbi Nachman</a><a href="/search?q=pri%C3%A8re" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Pri\u00e8re</a><a href="/search?q=Torah" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Torah</a><a href="/search?q=Breslev" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Breslev</a></div></div>');
 
   const content = '<div class="container" style="max-width:800px;margin:0 auto;padding:3rem 1rem;">' +
     '<h1 style="font-family:Cinzel,serif;color:#1E3A8A;font-size:2rem;margin-bottom:2rem;">' + (q ? 'Résultats pour "' + q.replace(/</g,'&lt;') + '"' : 'Recherche') + '</h1>' +

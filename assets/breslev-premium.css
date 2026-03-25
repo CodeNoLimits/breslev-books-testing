@@ -10,11 +10,11 @@
   /* Palette de Couleurs Premium - Version Lumineuse */
   --color-bg-dark: #f8f6f3; /* Crème clair au lieu de bleu nuit */
   --color-bg-card: rgba(255, 255, 255, 0.95); /* Fond blanc lumineux */
-  --color-gold: #c4a052; /* Or chaleureux */
+  --color-gold: #D4AF37; /* Or chaleureux */
   --color-gold-light: #e8d5a3; /* Or Pâle pour reflets */
   --color-text-main: #2c3e50; /* Texte foncé sur fond clair */
   --color-text-muted: #6c7a89;
-  --color-accent: #1e5799; /* Bleu Breslev royal */
+  --color-accent: #1E3A8A; /* Bleu Breslev royal */
 
   /* Nouvelles couleurs lumineuses */
   --color-bg-light: #ffffff;
@@ -109,7 +109,7 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
 }
 
 .text-gold-animated {
-  background: linear-gradient(to right, #c4a052 20%, #e8d5a3 40%, #c4a052 60%);
+  background: linear-gradient(to right, #D4AF37 20%, #e8d5a3 40%, #D4AF37 60%);
   background-size: 200% auto;
   color: transparent;
   -webkit-background-clip: text;
@@ -479,7 +479,7 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
 
 /* Footer */
 .footer {
-  background: linear-gradient(135deg, #1e5799 0%, #2a6cb6 100%);
+  background: linear-gradient(135deg, #1E3A8A 0%, #2a6cb6 100%);
   padding: 4rem 0 2rem;
   border-top: 3px solid var(--color-gold);
   margin-top: auto;
@@ -681,7 +681,7 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
   font-size: 0.78rem !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #c4a052 !important;
+  color: #D4AF37 !important;
   font-weight: 600;
 }
 .book-title {
@@ -721,7 +721,7 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
 .book-cover-container .badge-digital {
   position: absolute;
   top: 10px; right: 10px;
-  background: linear-gradient(135deg, #c4a052, #e8d5a3);
+  background: linear-gradient(135deg, #D4AF37, #e8d5a3);
   color: #1E3A8A;
   padding: 0.35rem 0.75rem;
   border-radius: 20px;

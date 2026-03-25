@@ -4,12 +4,12 @@
 
 :root {
   /* Couleurs Primaires */
-  --color-primary-royal: #1a237e;
+  --color-primary-royal: #1E3A8A;
   --color-primary-profond: #0d47a1;
   --color-primary-clair: #3f51b5;
   
   /* Couleurs Accent */
-  --color-accent-or: #ffd700;
+  --color-accent-or: #D4AF37;
   --color-accent-or-clair: #ffed4e;
   --color-accent-or-fonce: #ffc107;
   
@@ -21,8 +21,8 @@
   --color-gray-dark: #424242;
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-  --gradient-accent: linear-gradient(135deg, #ffd700 0%, #ffc107 100%);
+  --gradient-primary: linear-gradient(135deg, #1E3A8A 0%, #0d47a1 100%);
+  --gradient-accent: linear-gradient(135deg, #D4AF37 0%, #ffc107 100%);
   
   /* Typographie Hébreu */
   --font-hebrew: 'Frank Ruhl Libre', serif;

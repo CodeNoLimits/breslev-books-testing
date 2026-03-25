@@ -11,7 +11,7 @@
 :root {
   /* Couleurs principales éclaircies */
   --color-primary: #3b5998; /* Bleu plus clair */
-  --color-accent: #e8c547; /* Or plus lumineux */
+  --color-accent: #D4AF37; /* Or plus lumineux */
   --breslev-blue: #4a69bd; /* Bleu Breslev plus gai */
   --breslev-gold: #f0d866; /* Or plus vif */
   --breslev-cream: #fffef7; /* Crème plus chaud */
@@ -87,7 +87,7 @@
   .btn-primary,
   .button-primary,
   .add-to-cart {
-    background: linear-gradient(135deg, #e8c547 0%, #f0d866 100%) !important;
+    background: linear-gradient(135deg, #D4AF37 0%, #f0d866 100%) !important;
     color: #2c3e50 !important;
     border: none !important;
     box-shadow: 0 4px 15px rgba(232, 197, 71, 0.3) !important;

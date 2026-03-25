@@ -5,13 +5,13 @@
  */
 
 :root {
-  --bleu-royal: #1a237e;
+  --bleu-royal: #1E3A8A;
   --bleu-profond: #0d47a1;
-  --or-sacre: #ffd700;
+  --or-sacre: #D4AF37;
   --blanc-pur: #ffffff;
   --noir-elegant: #1a1a1a;
-  --gradient-divin: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-  --gradient-or: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  --gradient-divin: linear-gradient(135deg, #1E3A8A 0%, #0d47a1 100%);
+  --gradient-or: linear-gradient(135deg, #D4AF37 0%, #ffed4e 100%);
   --ombre-douce: 0 4px 6px rgba(0, 0, 0, 0.1);
   --font-titre: 'Playfair Display', serif;
   --font-hebreu: 'Frank Ruhl Libre', serif;
