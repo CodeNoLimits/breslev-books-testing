@@ -1,0 +1,517 @@
+/**
+ * THEME ELEGANCE — Breslev by Esther Ifrah
+ * Design premium or/crème — généré par Claude Code (Antigravity n'a pas livré à temps)
+ * Tokens: --gold: #D4AF37 | --cream: #FFF8F0 | --navy: #1E3A8A | --dark: #0F172A
+ */
+
+/* ===== GOOGLE FONTS ===== */
+/* Pair A — La Pléiade/Gallimard prestige: Cinzel (display) + Cormorant (italic titles) + EB Garamond (body) */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=EB+Garamond:wght@400;500&display=swap');
+
+/* ===== ROOT TOKENS ===== */
+:root {
+  --gold: #D4AF37;
+  --gold-light: #F5E6B8;
+  --gold-dark: #A8892A;
+  --navy: #1E3A8A;
+  --dark: #0F172A;
+  --cream: #EEF0FA;
+  --cream-dark: #E4E7F4;
+  --text: #2C3E50;
+  --text-light: #6B7280;
+  --serif: 'Cinzel', serif;
+  --body: 'Cormorant Garamond', serif;
+  --body-text: 'EB Garamond', Georgia, serif;  /* For descriptions, longer reading */
+
+  /* Warm-tinted shadows (research: never use blue-tinted shadows on warm cream BGs) */
+  --shadow-sm:   0 1px 3px rgba(26,18,8,0.08), 0 1px 2px rgba(26,18,8,0.04);
+  --shadow-book: -4px 4px 8px rgba(26,18,8,0.20), -8px 10px 24px rgba(26,18,8,0.12);
+  --shadow-book-hover: -6px 8px 16px rgba(26,18,8,0.28), -12px 16px 40px rgba(26,18,8,0.16);
+  --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* premium spring bounce */
+
+  /* Override existing tokens */
+  --color-gold: #D4AF37;
+  --color-accent: #D4AF37;
+}
+
+/* ===== BODY ===== */
+body {
+  background-color: rgba(30, 58, 138, 0.3); /* 30% bleu marine */
+  font-family: var(--body);
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+/* Body text (descriptions, paragraphs) uses EB Garamond for better reading comfort */
+p, .book-description, .description-text {
+  font-family: var(--body-text);
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+/* ===== NAVBAR ELEGANCE ===== */
+.navbar {
+  background: rgba(15, 23, 42, 0.97) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.navbar__logo {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  color: var(--gold) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.navbar__nav-link {
+  font-family: var(--serif);
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85) !important;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+}
+
+.navbar__nav-link:hover {
+  color: var(--gold) !important;
+  border-bottom-color: var(--gold);
+}
+
+/* ===== HERO ELEGANCE ===== */
+.hero-section {
+  position: relative;
+  min-height: 90vh;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.55) 0%,
+    rgba(30, 58, 138, 0.40) 50%,
+    rgba(15, 23, 42, 0.75) 100%
+  ) !important;
+}
+
+.hero-title {
+  font-family: var(--serif) !important;
+  font-size: clamp(2.5rem, 6vw, 5rem) !important;
+  color: var(--gold) !important;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 30px rgba(212, 175, 55, 0.4);
+  line-height: 1.15;
+}
+
+/* Gold shimmer animation on hero title */
+@keyframes gold-shimmer {
+  0%   { text-shadow: 0 2px 30px rgba(212, 175, 55, 0.3); }
+  50%  { text-shadow: 0 2px 40px rgba(212, 175, 55, 0.7), 0 0 80px rgba(212, 175, 55, 0.3); }
+  100% { text-shadow: 0 2px 30px rgba(212, 175, 55, 0.3); }
+}
+
+.hero-title {
+  animation: gold-shimmer 4s ease-in-out infinite;
+}
+
+/* ===== BOOK CARDS ELEGANCE ===== */
+.book-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  position: relative; /* needed for quick-add button */
+  transition: transform var(--transition-spring),
+              box-shadow 0.35s ease,
+              border-color 0.3s ease !important;
+  /* Warm book shadow (research: use warm rgba, not blue) */
+  box-shadow: var(--shadow-book) !important;
+  will-change: transform;
+}
+
+.book-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: var(--shadow-book-hover),
+              0 0 0 1px rgba(212, 175, 55, 0.35) !important;
+  border-color: rgba(212, 175, 55, 0.45) !important;
+}
+
+/* Standard 2:3 book cover ratio (industry standard: Penguin, Gallimard, Taschen) */
+.book-cover-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);
+}
+
+/* Fallback for browsers without aspect-ratio (Safari < 15) */
+@supports not (aspect-ratio: 2/3) {
+  .book-cover-container {
+    padding-top: 150%; /* 2:3 ratio = height/width = 1.5 = 150% */
+  }
+}
+
+.book-cover-container img,
+.book-cover-container .book-cover {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  /* Image zoom: scale the IMAGE inside container, not the card — prevents layout jump */
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.book-card:hover .book-cover-container img,
+.book-card:hover .book-cover {
+  transform: scale(1.06) !important;
+}
+
+/* ===== QUICK-ADD BUTTON (slide up on hover) ===== */
+/* Research: "Quick-Add button sliding up on hover" — highest conversion micro-interaction */
+.btn-quick-add {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--gold);
+  color: var(--dark);
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.7rem;
+  text-align: center;
+  transform: translateY(100%);
+  transition: transform var(--transition-spring);
+  cursor: pointer;
+  border: none;
+  z-index: 2;
+}
+
+.book-cover-container:hover .btn-quick-add,
+.book-card:hover .btn-quick-add {
+  transform: translateY(0);
+}
+
+/* ===== SKELETON SHIMMER (cream-toned for warm literary feel) ===== */
+@keyframes shimmer-book {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-book {
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(
+    90deg,
+    #e8e0d4 25%,
+    #f5f0e8 50%,
+    #e8e0d4 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-book 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* Golden overlay on hover */
+.book-cover-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(212, 175, 55, 0.25) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.book-card:hover .book-cover-container::after {
+  opacity: 1;
+}
+
+/* Book info */
+.book-title {
+  font-family: var(--serif) !important;
+  color: var(--dark) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.book-author {
+  font-family: var(--body) !important;
+  color: var(--navy) !important;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.book-price {
+  font-family: var(--serif) !important;
+  color: var(--gold-dark) !important;
+  font-size: 1.3rem !important;
+  font-weight: 700;
+}
+
+/* ===== BUTTON SYSTEM (CC-5 — Research-backed, uniformisé) =====
+ * PRIMARY  = Navy plein + texte blanc → action principale (Ajouter au panier, Payer)
+ * SECONDARY = Transparent + bordure gold + texte gold → action secondaire (Lire extrait)
+ * CTA       = Gold plein + texte dark → appel à l'action fort (S'abonner, Voir tout)
+ * Touch target minimum 48px (Apple/Google standard)
+ */
+
+/* PRIMARY — Navy plein */
+.btn-primary,
+.btn-add-to-cart,
+button[type="submit"]:not(.btn-outline):not(.btn-cta) {
+  background: var(--navy) !important;
+  color: #ffffff !important;
+  font-family: var(--serif) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 2px solid var(--navy) !important;
+  border-radius: 8px !important;
+  padding: 0.85rem 1.6rem !important;
+  min-height: 48px; /* Touch target */
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease !important;
+  box-shadow: 0 2px 8px rgba(26,18,8,0.12) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-primary:hover,
+.btn-add-to-cart:hover {
+  background: #152d6e !important; /* navy foncé */
+  border-color: #152d6e !important;
+  box-shadow: 0 6px 20px rgba(26,18,8,0.20) !important;
+  transform: translateY(-2px);
+  color: #ffffff !important;
+}
+
+/* SECONDARY — Outline gold */
+.btn-outline,
+.btn-secondary {
+  background: transparent !important;
+  color: var(--gold-dark) !important;
+  border: 2px solid var(--gold) !important;
+  font-family: var(--serif) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 8px !important;
+  padding: 0.85rem 1.6rem !important;
+  min-height: 48px;
+  cursor: pointer;
+  transition: all 0.25s ease !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-outline:hover,
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border-color: var(--gold-dark) !important;
+  color: var(--gold-dark) !important;
+  transform: translateY(-1px);
+}
+
+/* CTA — Gold plein (calls to action forts) */
+.btn-cta,
+a.btn-cta {
+  background: var(--gold) !important;
+  color: var(--dark) !important;
+  border: 2px solid var(--gold) !important;
+  font-family: var(--serif) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 8px !important;
+  padding: 0.85rem 1.6rem !important;
+  min-height: 48px;
+  cursor: pointer;
+  transition: all 0.25s ease !important;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(212,175,55,0.30) !important;
+}
+
+.btn-cta:hover {
+  background: var(--gold-dark) !important;
+  border-color: var(--gold-dark) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(212,175,55,0.40) !important;
+  transform: translateY(-2px);
+}
+
+/* Connexion / Inscription → Navy (cohérent avec boutons Primary) */
+button[onclick*="login"],
+button[onclick*="signup"],
+.btn-auth {
+  background: var(--navy) !important;
+  color: #ffffff !important;
+  border-color: var(--navy) !important;
+}
+
+/* ===== SECTION HEADERS ELEGANCE ===== */
+h2.text-center {
+  font-family: var(--serif) !important;
+  color: var(--dark) !important;
+  font-size: clamp(1.8rem, 3vw, 2.6rem) !important;
+  letter-spacing: 0.05em;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+h2.text-center::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 0.7rem auto 0;
+  border-radius: 2px;
+}
+
+/* ===== FOOTER ELEGANCE ===== */
+.footer {
+  background: linear-gradient(180deg, #0F172A 0%, #080F1F 100%) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.footer h4 {
+  font-family: var(--serif) !important;
+  color: var(--gold) !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.footer__link {
+  color: rgba(255,255,255,0.6) !important;
+  transition: color 0.2s ease;
+  font-family: var(--body);
+}
+
+.footer__link:hover {
+  color: var(--gold) !important;
+}
+
+.footer__bottom {
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  padding-top: 1.2rem;
+  color: rgba(255,255,255,0.4) !important;
+  font-size: 0.82rem;
+  font-family: var(--body);
+}
+
+/* ===== SOCIAL ICONS ===== */
+.social-links {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.social-link {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7) !important;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark) !important;
+  transform: translateY(-3px);
+}
+
+/* ===== PRODUCT PAGE ELEGANCE ===== */
+.product-title,
+h1[style*="color: #2c3e50"],
+h1[style*="color:#2c3e50"] {
+  font-family: var(--serif) !important;
+}
+
+/* ===== AUDIO SECTION ===== */
+.audio-section-title {
+  font-family: var(--serif) !important;
+  color: var(--gold) !important;
+}
+
+/* ===== COURS DU JOUR ===== */
+.cours-du-jour-preview h3 {
+  font-family: var(--serif) !important;
+}
+
+/* ===== GRID PRODUCTS ELEGANCE ===== */
+.grid-products {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 1.8rem !important;
+}
+
+@media (max-width: 768px) {
+  .grid-products {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .book-title {
+    font-size: 0.85rem !important;
+  }
+
+  .book-price {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .grid-products {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.7rem !important;
+  }
+}
+
+/* ===== TESTIMONIALS ===== */
+.testimonial-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.06) !important;
+}
+
+/* ===== SCROLL FADEUP ANIMATION ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeUp 0.6s ease forwards;
+}

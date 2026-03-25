@@ -1,0 +1,87 @@
+# Breslev Esther IFRA - Regles Cursor
+
+## Architecture du Projet
+
+Ce projet utilise une architecture **server-side Express.js** deployee sur Vercel.
+- **Fichier principal**: `server-local.js` (contient TOUT le backend et le HTML)
+- **Pas de framework frontend** (React, Vue, etc.) - HTML genere cote serveur
+- **Deploiement**: Vercel via `vercel.json`
+
+## Fichiers Importants
+
+```
+server-local.js          # Serveur Express - TOUT le code backend
+assets/
+  cart-system.js         # Gestion panier (localStorage)
+  checkout-system.js     # Processus checkout multi-etapes
+  shipping-config.js     # Configuration zones de livraison
+  breslev-premium.css    # Styles principaux
+  checkout-styles.css    # Styles checkout
+.env                     # Variables d'environnement (NE PAS MODIFIER)
+vercel.json              # Configuration deploiement
+```
+
+## URL de Production (NE JAMAIS CHANGER)
+
+```
+https://breslev-books-preview.vercel.app
+```
+
+Cette URL est configuree dans:
+- Google Cloud Console (OAuth)
+- Supabase (Redirect URLs)
+- Le code source
+
+## Commandes
+
+```bash
+# Lancer en local
+node server-local.js
+
+# Deployer
+vercel --prod --yes
+```
+
+## Integrations
+
+### Supabase (Auth + Database)
+- Google OAuth configure
+- Callback: `/auth/callback`
+
+### Stripe (Paiements)
+- Payment Intents pour achats
+- Checkout Sessions pour abonnements
+
+### PayPal
+- Mode sandbox pour tests
+- Integration client-side
+
+## Points Critiques
+
+### 1. Stripe Elements
+TOUJOURS detruire et recreer l'element Stripe a chaque navigation:
+```javascript
+if (this.cardElement) {
+  this.cardElement.destroy();
+}
+this.cardElement = this.elements.create('card', {...});
+this.cardElement.mount('#card-element');
+```
+
+### 2. Ordre de chargement scripts
+`cart-system.js` doit etre charge AVANT `checkout-system.js`
+
+### 3. Webhook Stripe
+DOIT etre configure AVANT `express.json()`:
+```javascript
+app.post('/api/webhook', express.raw({type: 'application/json'}), ...);
+app.use(express.json()); // APRES
+```
+
+## Documentation Complete
+
+Voir: `~/.claude-memory/ARCHITECTURE_SITE_ECOMMERCE_STANDALONE.md`
+
+## Contact
+
+Projet de reference pour sites e-commerce standalone Breslev/Rabbi Nachman.

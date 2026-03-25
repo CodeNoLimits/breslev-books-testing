@@ -1,0 +1,514 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-09T00:00:00Z",
+  "description": "Breslev Books Shopify Database Structure - Complete Schema with Metafields, Collections, Tags and Product Data",
+
+  "metafields": {
+    "products": {
+      "namespace": "book",
+      "definition": [
+        {
+          "key": "has_digital",
+          "type": "boolean",
+          "description": "Indicate if product has a digital version available",
+          "validations": {
+            "required": false
+          }
+        },
+        {
+          "key": "bundle_price",
+          "type": "money",
+          "description": "Special pricing for physical + digital bundle",
+          "validations": {
+            "required": false,
+            "minimum": 0
+          }
+        },
+        {
+          "key": "author",
+          "type": "single_line_text_field",
+          "description": "Book author name",
+          "validations": {
+            "required": false,
+            "maxLength": 255
+          }
+        },
+        {
+          "key": "pages",
+          "type": "number_integer",
+          "description": "Total number of pages",
+          "validations": {
+            "required": false,
+            "minimum": 1
+          }
+        },
+        {
+          "key": "language",
+          "type": "single_line_text_field",
+          "description": "Language code (FR, HE, EN, BI for bilingual)",
+          "validations": {
+            "required": false,
+            "enum": ["FR", "HE", "EN", "BI"]
+          }
+        },
+        {
+          "key": "category",
+          "type": "single_line_text_field",
+          "description": "Book category for internal organization",
+          "validations": {
+            "required": false,
+            "maxLength": 100
+          }
+        },
+        {
+          "key": "isbn",
+          "type": "single_line_text_field",
+          "description": "International Standard Book Number",
+          "validations": {
+            "required": false,
+            "maxLength": 20
+          }
+        },
+        {
+          "key": "pdf_url",
+          "type": "url",
+          "description": "Secure URL to PDF file (for digital product)",
+          "validations": {
+            "required": false
+          }
+        },
+        {
+          "key": "fliphtml5_id",
+          "type": "single_line_text_field",
+          "description": "FlipHTML5 publication ID for online reading experience",
+          "validations": {
+            "required": false,
+            "maxLength": 100
+          }
+        }
+      ]
+    },
+    "customers": {
+      "namespace": "subscription",
+      "definition": [
+        {
+          "key": "status",
+          "type": "single_line_text_field",
+          "description": "Subscription status (active, cancelled, expired, pending)",
+          "validations": {
+            "required": false,
+            "enum": ["active", "cancelled", "expired", "pending"]
+          }
+        },
+        {
+          "key": "plan",
+          "type": "single_line_text_field",
+          "description": "Subscription plan type (monthly, yearly, lifetime)",
+          "validations": {
+            "required": false,
+            "enum": ["monthly", "yearly", "lifetime"]
+          }
+        },
+        {
+          "key": "expires_at",
+          "type": "date",
+          "description": "Subscription expiration date",
+          "validations": {
+            "required": false
+          }
+        },
+        {
+          "key": "next_billing",
+          "type": "date",
+          "description": "Next billing date for subscription",
+          "validations": {
+            "required": false
+          }
+        },
+        {
+          "key": "amount",
+          "type": "money",
+          "description": "Subscription payment amount",
+          "validations": {
+            "required": false,
+            "minimum": 0
+          }
+        }
+      ]
+    }
+  },
+
+  "collections": [
+    {
+      "id": "livres-etude",
+      "name": "Livres d'étude",
+      "handle": "livres-etude",
+      "description": "Collection de livres principaux pour l'étude approfondie de la Kabbale et la spiritualité Breslev",
+      "image": "collections/livres-etude.jpg",
+      "sortOrder": 1
+    },
+    {
+      "id": "contes-recits",
+      "name": "Contes et récits",
+      "handle": "contes-recits",
+      "description": "Contes et histoires inspirantes de Rabbi Nahman et des sages de Breslev",
+      "image": "collections/contes-recits.jpg",
+      "sortOrder": 2
+    },
+    {
+      "id": "prieres-tefilot",
+      "name": "Prières et Téfilot",
+      "handle": "prieres-tefilot",
+      "description": "Prières, bénédictions et textes liturgiques pour la pratique quotidienne",
+      "image": "collections/prieres-tefilot.jpg",
+      "sortOrder": 3
+    },
+    {
+      "id": "biographies",
+      "name": "Biographies",
+      "handle": "biographies",
+      "description": "Biographies des grands maîtres de Breslev et de leurs enseignements",
+      "image": "collections/biographies.jpg",
+      "sortOrder": 4
+    },
+    {
+      "id": "brochures",
+      "name": "Brochures",
+      "handle": "brochures",
+      "description": "Petites brochures et guides pratiques sur les enseignements Breslev",
+      "image": "collections/brochures.jpg",
+      "sortOrder": 5
+    },
+    {
+      "id": "nouveautes",
+      "name": "Nouveautés",
+      "handle": "nouveautes",
+      "description": "Les dernières publications et nouvelles éditions",
+      "image": "collections/nouveautes.jpg",
+      "sortOrder": 6,
+      "isAutomatic": true,
+      "rule": {
+        "type": "created",
+        "period": "days",
+        "value": 30
+      }
+    },
+    {
+      "id": "best-sellers",
+      "name": "Best-sellers",
+      "handle": "best-sellers",
+      "description": "Les meilleures ventes et publications les plus populaires",
+      "image": "collections/best-sellers.jpg",
+      "sortOrder": 7
+    }
+  ],
+
+  "tags": {
+    "format": ["livre", "brochure", "numerique", "physique", "combo"],
+    "author": ["rabbi-nahman", "rabbi-nathan", "rabbi-ezra", "collectif"],
+    "language": ["francais", "hebreu", "bilingue"],
+    "promo": ["nouveau", "bestseller", "promo", "exclusif", "limite", "rupture"],
+    "category": ["spiritualite", "enseignement", "pratique", "meditation", "kabbale", "hassidisme"]
+  },
+
+  "products": [
+    {
+      "id": "prod_001",
+      "handle": "chemot-hatsadikim",
+      "title": "Chemot Hatsadikim",
+      "description": "Noms des justes - Guide de la vie spirituelle et des vertus selon les enseignements de Rabbi Nahman",
+      "vendor": "Breslev Books",
+      "productType": "Livre",
+      "collections": ["livres-etude"],
+      "tags": ["livre", "francais", "rabbi-nahman", "spiritualite"],
+      "images": {
+        "primary": "products/chemot-hatsadikim.jpg",
+        "gallery": ["products/chemot-hatsadikim-1.jpg", "products/chemot-hatsadikim-2.jpg"]
+      },
+      "pricing": {
+        "physical": {
+          "price": 24.99,
+          "currency": "EUR",
+          "comparePrice": 29.99,
+          "cost": 8.50,
+          "sku": "CHEMOT-FR-001"
+        },
+        "digital": {
+          "price": 9.99,
+          "currency": "EUR",
+          "sku": "CHEMOT-DIGIT-001"
+        },
+        "bundle": {
+          "price": 32.99,
+          "currency": "EUR",
+          "savings": 1.99
+        }
+      },
+      "inventory": {
+        "quantity": 150,
+        "trackQuantity": true,
+        "weight": 0.45,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "32.99",
+        "author": "Rabbi Nahman of Breslov",
+        "pages": 284,
+        "language": "FR",
+        "category": "Enseignement spirituel",
+        "isbn": "978-2-7543-2101-5",
+        "pdf_url": "https://api.breslev.example.com/pdf/chemot-hatsadikim.pdf",
+        "fliphtml5_id": "chemot_hatsadikim_001"
+      },
+      "status": "active"
+    },
+    {
+      "id": "prod_002",
+      "handle": "la-vie-breslever",
+      "title": "La Vie d'un Breslever",
+      "description": "Guide pratique et spirituel pour la vie quotidienne selon les enseignements de Breslev",
+      "vendor": "Breslev Books",
+      "productType": "Livre",
+      "collections": ["biographies", "nouveautes"],
+      "tags": ["livre", "francais", "rabbi-nathan", "pratique"],
+      "pricing": {
+        "physical": {
+          "price": 22.00,
+          "currency": "EUR",
+          "comparePrice": 27.00,
+          "cost": 7.50,
+          "sku": "VIE-BR-001"
+        },
+        "digital": {
+          "price": 8.99,
+          "currency": "EUR",
+          "sku": "VIE-DIGIT-001"
+        },
+        "bundle": {
+          "price": 29.99,
+          "currency": "EUR",
+          "savings": 1.00
+        }
+      },
+      "inventory": {
+        "quantity": 200,
+        "trackQuantity": true,
+        "weight": 0.38,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "29.99",
+        "author": "Rabbi Nathan of Breslov",
+        "pages": 256,
+        "language": "FR",
+        "category": "Guide pratique",
+        "isbn": "978-2-7543-2102-2",
+        "pdf_url": "https://api.breslev.example.com/pdf/vie-breslever.pdf",
+        "fliphtml5_id": "vie_breslever_001"
+      },
+      "status": "active"
+    },
+    {
+      "id": "prod_003",
+      "handle": "likutey-moharane-1",
+      "title": "Likutey Moharane - Partie 1",
+      "description": "Enseignements compilés de Rabbi Nahman - Partie 1. Études approfondies des mystères de la Torah",
+      "vendor": "Breslev Books",
+      "productType": "Livre",
+      "collections": ["livres-etude"],
+      "tags": ["livre", "bilingue", "rabbi-nahman", "kabbale", "bestseller"],
+      "pricing": {
+        "physical": {
+          "price": 39.99,
+          "currency": "EUR",
+          "cost": 13.50,
+          "sku": "LIKM1-FR-001"
+        },
+        "digital": {
+          "price": 19.99,
+          "currency": "EUR",
+          "sku": "LIKM1-DIGIT-001"
+        },
+        "bundle": {
+          "price": 52.99,
+          "currency": "EUR",
+          "savings": 6.99
+        }
+      },
+      "inventory": {
+        "quantity": 120,
+        "trackQuantity": true,
+        "weight": 0.65,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "52.99",
+        "author": "Rabbi Nahman of Breslov",
+        "pages": 512,
+        "language": "BI",
+        "category": "Enseignement kabbalistique",
+        "isbn": "978-2-7543-2103-9",
+        "pdf_url": "https://api.breslev.example.com/pdf/likutey-moharane-1.pdf",
+        "fliphtml5_id": "likutey_moharane_1_001"
+      },
+      "status": "active"
+    },
+    {
+      "id": "prod_004",
+      "handle": "tefilot-priere-quotidienne",
+      "title": "Téfilot - Prière Quotidienne",
+      "description": "Livre de prières complet avec bénédictions, psaumes et méditations pour la pratique quotidienne",
+      "vendor": "Breslev Books",
+      "productType": "Livre",
+      "collections": ["prieres-tefilot"],
+      "tags": ["livre", "bilingue", "spiritualite", "meditation"],
+      "pricing": {
+        "physical": {
+          "price": 28.00,
+          "currency": "EUR",
+          "comparePrice": 32.00,
+          "cost": 10.00,
+          "sku": "TEF-BI-001"
+        },
+        "digital": {
+          "price": 12.99,
+          "currency": "EUR",
+          "sku": "TEF-DIGIT-001"
+        },
+        "bundle": {
+          "price": 37.99,
+          "currency": "EUR",
+          "savings": 3.00
+        }
+      },
+      "inventory": {
+        "quantity": 180,
+        "trackQuantity": true,
+        "weight": 0.52,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "37.99",
+        "author": "Compilation Breslev",
+        "pages": 384,
+        "language": "BI",
+        "category": "Prières et liturgie",
+        "isbn": "978-2-7543-2104-6",
+        "pdf_url": "https://api.breslev.example.com/pdf/tefilot.pdf",
+        "fliphtml5_id": "tefilot_001"
+      },
+      "status": "active"
+    },
+    {
+      "id": "prod_005",
+      "handle": "guide-meditation-breslev",
+      "title": "Guide de Méditation Breslev",
+      "description": "Méthodes de méditation et de concentration mentale selon les enseignements de Rabbi Nahman",
+      "vendor": "Breslev Books",
+      "productType": "Brochure",
+      "collections": ["brochures", "nouveautes"],
+      "tags": ["brochure", "francais", "meditation", "nouveau"],
+      "pricing": {
+        "physical": {
+          "price": 12.99,
+          "currency": "EUR",
+          "comparePrice": 15.99,
+          "cost": 3.50,
+          "sku": "MED-BR-001"
+        },
+        "digital": {
+          "price": 4.99,
+          "currency": "EUR",
+          "sku": "MED-DIGIT-001"
+        },
+        "bundle": {
+          "price": 16.99,
+          "currency": "EUR",
+          "savings": 0.99
+        }
+      },
+      "inventory": {
+        "quantity": 300,
+        "trackQuantity": true,
+        "weight": 0.15,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "16.99",
+        "author": "Rabbi Nahman of Breslov",
+        "pages": 96,
+        "language": "FR",
+        "category": "Guide pratique",
+        "isbn": "978-2-7543-2105-3",
+        "pdf_url": "https://api.breslev.example.com/pdf/meditation-breslev.pdf",
+        "fliphtml5_id": "meditation_breslev_001"
+      },
+      "status": "active"
+    },
+    {
+      "id": "prod_006",
+      "handle": "histoires-rabbi-nahman",
+      "title": "Histoires de Rabbi Nahman",
+      "description": "Collection complète des contes et histoires spirituelles de Rabbi Nahman - édition de prestige",
+      "vendor": "Breslev Books",
+      "productType": "Livre",
+      "collections": ["contes-recits", "best-sellers"],
+      "tags": ["livre", "bilingue", "rabbi-nahman", "contes", "bestseller"],
+      "pricing": {
+        "physical": {
+          "price": 44.99,
+          "currency": "EUR",
+          "cost": 15.00,
+          "sku": "HIST-NHM-001"
+        },
+        "digital": {
+          "price": 22.99,
+          "currency": "EUR",
+          "sku": "HIST-DIGIT-001"
+        },
+        "bundle": {
+          "price": 59.99,
+          "currency": "EUR",
+          "savings": 7.99
+        }
+      },
+      "inventory": {
+        "quantity": 85,
+        "trackQuantity": true,
+        "weight": 0.78,
+        "weightUnit": "kg"
+      },
+      "metafields": {
+        "has_digital": true,
+        "bundle_price": "59.99",
+        "author": "Rabbi Nahman of Breslov",
+        "pages": 640,
+        "language": "BI",
+        "category": "Contes et récits",
+        "isbn": "978-2-7543-2106-0",
+        "pdf_url": "https://api.breslev.example.com/pdf/histoires-nahman.pdf",
+        "fliphtml5_id": "histoires_nahman_001"
+      },
+      "status": "active"
+    }
+  ],
+
+  "validation": {
+    "status": "COMPLETE",
+    "checklist": {
+      "metafields_products": true,
+      "metafields_customers": true,
+      "collections": true,
+      "tags": true,
+      "products_basic": true,
+      "products_pricing": true,
+      "products_inventory": true,
+      "products_metafields": true
+    }
+  }
+}

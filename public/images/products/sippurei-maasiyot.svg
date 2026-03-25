@@ -1,0 +1,40 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond avec pattern -->
+  <rect width="400" height="600" fill="#1a237e"/>
+
+  <!-- Pattern étoiles -->
+  <circle cx="80" cy="80" r="3" fill="#ffd700" opacity="0.3"/>
+  <circle cx="320" cy="100" r="3" fill="#ffd700" opacity="0.3"/>
+  <circle cx="60" cy="520" r="3" fill="#ffd700" opacity="0.3"/>
+  <circle cx="340" cy="500" r="3" fill="#ffd700" opacity="0.3"/>
+
+  <!-- Bordure dorée -->
+  <rect x="20" y="20" width="360" height="560" fill="none" stroke="#ffd700" stroke-width="3"/>
+
+  <!-- Titre -->
+  <text x="200" y="100" font-family="Georgia, serif" font-size="32" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    Sippurei
+  </text>
+  <text x="200" y="140" font-family="Georgia, serif" font-size="32" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    Maasiyot
+  </text>
+
+  <!-- Sous-titre -->
+  <text x="200" y="180" font-family="Georgia, serif" font-size="16" fill="#ffd700" text-anchor="middle" opacity="0.7">
+    Les Contes Merveilleux
+  </text>
+
+  <!-- Symbole livre ouvert -->
+  <path d="M 150 280 Q 200 260 250 280 L 250 380 Q 200 360 150 380 Z" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.5"/>
+  <line x1="200" y1="260" x2="200" y2="360" stroke="#ffd700" stroke-width="1" opacity="0.5"/>
+
+  <!-- Auteur -->
+  <text x="200" y="460" font-family="Georgia, serif" font-size="18" fill="#ffd700" text-anchor="middle" opacity="0.8">
+    Rabbi Nachman de Breslev
+  </text>
+
+  <!-- Éditions -->
+  <text x="200" y="530" font-family="Arial, sans-serif" font-size="14" fill="#ffd700" text-anchor="middle" opacity="0.6">
+    Éditions Breslev
+  </text>
+</svg>

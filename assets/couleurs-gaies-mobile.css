@@ -1,0 +1,178 @@
+/**
+ * CORRECTIONS COULEURS MOBILES - Demande cliente Esther Ifrah
+ * Date: 27 janvier 2026
+ * Objectif: Couleurs moins foncées et plus gaies sur mobile
+ */
+
+/* ============================================
+   OVERRIDE COULEURS - PLUS CLAIR & PLUS GAI
+   ============================================ */
+
+:root {
+  /* Couleurs principales éclaircies */
+  --color-primary: #3b5998; /* Bleu plus clair */
+  --color-accent: #e8c547; /* Or plus lumineux */
+  --breslev-blue: #4a69bd; /* Bleu Breslev plus gai */
+  --breslev-gold: #f0d866; /* Or plus vif */
+  --breslev-cream: #fffef7; /* Crème plus chaud */
+
+  /* Backgrounds plus lumineux */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #fdfcfa;
+  --color-bg-tertiary: #fbf9f6;
+  --color-bg-dark: #2c3e50; /* Moins noir, plus bleu */
+
+  /* Texte plus doux */
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #5d6d7e;
+}
+
+/* ============================================
+   CORRECTIONS SPÉCIFIQUES MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Header/navbar plus lumineux */
+  .site-header,
+  header,
+  .header-container,
+  .navbar {
+    background: linear-gradient(135deg, #4a69bd 0%, #5b7fd1 100%) !important;
+    box-shadow: 0 2px 10px rgba(74, 105, 189, 0.2);
+  }
+
+  /* Body background plus clair */
+  body {
+    background: #fffef7 !important;
+  }
+
+  /* Cards plus gaies */
+  .book-card,
+  .product-card,
+  .card {
+    background: #ffffff !important;
+    border: 1px solid #e8e4dc !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Sections alternées colorées */
+  .section:nth-child(odd) {
+    background: #fffef7 !important;
+  }
+
+  .section:nth-child(even) {
+    background: linear-gradient(180deg, #f0efea 0%, #fdfcfa 100%) !important;
+  }
+
+  /* Hero section plus lumineuse */
+  .hero,
+  .hero-section,
+  .banner {
+    background: linear-gradient(
+      135deg,
+      #4a69bd 0%,
+      #6b8dd6 50%,
+      #8ba8e6 100%
+    ) !important;
+  }
+
+  /* Footer moins sombre */
+  footer,
+  .site-footer,
+  .footer {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%) !important;
+  }
+
+  /* Boutons plus colorés */
+  .btn-primary,
+  .button-primary,
+  .add-to-cart {
+    background: linear-gradient(135deg, #e8c547 0%, #f0d866 100%) !important;
+    color: #2c3e50 !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(232, 197, 71, 0.3) !important;
+  }
+
+  .btn-primary:hover,
+  .button-primary:hover {
+    background: linear-gradient(135deg, #f0d866 0%, #f5e17a 100%) !important;
+    transform: translateY(-2px);
+  }
+
+  /* Navigation mobile plus claire */
+  .mobile-nav,
+  .mobile-menu,
+  .nav-mobile,
+  .navbar__nav {
+    background: #ffffff !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Texte navigation */
+  .nav-link,
+  .menu-item a,
+  .navbar__nav-link {
+    color: #2c3e50 !important;
+  }
+
+  /* Categories colorées */
+  .category-section {
+    background: linear-gradient(180deg, #fffef7 0%, #fdf9f3 100%) !important;
+  }
+
+  /* Badges plus visibles */
+  .badge,
+  .tag {
+    background: #4a69bd !important;
+    color: white !important;
+  }
+
+  /* Prix en or */
+  .price,
+  .product-price {
+    color: #d4a84b !important;
+    font-weight: 700;
+  }
+}
+
+/* ============================================
+   DESKTOP - Garder cohérence
+   ============================================ */
+
+@media (min-width: 769px) {
+  body {
+    background: #fffef7;
+  }
+
+  .hero-section {
+    background: linear-gradient(135deg, #3b5998 0%, #5a7abd 100%);
+  }
+}
+
+/* ============================================
+   ANIMATIONS PLUS GAIES
+   ============================================ */
+
+@keyframes fadeInGai {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.book-card,
+.product-card {
+  animation: fadeInGai 0.4s ease-out;
+}
+
+/* Hover effects colorés */
+.book-card:hover,
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(74, 105, 189, 0.15) !important;
+  border-color: #4a69bd !important;
+}

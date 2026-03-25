@@ -1,0 +1,216 @@
+/**
+ * CRITICAL CSS - ABOVE THE FOLD
+ * Inline this CSS for fastest FCP/LCP
+ * Non-critical CSS should be deferred with media queries
+ */
+
+:root {
+  --bleu-royal: #1a237e;
+  --bleu-profond: #0d47a1;
+  --or-sacre: #ffd700;
+  --blanc-pur: #ffffff;
+  --noir-elegant: #1a1a1a;
+  --gradient-divin: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+  --gradient-or: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  --ombre-douce: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --font-titre: 'Playfair Display', serif;
+  --font-hebreu: 'Frank Ruhl Libre', serif;
+  --font-texte: 'Crimson Text', serif;
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --spacing-lg: 40px;
+  --spacing-xl: 60px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-texte);
+  color: var(--noir-elegant);
+  line-height: 1.6;
+  background: var(--blanc-pur);
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  background: #f5f5f5;
+}
+
+img[data-src] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+img.loaded {
+  opacity: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-titre);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+  color: var(--bleu-royal);
+}
+
+a {
+  color: var(--bleu-royal);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--bleu-profond);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.section {
+  padding: var(--spacing-xl) 0;
+}
+
+header {
+  background: var(--blanc-pur);
+  box-shadow: var(--ombre-douce);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+}
+
+.logo {
+  font-family: var(--font-titre);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--bleu-royal);
+}
+
+.btn {
+  display: inline-block;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: var(--gradient-or);
+  color: var(--noir-elegant);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.btn-secondary {
+  background: var(--gradient-divin);
+  color: var(--blanc-pur);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(26, 35, 126, 0.2);
+}
+
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card {
+  background: var(--blanc-pur);
+  border-radius: 8px;
+  box-shadow: var(--ombre-douce);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(26, 35, 126, 0.2);
+}
+
+footer {
+  background: var(--gradient-divin);
+  color: var(--blanc-pur);
+  padding: var(--spacing-xl) 0 var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('https://fonts.gstatic.com/s/playfairdisplay/v21/nuFsD-_YoNmu45jTLygMp--TF_-M9Ws.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('https://fonts.gstatic.com/s/crimsontext/v9/wlpzgwvyNQtY3j3xJZG1Zw.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 30px;
+    --spacing-xl: 40px;
+  }
+
+  html {
+    font-size: 14px;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 12px 30px;
+  }
+}

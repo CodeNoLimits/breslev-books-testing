@@ -1,0 +1,46 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond dégradé -->
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d47a1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a237e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#grad2)"/>
+
+  <!-- Bordure simple -->
+  <rect x="30" y="30" width="340" height="540" fill="none" stroke="#ffd700" stroke-width="2"/>
+
+  <!-- Titre -->
+  <text x="200" y="110" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    Tikoun
+  </text>
+  <text x="200" y="150" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    HaKlali
+  </text>
+
+  <!-- Sous-titre -->
+  <text x="200" y="190" font-family="Georgia, serif" font-size="18" fill="#ffd700" text-anchor="middle" opacity="0.7">
+    Phonétique
+  </text>
+
+  <!-- Symbole menorah -->
+  <text x="200" y="350" font-family="Arial, sans-serif" font-size="100" fill="#ffd700" text-anchor="middle" opacity="0.4">
+    🕎
+  </text>
+
+  <!-- Description -->
+  <text x="200" y="450" font-family="Georgia, serif" font-size="16" fill="#ffd700" text-anchor="middle" opacity="0.7">
+    10 Psaumes de David
+  </text>
+
+  <!-- Auteur -->
+  <text x="200" y="490" font-family="Georgia, serif" font-size="18" fill="#ffd700" text-anchor="middle" opacity="0.8">
+    Rabbi Nachman de Breslev
+  </text>
+
+  <!-- Éditions -->
+  <text x="200" y="540" font-family="Arial, sans-serif" font-size="14" fill="#ffd700" text-anchor="middle" opacity="0.6">
+    Éditions Breslev
+  </text>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37"/>
+      <stop offset="100%" style="stop-color:#f4d03f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="8" fill="#0a1128"/>
+  <g transform="translate(12, 10)">
+    <!-- Book icon -->
+    <path d="M20 4 L20 40 L4 40 L4 8 C4 6 6 4 8 4 Z" fill="url(#gold)" opacity="0.9"/>
+    <path d="M20 4 L20 40 L36 40 L36 8 C36 6 34 4 32 4 Z" fill="url(#gold)" opacity="0.7"/>
+    <path d="M20 4 L20 40" stroke="#0a1128" stroke-width="1.5"/>
+    <!-- Pages lines -->
+    <line x1="8" y1="12" x2="16" y2="12" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+    <line x1="8" y1="18" x2="16" y2="18" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+    <line x1="8" y1="24" x2="16" y2="24" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+    <line x1="24" y1="12" x2="32" y2="12" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+    <line x1="24" y1="18" x2="32" y2="18" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+    <line x1="24" y1="24" x2="32" y2="24" stroke="#0a1128" stroke-width="1" opacity="0.5"/>
+  </g>
+</svg>

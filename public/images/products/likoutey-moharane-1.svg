@@ -1,0 +1,38 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond bleu profond -->
+  <rect width="400" height="600" fill="#0d47a1"/>
+
+  <!-- Bordure dorée double -->
+  <rect x="15" y="15" width="370" height="570" fill="none" stroke="#ffd700" stroke-width="4"/>
+  <rect x="25" y="25" width="350" height="550" fill="none" stroke="#ffd700" stroke-width="2"/>
+
+  <!-- Titre principal -->
+  <text x="200" y="90" font-family="Georgia, serif" font-size="36" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    Likoutey
+  </text>
+  <text x="200" y="135" font-family="Georgia, serif" font-size="36" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    Moharane
+  </text>
+
+  <!-- Tome -->
+  <text x="200" y="190" font-family="Georgia, serif" font-size="24" fill="#ffd700" text-anchor="middle" opacity="0.8">
+    Tome I
+  </text>
+
+  <!-- Symbole central -->
+  <circle cx="200" cy="320" r="100" fill="none" stroke="#ffd700" stroke-width="3" opacity="0.4"/>
+  <circle cx="200" cy="320" r="70" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.4"/>
+  <text x="200" y="340" font-family="Arial, sans-serif" font-size="60" fill="#ffd700" text-anchor="middle" opacity="0.6">
+    ✡
+  </text>
+
+  <!-- Auteur -->
+  <text x="200" y="480" font-family="Georgia, serif" font-size="20" fill="#ffd700" text-anchor="middle" opacity="0.9">
+    Rabbi Nachman de Breslev
+  </text>
+
+  <!-- Éditions -->
+  <text x="200" y="540" font-family="Arial, sans-serif" font-size="14" fill="#ffd700" text-anchor="middle" opacity="0.6">
+    Éditions Breslev
+  </text>
+</svg>

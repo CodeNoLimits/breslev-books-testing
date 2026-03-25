@@ -1,0 +1,24 @@
+node_modules/
+dist/
+build/
+.next/
+public/images/
+public/videos/
+*.mp3
+*.mp4
+*.jpg
+*.png
+*.webp
+*.gif
+*.pdf
+package-lock.json
+*.lock
+.git/
+*.log
+AGENT-*.md
+AGENT-*.txt
+AGENTS-*.md
+Discussion WhatsApp*/
+TurboScribe*/
+ACCESSIBILITY_REPORT.md
+ressources-esther-ifra/

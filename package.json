@@ -1,0 +1,30 @@
+{
+  "name": "breslev-shopify-preview",
+  "version": "1.0.0",
+  "description": "Serveur local preview pour thème Shopify Breslev Books",
+  "main": "server-local.js",
+  "scripts": {
+    "start": "node server-local.js",
+    "dev": "nodemon server-local.js"
+  },
+  "keywords": [
+    "shopify",
+    "breslev",
+    "preview"
+  ],
+  "author": "David",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "@supabase/supabase-js": "^2.84.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "multer": "^2.0.2",
+    "stripe": "^20.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "sharp": "^0.34.5"
+  }
+}

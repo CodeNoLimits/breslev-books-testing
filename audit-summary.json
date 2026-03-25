@@ -1,0 +1,133 @@
+{
+  "date": "2025-11-12",
+  "score_global": 62,
+  "status": "NON_CONFORME",
+  "deployable": false,
+  "risque": "ÉLEVÉ",
+  
+  "resume": {
+    "total_problemes": 25,
+    "critiques": 5,
+    "majeurs": 8,
+    "mineurs": 12,
+    "amendes_max": "20 396 500€"
+  },
+
+  "blocages_critiques": [
+    "Mentions légales absentes (75 000€)",
+    "CGV absentes (1 500€/transaction)",
+    "CGU absentes (protection juridique nulle)",
+    "Politique confidentialité RGPD absente (20M€)",
+    "Footer avec liens légaux absent"
+  ],
+
+  "pages_manquantes": [
+    {
+      "fichier": "src/app/mentions-legales/page.tsx",
+      "status": "ABSENT",
+      "priorite": "P0",
+      "amende": "75 000€"
+    },
+    {
+      "fichier": "src/app/cgv/page.tsx",
+      "status": "ABSENT",
+      "priorite": "P0",
+      "amende": "1 500€/transaction"
+    },
+    {
+      "fichier": "src/app/cgu/page.tsx",
+      "status": "ABSENT",
+      "priorite": "P0",
+      "amende": "Risque juridique total"
+    },
+    {
+      "fichier": "src/app/politique-confidentialite/page.tsx",
+      "status": "ABSENT",
+      "priorite": "P0",
+      "amende": "20 000 000€"
+    }
+  ],
+
+  "composants_manquants": [
+    {
+      "composant": "src/components/layout/Footer.tsx",
+      "status": "ABSENT",
+      "priorite": "P0"
+    },
+    {
+      "composant": "Bannière cookies RGPD",
+      "status": "ABSENT",
+      "priorite": "P1"
+    }
+  ],
+
+  "problemes_marketing": [
+    {
+      "type": "Certifications non vérifiées",
+      "fichier": "src/app/page.tsx",
+      "lignes": "183-195",
+      "badges": ["ISO 27001", "GDPR Ready", "SecNumCloud"],
+      "risque": "300 000€ + 2 ans prison",
+      "action": "Vérifier obtention OU retirer"
+    },
+    {
+      "type": "Logos sans autorisation",
+      "fichier": "src/app/page.tsx",
+      "lignes": "162-177",
+      "logos": ["Sage", "Cegid", "Pennylane", "Tiime", "Qonto"],
+      "risque": "400 000€ + dommages intérêts",
+      "action": "Obtenir autorisations ÉCRITES OU retirer"
+    }
+  ],
+
+  "scores_par_categorie": {
+    "mentions_juridiques": 0,
+    "messages_marketing": 65,
+    "conformite_efacture": 85,
+    "accessibilite": 45,
+    "liens_navigation": 55,
+    "securite_donnees": 80
+  },
+
+  "plan_action": {
+    "phase_1_urgent": {
+      "delai": "3-5 jours",
+      "taches": 7,
+      "cout": "3 000€ - 5 000€"
+    },
+    "phase_2_important": {
+      "delai": "7-14 jours",
+      "taches": 3,
+      "cout": "500€ - 1 000€"
+    },
+    "phase_3_amelioration": {
+      "delai": "30-60 jours",
+      "taches": 3,
+      "cout": "1 000€ - 2 000€"
+    }
+  },
+
+  "prochaines_etapes": [
+    "Créer 4 pages légales (mentions, CGV, CGU, confidentialité)",
+    "Créer Footer avec liens",
+    "Vérifier certifications (retirer si non obtenues)",
+    "Obtenir autorisations partenaires OU retirer logos",
+    "Implémenter bannière cookies RGPD",
+    "Audit accessibilité WCAG",
+    "Validation avocat e-commerce"
+  ],
+
+  "fichiers_generes": [
+    "AUDIT_CONFORMITE_REGLEMENTAIRE.json",
+    "RAPPORT_AUDIT_CONFORMITE.md",
+    "TODO_CONFORMITE_URGENT.md",
+    "audit-summary.json"
+  ],
+
+  "contact_urgence": {
+    "avocat_recommande": "Cabinet Alain Bensoussan (Paris)",
+    "dpo_externe": "Mon DPO (100€/mois)",
+    "templates_juridiques": "LegalPlace (200-500€)",
+    "cnil_pack_pme": "https://www.cnil.fr/fr/conformite-rgpd-comment-recenser-vos-traitements-de-donnees-personnelles"
+  }
+}

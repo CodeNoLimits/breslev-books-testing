@@ -1,0 +1,204 @@
+/* Breslev Flipbook Styles — StPageFlip */
+.flipbook-wrapper {
+  position: relative;
+  background: #0a0f1a;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 2rem 0;
+  overflow: hidden;
+}
+
+.flipbook-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #d4af37;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+}
+
+.flipbook-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(212,175,55,0.2);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.flipbook-controls-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.flipbook-page-info {
+  color: #d4af37;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.flipbook-btns button {
+  background: rgba(212,175,55,0.15);
+  border: 1px solid rgba(212,175,55,0.3);
+  color: #d4af37;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-left: 0.5rem;
+  transition: all 0.2s;
+}
+
+.flipbook-btns button:hover {
+  background: rgba(212,175,55,0.3);
+}
+
+.flipbook-book {
+  display: flex;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  transform-origin: center center;
+  min-height: 400px;
+}
+
+.flipbook-page {
+  background: #fff;
+}
+
+.flipbook-page canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.flipbook-controls-bottom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.fb-nav-btn {
+  background: linear-gradient(135deg, #d4af37, #b58c30);
+  color: #1a2332;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.fb-nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+}
+
+.flipbook-progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.flipbook-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #b58c30);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* Paywall overlay */
+.flipbook-paywall {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 26, 0.92);
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 12px;
+}
+
+.flipbook-paywall-content {
+  text-align: center;
+  padding: 2.5rem;
+  max-width: 400px;
+}
+
+.flipbook-paywall-content h3 {
+  color: #d4af37;
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.flipbook-paywall-content p {
+  color: rgba(255,255,255,0.8);
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.flipbook-buy-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #d4af37, #b58c30);
+  color: #1a2332;
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 30px;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.flipbook-buy-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(212,175,55,0.4);
+}
+
+.flipbook-error {
+  text-align: center;
+  padding: 3rem;
+  color: #ff6b6b;
+}
+
+/* Fullscreen mode */
+.flipbook-wrapper:fullscreen {
+  background: #0a0f1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .flipbook-controls-bottom {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .fb-nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  .flipbook-wrapper {
+    padding: 0.5rem;
+    margin: 1rem 0;
+  }
+}

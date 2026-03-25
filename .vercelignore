@@ -1,0 +1,41 @@
+# Vercel Ignore - Exclure fichiers lourds
+
+# Node modules
+node_modules/
+
+# Images PNG originales (on garde seulement les WebP optimisées)
+public/images/nan-banana/*.png
+
+# Fichiers développement
+.git/
+.claude-code-sync/
+agents/
+scripts/
+
+# Documentation
+*.md
+!README.md
+
+# Ressources lourdes
+ressources-esther-ifra/
+Discussion*
+TurboScribe*
+LIVRES PDF/
+
+# Fichiers config dev
+.cursor/
+.DS_Store
+.env*
+.gitignore
+
+# Templates Shopify (pas nécessaires pour preview)
+templates/
+sections/
+snippets/
+locales/
+config/
+layout/
+
+# Build helpers
+gen_audio.js
+gen_catalog.js

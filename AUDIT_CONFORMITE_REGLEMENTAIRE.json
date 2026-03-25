@@ -1,0 +1,703 @@
+{
+  "date_audit": "2025-11-12",
+  "auditeur": "Claude Code - Analyse automatisée",
+  "application": "DreamNova Compta - Facturation Électronique 2026",
+
+  "resume_executif": {
+    "niveau_global": "MOYEN - Risque modéré",
+    "score_conformite": "62/100",
+    "problemes_critiques": 5,
+    "problemes_majeurs": 8,
+    "problemes_mineurs": 12,
+    "recommandation": "Action immédiate requise - Créer les pages légales manquantes avant le déploiement en production"
+  },
+
+  "1_mentions_juridiques_obligatoires": {
+    "status": "NON CONFORME - CRITIQUE",
+    "problemes": [
+      {
+        "severite": "CRITIQUE",
+        "type": "CGV absentes",
+        "description": "Aucune page CGV (Conditions Générales de Vente) trouvée dans l'application",
+        "impact": "Obligation légale pour toute vente en ligne (Article L441-6 Code de commerce)",
+        "amendes_potentielles": "1 500€ par infraction (Article L121-1 Code de la consommation)",
+        "fichiers_manquants": [
+          "src/app/cgv/page.tsx",
+          "src/app/conditions-generales-vente/page.tsx"
+        ],
+        "action_requise": "Créer une page CGV complète avec mentions obligatoires"
+      },
+      {
+        "severite": "CRITIQUE",
+        "type": "CGU absentes",
+        "description": "Aucune page CGU (Conditions Générales d'Utilisation) trouvée",
+        "impact": "Protection juridique de l'éditeur et cadre contractuel avec utilisateurs",
+        "amendes_potentielles": "300 000€ + 5 ans de prison en cas de litige sans CGU (défaut de protection)",
+        "fichiers_manquants": [
+          "src/app/cgu/page.tsx",
+          "src/app/conditions-generales-utilisation/page.tsx"
+        ],
+        "action_requise": "Créer une page CGU couvrant l'utilisation de la plateforme"
+      },
+      {
+        "severite": "CRITIQUE",
+        "type": "Mentions légales absentes",
+        "description": "Aucune page mentions légales trouvée",
+        "impact": "Obligation LCEN (Loi pour la Confiance dans l'Économie Numérique) - Article 6",
+        "amendes_potentielles": "75 000€ pour les personnes morales (Article 6-IV LCEN)",
+        "fichiers_manquants": [
+          "src/app/mentions-legales/page.tsx"
+        ],
+        "mentions_obligatoires_manquantes": [
+          "Raison sociale et forme juridique",
+          "Adresse du siège social",
+          "Capital social",
+          "RCS et numéro SIRET",
+          "Numéro de TVA intracommunautaire",
+          "Coordonnées (téléphone, email)",
+          "Directeur de publication",
+          "Hébergeur (nom, raison sociale, adresse, téléphone)"
+        ],
+        "action_requise": "Créer page mentions-legales avec TOUTES les informations légales obligatoires"
+      },
+      {
+        "severite": "CRITIQUE",
+        "type": "Politique de confidentialité RGPD absente",
+        "description": "Aucune politique de confidentialité conforme RGPD trouvée",
+        "impact": "Violation du RGPD - Article 13 et 14 (Information des personnes concernées)",
+        "amendes_potentielles": "20 000 000€ ou 4% CA mondial (Article 83 RGPD)",
+        "fichiers_manquants": [
+          "src/app/politique-confidentialite/page.tsx",
+          "src/app/privacy/page.tsx"
+        ],
+        "mentions_rgpd_manquantes": [
+          "Identité du responsable de traitement",
+          "Finalités des traitements de données",
+          "Base juridique des traitements",
+          "Durée de conservation des données",
+          "Droits des utilisateurs (accès, rectification, effacement, portabilité, opposition)",
+          "Coordonnées du DPO si applicable",
+          "Droit d'introduire une réclamation auprès de la CNIL",
+          "Transferts de données hors UE (si applicable)",
+          "Politique de cookies"
+        ],
+        "action_requise": "Créer politique de confidentialité RGPD complète avec mentions obligatoires"
+      },
+      {
+        "severite": "MAJEUR",
+        "type": "Absence de bannière cookies RGPD",
+        "description": "Aucun système de consentement cookies détecté dans le code",
+        "impact": "Obligation RGPD si utilisation de cookies non strictement nécessaires",
+        "amendes_potentielles": "20 000 000€ ou 4% CA mondial (CNIL - délibération cookies 2020-092)",
+        "fichiers_concernes": [
+          "src/app/layout.tsx"
+        ],
+        "action_requise": "Implémenter un système de consentement cookies conforme (ex: Axeptio, Cookiebot, Tarteaucitron)"
+      }
+    ],
+    "liens_casses_detectes": [
+      {
+        "severite": "BLOQUANT",
+        "lien_source": "Footer manquant",
+        "lien_destination": "/mentions-legales",
+        "status": "404 - Page inexistante",
+        "action": "Créer la page et ajouter le lien dans le footer"
+      },
+      {
+        "severite": "BLOQUANT",
+        "lien_source": "Footer manquant",
+        "lien_destination": "/cgv",
+        "status": "404 - Page inexistante",
+        "action": "Créer la page et ajouter le lien dans le footer"
+      },
+      {
+        "severite": "BLOQUANT",
+        "lien_source": "Footer manquant",
+        "lien_destination": "/cgu",
+        "status": "404 - Page inexistante",
+        "action": "Créer la page et ajouter le lien dans le footer"
+      },
+      {
+        "severite": "BLOQUANT",
+        "lien_source": "Footer manquant",
+        "lien_destination": "/politique-confidentialite",
+        "status": "404 - Page inexistante",
+        "action": "Créer la page et ajouter le lien dans le footer"
+      }
+    ],
+    "score": "0/100",
+    "recommandation": "URGENT - Créer TOUTES les pages légales avant mise en production"
+  },
+
+  "2_conformite_messages_marketing": {
+    "status": "PARTIELLEMENT CONFORME",
+    "problemes": [
+      {
+        "severite": "MOYEN",
+        "type": "Mentions amendes correctes",
+        "fichier": "src/app/page.tsx",
+        "ligne": 152,
+        "contenu": "15 000€ - Amende maximale par entreprise",
+        "status": "CONFORME",
+        "note": "Le montant de 15 000€ est correct selon la réglementation (plafond annuel)"
+      },
+      {
+        "severite": "MOYEN",
+        "type": "Formule calcul amendes",
+        "fichier": "src/components/features/PenaltyCalculator.tsx",
+        "ligne": 23-25,
+        "contenu": "Math.min(invoices * 12 * 15, 15000)",
+        "status": "CONFORME",
+        "note": "Formule correcte : 15€/facture avec plafond 15 000€/an"
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Promesse 'jusqu'à 70% de réduction des coûts'",
+        "fichier": "src/app/page.tsx",
+        "ligne": 77,
+        "contenu": "Tarification prévisible et transparente avec jusqu'à 70% de réduction des coûts",
+        "status": "ATTENTION",
+        "risque": "Promesse quantifiée qui doit être justifiable et prouvable",
+        "recommandation": "Ajouter disclaimer: 'par rapport aux consultants traditionnels, selon profil entreprise' ou fournir étude comparative"
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Promesse ROI calculatrice",
+        "fichier": "src/components/features/PenaltyCalculator.tsx",
+        "ligne": 196-207,
+        "contenu": "Retour sur investissement en X mois",
+        "status": "ATTENTION",
+        "risque": "Calcul de ROI affiché comme garantie",
+        "recommandation": "Ajouter mention 'estimation' ou 'potentiel' au lieu de garantie implicite"
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Mentions certifications",
+        "fichier": "src/app/page.tsx",
+        "lignes": [183-195],
+        "contenu": "ISO 27001, GDPR Ready, SecNumCloud",
+        "status": "À VÉRIFIER",
+        "risque": "Afficher des certifications non obtenues = tromperie (Article L121-1 Code conso)",
+        "action_requise": "Vérifier que ces certifications sont RÉELLEMENT obtenues ou retirer les badges",
+        "amendes_potentielles": "2 ans de prison + 300 000€ d'amende pour publicité trompeuse"
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Logos partenaires",
+        "fichier": "src/app/page.tsx",
+        "lignes": [162-177],
+        "contenu": "Approuvé par les plus grandes entreprises françaises - Sage, Cegid, Pennylane, Tiime, Qonto",
+        "status": "ATTENTION - RISQUE ÉLEVÉ",
+        "risque": "Utilisation de noms/marques sans autorisation = contrefaçon de marque",
+        "recommandation": "Soit obtenir autorisation écrite de CHAQUE entreprise, soit retirer complètement",
+        "amendes_potentielles": "400 000€ d'amende + dommages et intérêts (Article L716-9 CPI)"
+      }
+    ],
+    "score": "65/100",
+    "recommandation": "Ajouter disclaimers sur promesses quantifiées et vérifier autorisations partenaires"
+  },
+
+  "3_conformite_facturation_electronique": {
+    "status": "PARTIELLEMENT CONFORME",
+    "problemes": [
+      {
+        "severite": "MINEUR",
+        "type": "Mentions Chorus Pro absentes",
+        "description": "Aucune mention du Portail Public de Facturation (Chorus Pro) comme alternative aux PDP",
+        "fichier": "src/app/reglementation/page.tsx",
+        "impact": "Information incomplète - Les entreprises doivent savoir qu'elles peuvent utiliser Chorus Pro gratuitement",
+        "action_requise": "Ajouter section expliquant que Chorus Pro est une alternative gratuite aux PDP"
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Disclaimer PDP agréées",
+        "description": "Pas de mention que les PDP citées doivent être OFFICIELLEMENT agréées par la DGFIP",
+        "fichier": "src/app/reglementation/page.tsx",
+        "lignes": [129-170],
+        "recommandation": "Ajouter: 'PDP certifiées par l'AIFE (Agence pour l'Informatique Financière de l'État)'"
+      },
+      {
+        "severite": "INFO",
+        "type": "Deadline correcte",
+        "fichier": "src/app/reglementation/page.tsx",
+        "ligne": 229,
+        "contenu": "1er Septembre 2026",
+        "status": "CONFORME",
+        "note": "Date correcte selon ordonnance n° 2021-1190 du 15 septembre 2021"
+      },
+      {
+        "severite": "INFO",
+        "type": "Format Factur-X",
+        "fichier": "src/app/reglementation/page.tsx",
+        "lignes": [97-125],
+        "status": "CONFORME",
+        "note": "Description correcte du format PDF/A-3 + XML EN 16931"
+      }
+    ],
+    "score": "85/100",
+    "recommandation": "Ajouter mention Chorus Pro comme alternative gratuite"
+  },
+
+  "4_accessibilite_wcag_rgpd": {
+    "status": "NON CONFORME - MAJEUR",
+    "problemes": [
+      {
+        "severite": "MAJEUR",
+        "type": "Absence attributs ARIA",
+        "description": "Aucun attribut ARIA détecté dans les composants (aria-label, aria-describedby, etc.)",
+        "impact": "Non-conformité RGAA (Référentiel Général d'Amélioration de l'Accessibilité)",
+        "obligation": "RGAA obligatoire pour services publics et entreprises >250M€ CA",
+        "fichiers_concernes": [
+          "src/components/ui/Button.tsx",
+          "src/components/ui/Input.tsx",
+          "src/components/features/DocumentUpload.tsx"
+        ],
+        "action_requise": "Ajouter aria-label sur tous les boutons avec icônes uniquement"
+      },
+      {
+        "severite": "MOYEN",
+        "type": "Labels formulaires",
+        "description": "Seulement 12 labels détectés dans toute l'application",
+        "status": "INSUFFISANT",
+        "fichiers_conformes": [
+          "src/components/ui/Input.tsx (lignes 14-20) - Label correctement associé via htmlFor"
+        ],
+        "fichiers_non_conformes": [
+          "src/components/features/PenaltyCalculator.tsx (lignes 118-124) - checkbox sans label visible associé via htmlFor sur input id"
+        ],
+        "action_requise": "Vérifier que TOUS les inputs ont un label associé via htmlFor={id}"
+      },
+      {
+        "severite": "MOYEN",
+        "type": "Contrastes couleurs",
+        "description": "Impossible de vérifier sans rendu visuel, mais utilisation intensive de classes Tailwind",
+        "status": "À VÉRIFIER MANUELLEMENT",
+        "recommandation": "Utiliser outil comme axe DevTools ou WAVE pour vérifier ratio contraste ≥4.5:1 (WCAG AA)",
+        "fichiers_a_tester": [
+          "src/app/globals.css (lignes de couleurs)",
+          "Tous les composants avec text-slate-400, text-slate-500 sur fond clair"
+        ]
+      },
+      {
+        "severite": "MINEUR",
+        "type": "Boutons icônes sans label",
+        "fichiers_concernes": [
+          "src/app/dashboard/page.tsx (ligne 792) - Bouton 'visibility' sans aria-label",
+          "src/components/features/Hero.tsx (ligne 104-106) - Boutons SVG sans aria-label"
+        ],
+        "action_requise": "Ajouter aria-label='Description action' sur tous les boutons avec uniquement des icônes"
+      },
+      {
+        "severite": "INFO",
+        "type": "Navigation clavier",
+        "status": "À TESTER",
+        "recommandation": "Tester que tous les éléments interactifs sont accessibles via Tab et Enter/Space"
+      }
+    ],
+    "score": "45/100",
+    "recommandation": "Audit accessibilité complet requis - Ajouter ARIA labels et tester contrastes"
+  },
+
+  "5_liens_navigation": {
+    "status": "PARTIELLEMENT CONFORME",
+    "liens_existants_valides": [
+      {
+        "href": "/",
+        "page_existe": true,
+        "fichier": "src/app/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/audit",
+        "page_existe": true,
+        "fichier": "src/app/audit/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/audit-results",
+        "page_existe": true,
+        "fichier": "src/app/audit-results/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/dashboard",
+        "page_existe": true,
+        "fichier": "src/app/dashboard/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/login",
+        "page_existe": true,
+        "fichier": "src/app/login/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/pricing",
+        "page_existe": true,
+        "fichier": "src/app/pricing/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/checkout",
+        "page_existe": true,
+        "fichier": "src/app/checkout/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/reglementation",
+        "page_existe": true,
+        "fichier": "src/app/reglementation/page.tsx",
+        "status": "OK"
+      },
+      {
+        "href": "/formation",
+        "page_existe": true,
+        "fichier": "src/app/formation/page.tsx",
+        "status": "OK (page placeholder)"
+      },
+      {
+        "href": "/mobile-scan",
+        "page_existe": true,
+        "fichier": "src/app/mobile-scan/page.tsx",
+        "status": "OK"
+      }
+    ],
+    "ancres_hash_valides": [
+      {
+        "href": "/dashboard#pdp-integration",
+        "element_id": "pdp-integration",
+        "fichier": "src/app/dashboard/page.tsx",
+        "ligne": 900,
+        "status": "OK"
+      },
+      {
+        "href": "/dashboard#e-reporting",
+        "element_id": "e-reporting",
+        "fichier": "src/app/dashboard/page.tsx",
+        "ligne": 673,
+        "status": "OK"
+      },
+      {
+        "href": "/dashboard#archivage",
+        "element_id": "archivage",
+        "fichier": "src/app/dashboard/page.tsx",
+        "ligne": 719,
+        "status": "OK"
+      },
+      {
+        "href": "/dashboard#test-flow",
+        "element_id": "test-flow",
+        "fichier": "src/app/dashboard/page.tsx",
+        "ligne": 820,
+        "status": "OK"
+      },
+      {
+        "href": "/dashboard#document-upload",
+        "element_id": "document-upload",
+        "fichier": "src/app/dashboard/page.tsx",
+        "ligne": 940,
+        "status": "OK"
+      }
+    ],
+    "liens_manquants_critiques": [
+      {
+        "href": "/mentions-legales",
+        "necessaire_pour": "Footer + Obligation LCEN",
+        "status": "404 - Page inexistante",
+        "priorite": "CRITIQUE"
+      },
+      {
+        "href": "/cgv",
+        "necessaire_pour": "Footer + Obligation Code de commerce",
+        "status": "404 - Page inexistante",
+        "priorite": "CRITIQUE"
+      },
+      {
+        "href": "/cgu",
+        "necessaire_pour": "Footer + Protection juridique",
+        "status": "404 - Page inexistante",
+        "priorite": "CRITIQUE"
+      },
+      {
+        "href": "/politique-confidentialite",
+        "necessaire_pour": "Footer + Obligation RGPD Article 13",
+        "status": "404 - Page inexistante",
+        "priorite": "CRITIQUE"
+      }
+    ],
+    "problemes_navigation": [
+      {
+        "severite": "CRITIQUE",
+        "type": "Footer absent",
+        "description": "Aucun composant Footer détecté dans l'application",
+        "impact": "Pas de liens vers mentions légales, CGV, CGU, politique de confidentialité",
+        "fichiers_concernes": [
+          "src/app/layout.tsx (pas de <Footer />)",
+          "src/app/page.tsx (pas de footer en bas de page)"
+        ],
+        "action_requise": "Créer composant Footer avec TOUS les liens légaux obligatoires"
+      }
+    ],
+    "score": "55/100",
+    "recommandation": "Créer Footer avec liens vers toutes les pages légales manquantes"
+  },
+
+  "6_securite_donnees": {
+    "status": "PARTIELLEMENT CONFORME",
+    "points_positifs": [
+      {
+        "type": "Utilisation Supabase",
+        "fichier": "src/lib/supabase/client.ts",
+        "status": "CONFORME",
+        "note": "Supabase fournit chiffrement au repos et en transit (TLS 1.3)"
+      },
+      {
+        "type": "Authentification sécurisée",
+        "fichier": "src/app/login/page.tsx",
+        "status": "CONFORME",
+        "note": "Utilisation de Supabase Auth (OAuth 2.0 + JWT)"
+      },
+      {
+        "type": "Middleware protection routes",
+        "fichier": "src/middleware.ts",
+        "status": "CONFORME",
+        "note": "Protection des routes /dashboard, /audit-results"
+      }
+    ],
+    "problemes": [
+      {
+        "severite": "MINEUR",
+        "type": "Pas de mention hébergement données France/UE",
+        "description": "Aucune mention explicite de la localisation géographique des serveurs",
+        "impact": "Transparence RGPD - Article 13 (information sur transferts)",
+        "action_requise": "Ajouter dans politique de confidentialité: 'Données hébergées en UE (Supabase région eu-central-1 Frankfurt)'"
+      },
+      {
+        "severite": "INFO",
+        "type": "Service Worker PWA",
+        "fichier": "public/sw.js",
+        "status": "À VÉRIFIER",
+        "recommandation": "S'assurer que le Service Worker ne cache pas de données sensibles"
+      }
+    ],
+    "score": "80/100",
+    "recommandation": "Ajouter mention localisation données dans politique confidentialité"
+  },
+
+  "7_plan_action_prioritaire": {
+    "phase_1_urgent_avant_production": [
+      {
+        "priorite": "P0 - BLOQUANT",
+        "tache": "Créer page Mentions Légales",
+        "fichier": "src/app/mentions-legales/page.tsx",
+        "contenu_requis": [
+          "Raison sociale + forme juridique",
+          "Adresse siège social",
+          "Capital social",
+          "RCS + SIRET",
+          "TVA intracommunautaire",
+          "Email + téléphone",
+          "Directeur de publication",
+          "Hébergeur (Netlify: nom, adresse, tel)"
+        ],
+        "delai": "Avant mise en production"
+      },
+      {
+        "priorite": "P0 - BLOQUANT",
+        "tache": "Créer page CGV (Conditions Générales de Vente)",
+        "fichier": "src/app/cgv/page.tsx",
+        "contenu_requis": [
+          "Prix (TTC avec mention HT)",
+          "Modalités de paiement",
+          "Délais de livraison/accès service",
+          "Conditions d'annulation",
+          "Garanties",
+          "Droit de rétractation (14 jours sauf exceptions)",
+          "Médiation consommateur",
+          "Loi applicable et juridiction compétente"
+        ],
+        "delai": "Avant mise en production"
+      },
+      {
+        "priorite": "P0 - BLOQUANT",
+        "tache": "Créer page CGU (Conditions Générales d'Utilisation)",
+        "fichier": "src/app/cgu/page.tsx",
+        "contenu_requis": [
+          "Objet du service",
+          "Acceptation des CGU",
+          "Inscription et compte utilisateur",
+          "Obligations de l'utilisateur",
+          "Propriété intellectuelle",
+          "Responsabilité et garanties",
+          "Durée et résiliation",
+          "Modification des CGU"
+        ],
+        "delai": "Avant mise en production"
+      },
+      {
+        "priorite": "P0 - BLOQUANT",
+        "tache": "Créer Politique de Confidentialité RGPD",
+        "fichier": "src/app/politique-confidentialite/page.tsx",
+        "contenu_requis": [
+          "Responsable de traitement (DreamNova + coordonnées)",
+          "Types de données collectées",
+          "Finalités de chaque traitement",
+          "Base juridique (consentement, contrat, intérêt légitime)",
+          "Durée de conservation",
+          "Destinataires des données (Supabase, Stripe, etc.)",
+          "Transferts hors UE (si applicable)",
+          "Droits RGPD (accès, rectification, effacement, portabilité, opposition, limitation)",
+          "Contact DPO ou responsable (email)",
+          "Droit réclamation CNIL",
+          "Politique cookies détaillée"
+        ],
+        "delai": "Avant mise en production"
+      },
+      {
+        "priorite": "P0 - BLOQUANT",
+        "tache": "Créer Footer avec liens légaux",
+        "fichier": "src/components/layout/Footer.tsx",
+        "contenu_requis": [
+          "Lien vers /mentions-legales",
+          "Lien vers /cgv",
+          "Lien vers /cgu",
+          "Lien vers /politique-confidentialite",
+          "Copyright © 2025 DreamNova"
+        ],
+        "integration": "Ajouter <Footer /> dans src/app/layout.tsx",
+        "delai": "Avant mise en production"
+      }
+    ],
+    "phase_2_post_production_j7": [
+      {
+        "priorite": "P1 - IMPORTANT",
+        "tache": "Implémenter bannière cookies RGPD",
+        "solutions": [
+          "Axeptio (français, facile)",
+          "Tarteaucitron.js (open source)",
+          "Cookiebot (payant, complet)"
+        ],
+        "delai": "J+7 après mise en production"
+      },
+      {
+        "priorite": "P1 - IMPORTANT",
+        "tache": "Vérifier certifications affichées",
+        "action": "Confirmer que ISO 27001, GDPR Ready, SecNumCloud sont VRAIMENT obtenus ou retirer les badges",
+        "delai": "J+7 après mise en production"
+      },
+      {
+        "priorite": "P1 - IMPORTANT",
+        "tache": "Obtenir autorisations logos partenaires",
+        "action": "Contacter Sage, Cegid, Pennylane, Tiime, Qonto pour autorisation OU retirer section",
+        "delai": "J+14 après mise en production"
+      }
+    ],
+    "phase_3_amelioration_continue": [
+      {
+        "priorite": "P2 - AMÉLIORATION",
+        "tache": "Audit accessibilité WCAG",
+        "action": "Tester avec axe DevTools, WAVE, et utilisateurs malvoyants",
+        "delai": "J+30"
+      },
+      {
+        "priorite": "P2 - AMÉLIORATION",
+        "tache": "Ajouter aria-label sur tous boutons icônes",
+        "fichiers": [
+          "src/app/dashboard/page.tsx",
+          "src/components/features/Hero.tsx"
+        ],
+        "delai": "J+30"
+      },
+      {
+        "priorite": "P3 - OPTIONNEL",
+        "tache": "Ajouter disclaimers sur promesses marketing",
+        "action": "Préciser 'estimation', 'selon profil', 'par rapport à consultants traditionnels'",
+        "delai": "J+60"
+      }
+    ]
+  },
+
+  "8_synthese_risques_juridiques": {
+    "risque_penal": {
+      "niveau": "ÉLEVÉ",
+      "amendes_cumulees_potentielles": "20 396 500€",
+      "detail": [
+        {
+          "infraction": "Non-respect RGPD (absence politique confidentialité)",
+          "amende_max": "20 000 000€ ou 4% CA mondial",
+          "probabilite": "Élevée si plainte utilisateur"
+        },
+        {
+          "infraction": "Absence mentions légales (LCEN Article 6)",
+          "amende_max": "75 000€",
+          "probabilite": "Certaine si contrôle DGCCRF"
+        },
+        {
+          "infraction": "Absence CGV (Code de commerce)",
+          "amende_max": "1 500€ par transaction",
+          "probabilite": "Élevée si litige client"
+        },
+        {
+          "infraction": "Publicité trompeuse (certifications non obtenues)",
+          "amende_max": "300 000€ + 2 ans prison",
+          "probabilite": "Moyenne si dénonciation"
+        },
+        {
+          "infraction": "Contrefaçon marques (logos sans autorisation)",
+          "amende_max": "400 000€ + dommages intérêts",
+          "probabilite": "Élevée si plainte titulaire marque"
+        }
+      ]
+    },
+    "risque_civil": {
+      "niveau": "TRÈS ÉLEVÉ",
+      "scenarios": [
+        {
+          "cas": "Client mécontent sans CGV",
+          "consequence": "Impossibilité de se défendre juridiquement - Remboursement intégral probable + dommages"
+        },
+        {
+          "cas": "Fuite de données sans politique RGPD",
+          "consequence": "Responsabilité totale - Dommages et intérêts à TOUS les utilisateurs impactés"
+        },
+        {
+          "cas": "Litige avec partenaire (logo sans autorisation)",
+          "consequence": "Retrait forcé + dommages intérêts + interdiction utilisation marque"
+        }
+      ]
+    },
+    "risque_reputationnel": {
+      "niveau": "ÉLEVÉ",
+      "impacts": [
+        "Perte de confiance si découverte absence mentions légales",
+        "Bad buzz si utilisation logos sans autorisation révélée",
+        "Impossibilité certification ISO 27001 réelle sans conformité juridique"
+      ]
+    }
+  },
+
+  "conclusion": {
+    "verdict": "APPLICATION NON DEPLOYABLE EN PRODUCTION EN L'ÉTAT",
+    "blocages_critiques": 5,
+    "pages_a_creer_obligatoires": 4,
+    "delai_mise_en_conformite_estime": "3-5 jours pour une personne",
+    "cout_mise_en_conformite": {
+      "interne": "3-5 jours de travail développeur + juriste",
+      "externe": "2 000€ - 5 000€ si prestation avocat + développeur"
+    },
+    "prochaines_etapes": [
+      "1. Créer les 4 pages légales (mentions, CGV, CGU, confidentialité)",
+      "2. Créer Footer avec liens vers ces pages",
+      "3. Vérifier certifications affichées (retirer si non obtenues)",
+      "4. Obtenir autorisations partenaires OU retirer logos",
+      "5. Implémenter bannière cookies RGPD",
+      "6. Audit accessibilité WCAG",
+      "7. Tests utilisateurs et validation juridique"
+    ],
+    "contact_recommande": [
+      "Avocat spécialisé e-commerce et RGPD",
+      "DPO externe (si budget limité: plateformes en ligne type 'Mon DPO')",
+      "CNIL: demander pack conformité PME (gratuit)"
+    ]
+  }
+}

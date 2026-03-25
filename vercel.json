@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server-local.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/audios/(.*)",
+      "dest": "server-local.js",
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "server-local.js",
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
+    },
+    {
+      "src": "/pdfs/(.*)",
+      "dest": "server-local.js",
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
+    },
+    {
+      "src": "/(.*\\.css)",
+      "dest": "server-local.js",
+      "headers": { "Cache-Control": "public, max-age=604800" }
+    },
+    {
+      "src": "/(.*\\.js)",
+      "dest": "server-local.js",
+      "headers": { "Cache-Control": "public, max-age=604800" }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server-local.js"
+    }
+  ]
+}

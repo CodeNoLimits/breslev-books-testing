@@ -1,0 +1,1316 @@
+[
+  {
+    "id": 1,
+    "title": "Cours Esther 1",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0135.opus",
+    "filename": "PTT-20251027-WA0135.opus",
+    "duration": "~9:00",
+    "date": "2026-01-05T07:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "Cours Esther 2",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0136.opus",
+    "filename": "PTT-20251027-WA0136.opus",
+    "duration": "~7:00",
+    "date": "2026-01-05T07:30:00.000Z"
+  },
+  {
+    "id": 3,
+    "title": "Cours Esther 3",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0137.opus",
+    "filename": "PTT-20251027-WA0137.opus",
+    "duration": "~8:00",
+    "date": "2026-01-06T08:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "title": "Cours Esther 4",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0138.opus",
+    "filename": "PTT-20251027-WA0138.opus",
+    "duration": "~4:00",
+    "date": "2026-01-06T08:30:00.000Z"
+  },
+  {
+    "id": 5,
+    "title": "Cours Esther 5",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0142.opus",
+    "filename": "PTT-20251027-WA0142.opus",
+    "duration": "~3:00",
+    "date": "2026-01-07T09:00:00.000Z"
+  },
+  {
+    "id": 6,
+    "title": "Cours Esther 6",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0175.opus",
+    "filename": "PTT-20251027-WA0175.opus",
+    "duration": "~5:00",
+    "date": "2026-01-07T09:30:00.000Z"
+  },
+  {
+    "id": 7,
+    "title": "Cours Esther 7",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0180.opus",
+    "filename": "PTT-20251027-WA0180.opus",
+    "duration": "~6:00",
+    "date": "2026-01-08T10:00:00.000Z"
+  },
+  {
+    "id": 8,
+    "title": "Cours Esther 8",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0181.opus",
+    "filename": "PTT-20251027-WA0181.opus",
+    "duration": "~6:00",
+    "date": "2026-01-08T11:00:00.000Z"
+  },
+  {
+    "id": 9,
+    "title": "Cours Esther 9",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251027-WA0187.opus",
+    "filename": "PTT-20251027-WA0187.opus",
+    "duration": "~5:00",
+    "date": "2026-01-09T11:30:00.000Z"
+  },
+  {
+    "id": 10,
+    "title": "Cours Esther 10",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251028-WA0109.opus",
+    "filename": "PTT-20251028-WA0109.opus",
+    "duration": "~3:00",
+    "date": "2026-01-10T12:00:00.000Z"
+  },
+  {
+    "id": 11,
+    "title": "Cours Esther 11",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251028-WA0134.opus",
+    "filename": "PTT-20251028-WA0134.opus",
+    "duration": "~4:00",
+    "date": "2026-01-10T12:30:00.000Z"
+  },
+  {
+    "id": 12,
+    "title": "Cours Esther 12",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251028-WA0135.opus",
+    "filename": "PTT-20251028-WA0135.opus",
+    "duration": "~8:00",
+    "date": "2026-01-11T13:00:00.000Z"
+  },
+  {
+    "id": 13,
+    "title": "Cours Esther 13",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0015.opus",
+    "filename": "PTT-20251030-WA0015.opus",
+    "duration": "~7:00",
+    "date": "2026-01-11T13:30:00.000Z"
+  },
+  {
+    "id": 14,
+    "title": "Cours Esther 14",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0097.opus",
+    "filename": "PTT-20251030-WA0097.opus",
+    "duration": "~9:00",
+    "date": "2026-01-12T14:00:00.000Z"
+  },
+  {
+    "id": 15,
+    "title": "Cours Esther 15",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0098.opus",
+    "filename": "PTT-20251030-WA0098.opus",
+    "duration": "~10:00",
+    "date": "2026-01-12T15:00:00.000Z"
+  },
+  {
+    "id": 16,
+    "title": "Cours Esther 16",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0099.opus",
+    "filename": "PTT-20251030-WA0099.opus",
+    "duration": "~10:00",
+    "date": "2026-01-13T15:30:00.000Z"
+  },
+  {
+    "id": 17,
+    "title": "Cours Esther 17",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0101.opus",
+    "filename": "PTT-20251030-WA0101.opus",
+    "duration": "~9:00",
+    "date": "2026-01-13T16:00:00.000Z"
+  },
+  {
+    "id": 18,
+    "title": "Cours Esther 18",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0102.opus",
+    "filename": "PTT-20251030-WA0102.opus",
+    "duration": "~7:00",
+    "date": "2026-01-14T16:30:00.000Z"
+  },
+  {
+    "id": 19,
+    "title": "Cours Esther 19",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0103.opus",
+    "filename": "PTT-20251030-WA0103.opus",
+    "duration": "~8:00",
+    "date": "2026-01-14T17:00:00.000Z"
+  },
+  {
+    "id": 20,
+    "title": "Cours Esther 20",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0104.opus",
+    "filename": "PTT-20251030-WA0104.opus",
+    "duration": "~4:00",
+    "date": "2026-01-15T17:30:00.000Z"
+  },
+  {
+    "id": 21,
+    "title": "Cours Esther 21",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0107.opus",
+    "filename": "PTT-20251030-WA0107.opus",
+    "duration": "~4:00",
+    "date": "2026-01-15T18:00:00.000Z"
+  },
+  {
+    "id": 22,
+    "title": "Cours Esther 22",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0108.opus",
+    "filename": "PTT-20251030-WA0108.opus",
+    "duration": "~5:00",
+    "date": "2026-01-16T19:00:00.000Z"
+  },
+  {
+    "id": 23,
+    "title": "Cours Esther 23",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0109.opus",
+    "filename": "PTT-20251030-WA0109.opus",
+    "duration": "~7:00",
+    "date": "2026-01-16T19:30:00.000Z"
+  },
+  {
+    "id": 24,
+    "title": "Cours Esther 24",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0110.opus",
+    "filename": "PTT-20251030-WA0110.opus",
+    "duration": "~6:00",
+    "date": "2026-01-17T20:00:00.000Z"
+  },
+  {
+    "id": 25,
+    "title": "Cours Esther 25",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0111.opus",
+    "filename": "PTT-20251030-WA0111.opus",
+    "duration": "~6:00",
+    "date": "2026-01-17T20:30:00.000Z"
+  },
+  {
+    "id": 26,
+    "title": "Cours Esther 26",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0112.opus",
+    "filename": "PTT-20251030-WA0112.opus",
+    "duration": "~3:00",
+    "date": "2026-01-18T21:00:00.000Z"
+  },
+  {
+    "id": 27,
+    "title": "Cours Esther 27",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0141.opus",
+    "filename": "PTT-20251030-WA0141.opus",
+    "duration": "~5:00",
+    "date": "2026-01-18T21:30:00.000Z"
+  },
+  {
+    "id": 28,
+    "title": "Cours Esther 28",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0177.opus",
+    "filename": "PTT-20251030-WA0177.opus",
+    "duration": "~8:00",
+    "date": "2026-01-19T22:00:00.000Z"
+  },
+  {
+    "id": 29,
+    "title": "Cours Esther 29",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251030-WA0179.opus",
+    "filename": "PTT-20251030-WA0179.opus",
+    "duration": "~8:00",
+    "date": "2026-01-19T07:00:00.000Z"
+  },
+  {
+    "id": 30,
+    "title": "Cours Esther 30",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251109-WA0100.opus",
+    "filename": "PTT-20251109-WA0100.opus",
+    "duration": "~9:00",
+    "date": "2026-01-20T07:30:00.000Z"
+  },
+  {
+    "id": 31,
+    "title": "Cours Esther 31",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251109-WA0102.opus",
+    "filename": "PTT-20251109-WA0102.opus",
+    "duration": "~3:00",
+    "date": "2026-01-20T08:00:00.000Z"
+  },
+  {
+    "id": 32,
+    "title": "Cours Esther 32",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251109-WA0126.opus",
+    "filename": "PTT-20251109-WA0126.opus",
+    "duration": "~10:00",
+    "date": "2026-01-21T08:30:00.000Z"
+  },
+  {
+    "id": 33,
+    "title": "Cours Esther 33",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251109-WA0127.opus",
+    "filename": "PTT-20251109-WA0127.opus",
+    "duration": "~10:00",
+    "date": "2026-01-22T09:00:00.000Z"
+  },
+  {
+    "id": 34,
+    "title": "Cours Esther 34",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251109-WA0130.opus",
+    "filename": "PTT-20251109-WA0130.opus",
+    "duration": "~7:00",
+    "date": "2026-01-22T09:30:00.000Z"
+  },
+  {
+    "id": 35,
+    "title": "Cours Esther 35",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251123-WA0039.opus",
+    "filename": "PTT-20251123-WA0039.opus",
+    "duration": "~9:00",
+    "date": "2026-01-23T10:00:00.000Z"
+  },
+  {
+    "id": 36,
+    "title": "Cours Esther 36",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0145.opus",
+    "filename": "PTT-20251125-WA0145.opus",
+    "duration": "~4:00",
+    "date": "2026-01-23T11:00:00.000Z"
+  },
+  {
+    "id": 37,
+    "title": "Cours Esther 37",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0146.opus",
+    "filename": "PTT-20251125-WA0146.opus",
+    "duration": "~4:00",
+    "date": "2026-01-24T11:30:00.000Z"
+  },
+  {
+    "id": 38,
+    "title": "Cours Esther 38",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0160.opus",
+    "filename": "PTT-20251125-WA0160.opus",
+    "duration": "~5:00",
+    "date": "2026-01-24T12:00:00.000Z"
+  },
+  {
+    "id": 39,
+    "title": "Cours Esther 39",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0165.opus",
+    "filename": "PTT-20251125-WA0165.opus",
+    "duration": "~7:00",
+    "date": "2026-01-25T12:30:00.000Z"
+  },
+  {
+    "id": 40,
+    "title": "Cours Esther 40",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0168.opus",
+    "filename": "PTT-20251125-WA0168.opus",
+    "duration": "~6:00",
+    "date": "2026-01-25T13:00:00.000Z"
+  },
+  {
+    "id": 41,
+    "title": "Cours Esther 41",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0169.opus",
+    "filename": "PTT-20251125-WA0169.opus",
+    "duration": "~6:00",
+    "date": "2026-01-26T13:30:00.000Z"
+  },
+  {
+    "id": 42,
+    "title": "Cours Esther 42",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0185.opus",
+    "filename": "PTT-20251125-WA0185.opus",
+    "duration": "~6:00",
+    "date": "2026-01-26T14:00:00.000Z"
+  },
+  {
+    "id": 43,
+    "title": "Cours Esther 43",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0190.opus",
+    "filename": "PTT-20251125-WA0190.opus",
+    "duration": "~5:00",
+    "date": "2026-01-27T15:00:00.000Z"
+  },
+  {
+    "id": 44,
+    "title": "Cours Esther 44",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0203.opus",
+    "filename": "PTT-20251125-WA0203.opus",
+    "duration": "~7:00",
+    "date": "2026-01-27T15:30:00.000Z"
+  },
+  {
+    "id": 45,
+    "title": "Cours Esther 45",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0204.opus",
+    "filename": "PTT-20251125-WA0204.opus",
+    "duration": "~8:00",
+    "date": "2026-01-28T16:00:00.000Z"
+  },
+  {
+    "id": 46,
+    "title": "Cours Esther 46",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0205.opus",
+    "filename": "PTT-20251125-WA0205.opus",
+    "duration": "~4:00",
+    "date": "2026-01-28T16:30:00.000Z"
+  },
+  {
+    "id": 47,
+    "title": "Cours Esther 47",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0206.opus",
+    "filename": "PTT-20251125-WA0206.opus",
+    "duration": "~3:00",
+    "date": "2026-01-29T17:00:00.000Z"
+  },
+  {
+    "id": 48,
+    "title": "Cours Esther 48",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0207.opus",
+    "filename": "PTT-20251125-WA0207.opus",
+    "duration": "~9:00",
+    "date": "2026-01-29T17:30:00.000Z"
+  },
+  {
+    "id": 49,
+    "title": "Cours Esther 49",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0208.opus",
+    "filename": "PTT-20251125-WA0208.opus",
+    "duration": "~10:00",
+    "date": "2026-01-30T18:00:00.000Z"
+  },
+  {
+    "id": 50,
+    "title": "Cours Esther 50",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0209.opus",
+    "filename": "PTT-20251125-WA0209.opus",
+    "duration": "~10:00",
+    "date": "2026-01-30T19:00:00.000Z"
+  },
+  {
+    "id": 51,
+    "title": "Cours Esther 51",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251125-WA0210.opus",
+    "filename": "PTT-20251125-WA0210.opus",
+    "duration": "~9:00",
+    "date": "2026-01-31T19:30:00.000Z"
+  },
+  {
+    "id": 52,
+    "title": "Cours Esther 52",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251126-WA0000.opus",
+    "filename": "PTT-20251126-WA0000.opus",
+    "duration": "~3:00",
+    "date": "2026-01-31T20:00:00.000Z"
+  },
+  {
+    "id": 53,
+    "title": "Cours Esther 53",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251126-WA0015.opus",
+    "filename": "PTT-20251126-WA0015.opus",
+    "duration": "~4:00",
+    "date": "2026-02-01T20:30:00.000Z"
+  },
+  {
+    "id": 54,
+    "title": "Cours Esther 54",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251126-WA0195.opus",
+    "filename": "PTT-20251126-WA0195.opus",
+    "duration": "~8:00",
+    "date": "2026-02-01T21:00:00.000Z"
+  },
+  {
+    "id": 55,
+    "title": "Cours Esther 55",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251126-WA0200.opus",
+    "filename": "PTT-20251126-WA0200.opus",
+    "duration": "~7:00",
+    "date": "2026-02-02T21:30:00.000Z"
+  },
+  {
+    "id": 56,
+    "title": "Cours Esther 56",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251126-WA0203.opus",
+    "filename": "PTT-20251126-WA0203.opus",
+    "duration": "~5:00",
+    "date": "2026-02-03T22:00:00.000Z"
+  },
+  {
+    "id": 57,
+    "title": "Cours Esther 57",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0000.opus",
+    "filename": "PTT-20251127-WA0000.opus",
+    "duration": "~6:00",
+    "date": "2026-02-03T07:00:00.000Z"
+  },
+  {
+    "id": 58,
+    "title": "Cours Esther 58",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0001.opus",
+    "filename": "PTT-20251127-WA0001.opus",
+    "duration": "~6:00",
+    "date": "2026-02-04T07:30:00.000Z"
+  },
+  {
+    "id": 59,
+    "title": "Cours Esther 59",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0004.opus",
+    "filename": "PTT-20251127-WA0004.opus",
+    "duration": "~5:00",
+    "date": "2026-02-04T08:00:00.000Z"
+  },
+  {
+    "id": 60,
+    "title": "Cours Esther 60",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0005.opus",
+    "filename": "PTT-20251127-WA0005.opus",
+    "duration": "~7:00",
+    "date": "2026-02-05T08:30:00.000Z"
+  },
+  {
+    "id": 61,
+    "title": "Cours Esther 61",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0006.opus",
+    "filename": "PTT-20251127-WA0006.opus",
+    "duration": "~5:00",
+    "date": "2026-02-05T09:00:00.000Z"
+  },
+  {
+    "id": 62,
+    "title": "Cours Esther 62",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0007.opus",
+    "filename": "PTT-20251127-WA0007.opus",
+    "duration": "~4:00",
+    "date": "2026-02-06T09:30:00.000Z"
+  },
+  {
+    "id": 63,
+    "title": "Cours Esther 63",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0011.opus",
+    "filename": "PTT-20251127-WA0011.opus",
+    "duration": "~4:00",
+    "date": "2026-02-06T10:00:00.000Z"
+  },
+  {
+    "id": 64,
+    "title": "Cours Esther 64",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0012.opus",
+    "filename": "PTT-20251127-WA0012.opus",
+    "duration": "~9:00",
+    "date": "2026-02-07T11:00:00.000Z"
+  },
+  {
+    "id": 65,
+    "title": "Cours Esther 65",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0013.opus",
+    "filename": "PTT-20251127-WA0013.opus",
+    "duration": "~7:00",
+    "date": "2026-02-07T11:30:00.000Z"
+  },
+  {
+    "id": 66,
+    "title": "Cours Esther 66",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0014.opus",
+    "filename": "PTT-20251127-WA0014.opus",
+    "duration": "~10:00",
+    "date": "2026-02-08T12:00:00.000Z"
+  },
+  {
+    "id": 67,
+    "title": "Cours Esther 67",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0015.opus",
+    "filename": "PTT-20251127-WA0015.opus",
+    "duration": "~10:00",
+    "date": "2026-02-08T12:30:00.000Z"
+  },
+  {
+    "id": 68,
+    "title": "Cours Esther 68",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0019.opus",
+    "filename": "PTT-20251127-WA0019.opus",
+    "duration": "~3:00",
+    "date": "2026-02-09T13:00:00.000Z"
+  },
+  {
+    "id": 69,
+    "title": "Cours Esther 69",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0020.opus",
+    "filename": "PTT-20251127-WA0020.opus",
+    "duration": "~9:00",
+    "date": "2026-02-09T13:30:00.000Z"
+  },
+  {
+    "id": 70,
+    "title": "Cours Esther 70",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0024.opus",
+    "filename": "PTT-20251127-WA0024.opus",
+    "duration": "~8:00",
+    "date": "2026-02-10T14:00:00.000Z"
+  },
+  {
+    "id": 71,
+    "title": "Cours Esther 71",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0027.opus",
+    "filename": "PTT-20251127-WA0027.opus",
+    "duration": "~8:00",
+    "date": "2026-02-10T15:00:00.000Z"
+  },
+  {
+    "id": 72,
+    "title": "Cours Esther 72",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0297.opus",
+    "filename": "PTT-20251127-WA0297.opus",
+    "duration": "~5:00",
+    "date": "2026-02-11T15:30:00.000Z"
+  },
+  {
+    "id": 73,
+    "title": "Cours Esther 73",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0298.opus",
+    "filename": "PTT-20251127-WA0298.opus",
+    "duration": "~3:00",
+    "date": "2026-02-11T16:00:00.000Z"
+  },
+  {
+    "id": 74,
+    "title": "Cours Esther 74",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0318.opus",
+    "filename": "PTT-20251127-WA0318.opus",
+    "duration": "~6:00",
+    "date": "2026-02-12T16:30:00.000Z"
+  },
+  {
+    "id": 75,
+    "title": "Cours Esther 75",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0319.opus",
+    "filename": "PTT-20251127-WA0319.opus",
+    "duration": "~6:00",
+    "date": "2026-02-12T17:00:00.000Z"
+  },
+  {
+    "id": 76,
+    "title": "Cours Esther 76",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0321.opus",
+    "filename": "PTT-20251127-WA0321.opus",
+    "duration": "~7:00",
+    "date": "2026-02-13T17:30:00.000Z"
+  },
+  {
+    "id": 77,
+    "title": "Cours Esther 77",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251127-WA0322.opus",
+    "filename": "PTT-20251127-WA0322.opus",
+    "duration": "~5:00",
+    "date": "2026-02-13T18:00:00.000Z"
+  },
+  {
+    "id": 78,
+    "title": "Cours Esther 78",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20251207-WA0033.opus",
+    "filename": "PTT-20251207-WA0033.opus",
+    "duration": "~4:00",
+    "date": "2026-02-14T19:00:00.000Z"
+  },
+  {
+    "id": 79,
+    "title": "Cours Esther 79",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260112-WA0077.opus",
+    "filename": "PTT-20260112-WA0077.opus",
+    "duration": "~4:00",
+    "date": "2026-02-15T19:30:00.000Z"
+  },
+  {
+    "id": 80,
+    "title": "Cours Esther 80",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260112-WA0123.opus",
+    "filename": "PTT-20260112-WA0123.opus",
+    "duration": "~9:00",
+    "date": "2026-02-15T20:00:00.000Z"
+  },
+  {
+    "id": 81,
+    "title": "Cours Esther 81",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260113-WA0337.opus",
+    "filename": "PTT-20260113-WA0337.opus",
+    "duration": "~7:00",
+    "date": "2026-02-16T20:30:00.000Z"
+  },
+  {
+    "id": 82,
+    "title": "Cours Esther 82",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260113-WA0360.opus",
+    "filename": "PTT-20260113-WA0360.opus",
+    "duration": "~9:00",
+    "date": "2026-02-16T21:00:00.000Z"
+  },
+  {
+    "id": 83,
+    "title": "Cours Esther 83",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260210-WA0013.opus",
+    "filename": "PTT-20260210-WA0013.opus",
+    "duration": "~10:00",
+    "date": "2026-02-17T21:30:00.000Z"
+  },
+  {
+    "id": 84,
+    "title": "Cours Esther 84",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260211-WA0149.opus",
+    "filename": "PTT-20260211-WA0149.opus",
+    "duration": "~10:00",
+    "date": "2026-02-17T22:00:00.000Z"
+  },
+  {
+    "id": 85,
+    "title": "Cours Esther 85",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260222-WA0058.opus",
+    "filename": "PTT-20260222-WA0058.opus",
+    "duration": "~9:00",
+    "date": "2026-02-18T07:00:00.000Z"
+  },
+  {
+    "id": 86,
+    "title": "Cours Esther 86",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260222-WA0066.opus",
+    "filename": "PTT-20260222-WA0066.opus",
+    "duration": "~7:00",
+    "date": "2026-02-18T07:30:00.000Z"
+  },
+  {
+    "id": 87,
+    "title": "Cours Esther 87",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260222-WA0081.opus",
+    "filename": "PTT-20260222-WA0081.opus",
+    "duration": "~8:00",
+    "date": "2026-02-19T08:00:00.000Z"
+  },
+  {
+    "id": 88,
+    "title": "Cours Esther 88",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260222-WA0087.opus",
+    "filename": "PTT-20260222-WA0087.opus",
+    "duration": "~4:00",
+    "date": "2026-02-19T08:30:00.000Z"
+  },
+  {
+    "id": 89,
+    "title": "Cours Esther 89",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260223-WA0136.opus",
+    "filename": "PTT-20260223-WA0136.opus",
+    "duration": "~3:00",
+    "date": "2026-02-20T09:00:00.000Z"
+  },
+  {
+    "id": 90,
+    "title": "Cours Esther 90",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260223-WA0137.opus",
+    "filename": "PTT-20260223-WA0137.opus",
+    "duration": "~5:00",
+    "date": "2026-02-20T09:30:00.000Z"
+  },
+  {
+    "id": 91,
+    "title": "Cours Esther 91",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260224-WA0085.opus",
+    "filename": "PTT-20260224-WA0085.opus",
+    "duration": "~6:00",
+    "date": "2026-02-21T10:00:00.000Z"
+  },
+  {
+    "id": 92,
+    "title": "Cours Esther 92",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260224-WA0086.opus",
+    "filename": "PTT-20260224-WA0086.opus",
+    "duration": "~6:00",
+    "date": "2026-02-21T11:00:00.000Z"
+  },
+  {
+    "id": 93,
+    "title": "Cours Esther 93",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260224-WA0093.opus",
+    "filename": "PTT-20260224-WA0093.opus",
+    "duration": "~5:00",
+    "date": "2026-02-22T11:30:00.000Z"
+  },
+  {
+    "id": 94,
+    "title": "Cours Esther 94",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260224-WA0094.opus",
+    "filename": "PTT-20260224-WA0094.opus",
+    "duration": "~3:00",
+    "date": "2026-02-22T12:00:00.000Z"
+  },
+  {
+    "id": 95,
+    "title": "Cours Esther 95",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260224-WA0098.opus",
+    "filename": "PTT-20260224-WA0098.opus",
+    "duration": "~4:00",
+    "date": "2026-02-23T12:30:00.000Z"
+  },
+  {
+    "id": 96,
+    "title": "Cours Esther 96",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260226-WA0064.opus",
+    "filename": "PTT-20260226-WA0064.opus",
+    "duration": "~8:00",
+    "date": "2026-02-23T13:00:00.000Z"
+  },
+  {
+    "id": 97,
+    "title": "Cours Esther 97",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260226-WA0078.opus",
+    "filename": "PTT-20260226-WA0078.opus",
+    "duration": "~7:00",
+    "date": "2026-02-24T13:30:00.000Z"
+  },
+  {
+    "id": 98,
+    "title": "Cours Esther 98",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260226-WA0086.opus",
+    "filename": "PTT-20260226-WA0086.opus",
+    "duration": "~9:00",
+    "date": "2026-02-24T14:00:00.000Z"
+  },
+  {
+    "id": 99,
+    "title": "Cours Esther 99",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260226-WA0088.opus",
+    "filename": "PTT-20260226-WA0088.opus",
+    "duration": "~10:00",
+    "date": "2026-02-25T15:00:00.000Z"
+  },
+  {
+    "id": 100,
+    "title": "Cours Esther 100",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260226-WA0141.opus",
+    "filename": "PTT-20260226-WA0141.opus",
+    "duration": "~10:00",
+    "date": "2026-02-25T15:30:00.000Z"
+  },
+  {
+    "id": 101,
+    "title": "Cours Esther 101",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260227-WA0006.opus",
+    "filename": "PTT-20260227-WA0006.opus",
+    "duration": "~9:00",
+    "date": "2026-02-26T16:00:00.000Z"
+  },
+  {
+    "id": 102,
+    "title": "Cours Esther 102",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260227-WA0007.opus",
+    "filename": "PTT-20260227-WA0007.opus",
+    "duration": "~7:00",
+    "date": "2026-02-27T16:30:00.000Z"
+  },
+  {
+    "id": 103,
+    "title": "Cours Esther 103",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260227-WA0008.opus",
+    "filename": "PTT-20260227-WA0008.opus",
+    "duration": "~9:00",
+    "date": "2026-02-27T17:00:00.000Z"
+  },
+  {
+    "id": 104,
+    "title": "Cours Esther 104",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/PTT-20260227-WA0013.opus",
+    "filename": "PTT-20260227-WA0013.opus",
+    "duration": "~4:00",
+    "date": "2026-02-28T17:30:00.000Z"
+  },
+  {
+    "id": 105,
+    "title": "Enseignement Breslev 105",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/WhatsApp Audio 2026-02-26 at 19.34.25.opus",
+    "filename": "WhatsApp Audio 2026-02-26 at 19.34.25.opus",
+    "duration": "~4:00",
+    "date": "2026-02-28T18:00:00.000Z"
+  },
+  {
+    "id": 106,
+    "title": "Enseignement Breslev 106",
+    "description": "Enseignement de Breslev par Esther Ifrah",
+    "url": "/audios/WhatsApp Audio 2026-02-26 at 23.28.28.opus",
+    "filename": "WhatsApp Audio 2026-02-26 at 23.28.28.opus",
+    "duration": "~5:00",
+    "date": "2026-03-01T19:00:00.000Z"
+  },
+  {
+    "id": 107,
+    "title": "Thora Alef — Cours 1",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 1",
+    "url": "/audios/wpp_20260226_1845_esther_0EB595.ogg",
+    "filename": "wpp_20260226_1845_esther_0EB595.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-01T19:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 108,
+    "title": "Thora Alef — Cours 2",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 2",
+    "url": "/audios/wpp_20260226_2328_esther_00F8D4.ogg",
+    "filename": "wpp_20260226_2328_esther_00F8D4.ogg",
+    "duration": "~15:00",
+    "date": "2026-03-02T20:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 109,
+    "title": "Thora Alef — Cours 3",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 3",
+    "url": "/audios/wpp_20260226_2328_esther_0D77F4.ogg",
+    "filename": "wpp_20260226_2328_esther_0D77F4.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-02T20:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 110,
+    "title": "Thora Alef — Cours 4",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 4",
+    "url": "/audios/wpp_20260226_2328_esther_157FD1.ogg",
+    "filename": "wpp_20260226_2328_esther_157FD1.ogg",
+    "duration": "~12:00",
+    "date": "2026-03-03T21:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 111,
+    "title": "Thora Alef — Cours 5",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 5",
+    "url": "/audios/wpp_20260226_2328_esther_20F23C.ogg",
+    "filename": "wpp_20260226_2328_esther_20F23C.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-03T21:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 112,
+    "title": "Thora Alef — Cours 6",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 6",
+    "url": "/audios/wpp_20260226_2328_esther_28F70C.ogg",
+    "filename": "wpp_20260226_2328_esther_28F70C.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-04T22:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 113,
+    "title": "Thora Alef — Cours 7",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 7",
+    "url": "/audios/wpp_20260226_2328_esther_2AF8FB.ogg",
+    "filename": "wpp_20260226_2328_esther_2AF8FB.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-04T07:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 114,
+    "title": "Thora Alef — Cours 8",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 8",
+    "url": "/audios/wpp_20260226_2328_esther_38F7DE.ogg",
+    "filename": "wpp_20260226_2328_esther_38F7DE.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-05T07:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 115,
+    "title": "Thora Alef — Cours 9",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 9",
+    "url": "/audios/wpp_20260226_2328_esther_3992C7.ogg",
+    "filename": "wpp_20260226_2328_esther_3992C7.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-05T08:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 116,
+    "title": "Thora Alef — Cours 10",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 10",
+    "url": "/audios/wpp_20260226_2328_esther_39D5AC.ogg",
+    "filename": "wpp_20260226_2328_esther_39D5AC.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-06T08:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 117,
+    "title": "Thora Alef — Cours 11",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 11",
+    "url": "/audios/wpp_20260226_2328_esther_404981.ogg",
+    "filename": "wpp_20260226_2328_esther_404981.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-06T09:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 118,
+    "title": "Thora Alef — Cours 12",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 12",
+    "url": "/audios/wpp_20260226_2328_esther_476C4D.ogg",
+    "filename": "wpp_20260226_2328_esther_476C4D.ogg",
+    "duration": "~12:00",
+    "date": "2026-03-07T09:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 119,
+    "title": "Thora Alef — Cours 13",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 13",
+    "url": "/audios/wpp_20260226_2328_esther_585D0E.ogg",
+    "filename": "wpp_20260226_2328_esther_585D0E.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-07T10:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 120,
+    "title": "Thora Alef — Cours 14",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 14",
+    "url": "/audios/wpp_20260226_2328_esther_5FDF84.ogg",
+    "filename": "wpp_20260226_2328_esther_5FDF84.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-08T11:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 121,
+    "title": "Thora Alef — Cours 15",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 15",
+    "url": "/audios/wpp_20260226_2328_esther_627E1E.ogg",
+    "filename": "wpp_20260226_2328_esther_627E1E.ogg",
+    "duration": "~15:00",
+    "date": "2026-03-08T11:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 122,
+    "title": "Thora Alef — Cours 16",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 16",
+    "url": "/audios/wpp_20260226_2328_esther_695455.ogg",
+    "filename": "wpp_20260226_2328_esther_695455.ogg",
+    "duration": "~15:00",
+    "date": "2026-03-09T12:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 123,
+    "title": "Thora Alef — Cours 17",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 17",
+    "url": "/audios/wpp_20260226_2328_esther_6A0622.ogg",
+    "filename": "wpp_20260226_2328_esther_6A0622.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-09T12:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 124,
+    "title": "Thora Alef — Cours 18",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Alef — Cours 18",
+    "url": "/audios/wpp_20260226_2328_esther_6D80DB.ogg",
+    "filename": "wpp_20260226_2328_esther_6D80DB.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-10T13:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 125,
+    "title": "Thora Beth — Cours 1",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 1",
+    "url": "/audios/wpp_20260226_2328_esther_7143DA.ogg",
+    "filename": "wpp_20260226_2328_esther_7143DA.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-11T13:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 126,
+    "title": "Thora Beth — Cours 2",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 2",
+    "url": "/audios/wpp_20260226_2328_esther_7270AF.ogg",
+    "filename": "wpp_20260226_2328_esther_7270AF.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-11T14:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 127,
+    "title": "Thora Beth — Cours 3",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 3",
+    "url": "/audios/wpp_20260226_2328_esther_819F43.ogg",
+    "filename": "wpp_20260226_2328_esther_819F43.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-12T15:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 128,
+    "title": "Thora Beth — Cours 4",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 4",
+    "url": "/audios/wpp_20260226_2328_esther_83D2C1.ogg",
+    "filename": "wpp_20260226_2328_esther_83D2C1.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-12T15:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 129,
+    "title": "Thora Beth — Cours 5",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 5",
+    "url": "/audios/wpp_20260226_2328_esther_8AAEB0.ogg",
+    "filename": "wpp_20260226_2328_esther_8AAEB0.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-13T16:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 130,
+    "title": "Thora Beth — Cours 6",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 6",
+    "url": "/audios/wpp_20260226_2328_esther_92F6EA.ogg",
+    "filename": "wpp_20260226_2328_esther_92F6EA.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-13T16:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 131,
+    "title": "Thora Beth — Cours 7",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 7",
+    "url": "/audios/wpp_20260226_2328_esther_9B23C7.ogg",
+    "filename": "wpp_20260226_2328_esther_9B23C7.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-14T17:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 132,
+    "title": "Thora Beth — Cours 8",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 8",
+    "url": "/audios/wpp_20260226_2328_esther_A872D8.ogg",
+    "filename": "wpp_20260226_2328_esther_A872D8.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-14T17:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 133,
+    "title": "Thora Beth — Cours 9",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 9",
+    "url": "/audios/wpp_20260226_2328_esther_AF495D.ogg",
+    "filename": "wpp_20260226_2328_esther_AF495D.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-15T18:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 134,
+    "title": "Thora Beth — Cours 10",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 10",
+    "url": "/audios/wpp_20260226_2328_esther_B13A8C.ogg",
+    "filename": "wpp_20260226_2328_esther_B13A8C.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-15T19:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 135,
+    "title": "Thora Beth — Cours 11",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 11",
+    "url": "/audios/wpp_20260226_2328_esther_B8A68C.ogg",
+    "filename": "wpp_20260226_2328_esther_B8A68C.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-16T19:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 136,
+    "title": "Thora Beth — Cours 12",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 12",
+    "url": "/audios/wpp_20260226_2328_esther_C6E9FD.ogg",
+    "filename": "wpp_20260226_2328_esther_C6E9FD.ogg",
+    "duration": "~18:00",
+    "date": "2026-03-16T20:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 137,
+    "title": "Thora Beth — Cours 13",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 13",
+    "url": "/audios/wpp_20260226_2328_esther_C8AE91.ogg",
+    "filename": "wpp_20260226_2328_esther_C8AE91.ogg",
+    "duration": "~15:00",
+    "date": "2026-03-17T20:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 138,
+    "title": "Thora Beth — Cours 14",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 14",
+    "url": "/audios/wpp_20260226_2328_esther_CFB7D2.ogg",
+    "filename": "wpp_20260226_2328_esther_CFB7D2.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-17T21:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 139,
+    "title": "Thora Beth — Cours 15",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 15",
+    "url": "/audios/wpp_20260226_2328_esther_DCE22D.ogg",
+    "filename": "wpp_20260226_2328_esther_DCE22D.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-18T21:30:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 140,
+    "title": "Thora Beth — Cours 16",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora Beth — Cours 16",
+    "url": "/audios/wpp_20260226_2328_esther_E30310.ogg",
+    "filename": "wpp_20260226_2328_esther_E30310.ogg",
+    "duration": "~22:00",
+    "date": "2026-03-18T22:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 141,
+    "title": "Thora 3 — Cours 1",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora 3 — Cours 1",
+    "url": "/audios/wpp_20260226_2328_esther_E4CD93.ogg",
+    "filename": "wpp_20260226_2328_esther_E4CD93.ogg",
+    "duration": "~25:00",
+    "date": "2026-03-19T07:00:00.000Z",
+    "series": "Likouté Moharane"
+  },
+  {
+    "id": 142,
+    "title": "Thora 3 — Cours 2",
+    "description": "Enseignement du Likouté Moharane par Esther Ifrah — Thora 3 — Cours 2",
+    "url": "/audios/wpp_20260226_2328_esther_F74B03.ogg",
+    "filename": "wpp_20260226_2328_esther_F74B03.ogg",
+    "duration": "~20:00",
+    "date": "2026-03-19T07:30:00.000Z",
+    "series": "Likouté Moharane"
+  }
+]
