@@ -248,6 +248,18 @@ app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Simple in-memory rate limiter
+const rateLimits = new Map();
+function rateLimit(key, maxPerMin = 10) {
+  const now = Date.now();
+  const window = 60000;
+  if (!rateLimits.has(key)) rateLimits.set(key, []);
+  const hits = rateLimits.get(key).filter(t => now - t < window);
+  hits.push(now);
+  rateLimits.set(key, hits);
+  return hits.length > maxPerMin;
+}
+
 // Simple cookie parser (no dep)
 app.use((req, res, next) => {
   req.cookies = {};
@@ -517,6 +529,7 @@ const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, 'db/catalog.json
 
 // Auth: Inscription
 app.post("/api/auth/signup", async (req, res) => {
+  if (rateLimit(req.ip + ':signup', 5)) return res.status(429).json({error: 'Trop de requêtes'});
   if (!supabase)
     return res.status(503).json({ error: "Supabase not configured" });
 
@@ -549,6 +562,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
 // Auth: Connexion
 app.post("/api/auth/login", async (req, res) => {
+  if (rateLimit(req.ip + ':login', 10)) return res.status(429).json({error: 'Trop de requêtes'});
   if (!supabase)
     return res.status(503).json({ error: "Supabase not configured" });
 
@@ -843,13 +857,10 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <link rel="dns-prefetch" href="https://js.stripe.com">
       <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-      <!-- Google Fonts — preconnect + preload critical, lazy load rest -->
+      <!-- Google Fonts — 3 fonts only: Cinzel (headings), Cormorant Garamond (body), Frank Ruhl Libre (Hebrew) -->
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap">
-      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-      <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
 
       <!-- JSON-LD Structured Data for Google -->
       <script type="application/ld+json">
@@ -922,16 +933,19 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <li><a href="/" class="navbar__nav-link">Accueil</a></li>
             <li><a href="/collections/all" class="navbar__nav-link" style="font-weight: 700; color: var(--gold) !important; letter-spacing: 0.15em;">Bibliothèque</a></li>
             <li><a href="/audio" class="navbar__nav-link"><i class="fas fa-headphones"></i> Audio</a></li>
-            <li><a href="/cours" class="navbar__nav-link"><i class="fas fa-graduation-cap"></i> Cours du Jour</a></li>
+            <li><a href="/cours" class="navbar__nav-link"><i class="fas fa-graduation-cap"></i> Cours</a></li>
             <li><a href="/etudes" class="navbar__nav-link"><i class="fas fa-star-of-david"></i> Études</a></li>
             <li><a href="/voyages" class="navbar__nav-link"><i class="fas fa-plane"></i> Voyages</a></li>
-            <li><a href="/a-propos" class="navbar__nav-link">À propos</a></li>
+            <li><a href="/a-propos" class="navbar__nav-link">Infos</a></li>
             <li><a href="/pages/abonnement" class="navbar__nav-link">Abonnement</a></li>
             <li><a href="/account" class="navbar__nav-link"><i class="fas fa-user"></i> Compte</a></li>
             <li><a href="/contact" class="navbar__nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
-            <li><a href="/search" class="navbar__nav-link"><i class="fas fa-search"></i></a></li>
+            <!-- Search moved to navbar__actions -->
           </ul>
           <div class="navbar__actions">
+            <a href="/search" class="navbar__icon-btn" aria-label="Rechercher" style="color: rgba(255,255,255,0.85); font-size: 1.1rem;">
+              <i class="fas fa-search"></i>
+            </a>
             <a href="/cart" class="btn btn-outline" style="border:none; position: relative;">
               <i class="fas fa-shopping-cart" style="font-size: 1.3rem;"></i>
               <span class="cart-badge" style="display: none;">0</span>
@@ -2782,6 +2796,7 @@ app.get("/contact", (req, res) => {
 
 // API: Contact form — REAL email sending
 app.post("/api/contact", async (req, res) => {
+  if (rateLimit(req.ip + ':contact', 5)) return res.status(429).json({error: 'Trop de requêtes'});
   const { name, email, subject, message } = req.body;
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Nom, email et message requis" });

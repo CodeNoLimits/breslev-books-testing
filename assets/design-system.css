@@ -31,13 +31,13 @@
   --font-hebrew-body: 1.125rem;
   
   /* Typographie Français */
-  --font-french: 'Playfair Display', serif;
+  --font-french: 'Cinzel', serif;
   --font-french-h1: 3.5rem;
   --font-french-h2: 2.5rem;
   --font-french-body: 1.25rem;
   
   /* Typographie Corps */
-  --font-body: 'Crimson Text', serif;
+  --font-body: 'Cormorant Garamond', serif;
   --font-body-size: 1.125rem;
   --font-body-line-height: 1.8;
   

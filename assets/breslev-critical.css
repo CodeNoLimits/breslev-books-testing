@@ -13,9 +13,9 @@
   --gradient-divin: linear-gradient(135deg, #1E3A8A 0%, #0d47a1 100%);
   --gradient-or: linear-gradient(135deg, #D4AF37 0%, #ffed4e 100%);
   --ombre-douce: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --font-titre: 'Playfair Display', serif;
+  --font-titre: 'Cinzel', serif;
   --font-hebreu: 'Frank Ruhl Libre', serif;
-  --font-texte: 'Crimson Text', serif;
+  --font-texte: 'Cormorant Garamond', serif;
   --spacing-xs: 5px;
   --spacing-sm: 10px;
   --spacing-md: 20px;
@@ -176,19 +176,7 @@ footer {
   margin-top: var(--spacing-xl);
 }
 
-@font-face {
-  font-family: 'Playfair Display';
-  src: url('https://fonts.gstatic.com/s/playfairdisplay/v21/nuFsD-_YoNmu45jTLygMp--TF_-M9Ws.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Crimson Text';
-  src: url('https://fonts.gstatic.com/s/crimsontext/v9/wlpzgwvyNQtY3j3xJZG1Zw.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
+/* Fonts loaded via Google Fonts link in HTML: Cinzel, Cormorant Garamond, Frank Ruhl Libre */
 
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }

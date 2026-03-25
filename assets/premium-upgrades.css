@@ -47,15 +47,15 @@
 
 /* Ensure 2:3 book ratio on all screen sizes */
 .book-cover-container {
-  aspect-ratio: 2 / 3 !important;
-  height: auto !important;
+  aspect-ratio: 2 / 3;
+  height: auto;
 }
 
 /* Fix landscape images (likoutey-halakhot, etc.) — use cover mode with top alignment */
 .book-cover-container img.book-cover,
 .book-cover-container .book-cover {
-  object-fit: cover !important;
-  object-position: center top !important;
+  object-fit: cover;
+  object-position: center top;
 }
 
 /* Smooth page load */

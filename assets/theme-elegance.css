@@ -5,8 +5,7 @@
  */
 
 /* ===== GOOGLE FONTS ===== */
-/* Pair A — La Pléiade/Gallimard prestige: Cinzel (display) + Cormorant (italic titles) + EB Garamond (body) */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=EB+Garamond:wght@400;500&display=swap');
+/* Fonts loaded via Google Fonts link in HTML: Cinzel, Cormorant Garamond, Frank Ruhl Libre */
 
 /* ===== ROOT TOKENS ===== */
 :root {
@@ -21,7 +20,7 @@
   --text-light: #6B7280;
   --serif: 'Cinzel', serif;
   --body: 'Cormorant Garamond', serif;
-  --body-text: 'EB Garamond', Georgia, serif;  /* For descriptions, longer reading */
+  --body-text: 'Cormorant Garamond', Georgia, serif;  /* For descriptions, longer reading */
 
   /* Warm-tinted shadows (research: never use blue-tinted shadows on warm cream BGs) */
   --shadow-sm:   0 1px 3px rgba(26,18,8,0.08), 0 1px 2px rgba(26,18,8,0.04);
@@ -42,7 +41,7 @@ body {
   color: var(--text);
 }
 
-/* Body text (descriptions, paragraphs) uses EB Garamond for better reading comfort */
+/* Body text (descriptions, paragraphs) uses Cormorant Garamond for better reading comfort */
 p, .book-description, .description-text {
   font-family: var(--body-text);
   font-size: 1.1rem;
@@ -157,19 +156,19 @@ p, .book-description, .description-text {
 
 .book-cover-container img,
 .book-cover-container .book-cover {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   /* Image zoom: scale the IMAGE inside container, not the card — prevents layout jump */
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .book-card:hover .book-cover-container img,
 .book-card:hover .book-cover {
-  transform: scale(1.06) !important;
+  transform: scale(1.06);
 }
 
 /* ===== QUICK-ADD BUTTON (slide up on hover) ===== */
@@ -240,25 +239,25 @@ p, .book-description, .description-text {
 
 /* Book info */
 .book-title {
-  font-family: var(--serif) !important;
-  color: var(--dark) !important;
-  font-size: 0.95rem !important;
+  font-family: var(--serif);
+  color: var(--dark);
+  font-size: 0.95rem;
   line-height: 1.4;
   font-weight: 600;
 }
 
 .book-author {
-  font-family: var(--body) !important;
-  color: var(--navy) !important;
+  font-family: var(--body);
+  color: var(--navy);
   font-size: 0.82rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .book-price {
-  font-family: var(--serif) !important;
-  color: var(--gold-dark) !important;
-  font-size: 1.3rem !important;
+  font-family: var(--serif);
+  color: var(--gold-dark);
+  font-size: 1.3rem;
   font-weight: 700;
 }
 

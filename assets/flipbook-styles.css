@@ -91,7 +91,7 @@
   padding: 0.6rem 1.5rem;
   border-radius: 25px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
   cursor: pointer;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
@@ -147,7 +147,7 @@
 
 .flipbook-paywall-content p {
   color: rgba(255,255,255,0.8);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Cormorant Garamond', serif;
   line-height: 1.6;
   margin-bottom: 0.5rem;
 }

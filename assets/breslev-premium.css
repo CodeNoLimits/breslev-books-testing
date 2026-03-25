@@ -4,7 +4,7 @@
  * Author: Antigravity
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap');
+/* Fonts loaded via Google Fonts link in HTML: Cinzel, Cormorant Garamond, Frank Ruhl Libre */
 
 :root {
   /* Palette de Couleurs Premium - Version Lumineuse */
@@ -22,8 +22,8 @@
   --color-border-gold: rgba(196, 160, 82, 0.3);
   
   /* Typographie Premium - Design System Verrouillé */
-  --font-sans: 'Outfit', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Cormorant Garamond', serif;
+  --font-serif: 'Cinzel', serif;
   --font-cinzel: 'Cinzel', serif;
   --font-cormorant: 'Cormorant Garamond', serif;
 
@@ -692,7 +692,7 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
   font-weight: 700 !important;
 }
 .book-price {
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Cormorant Garamond', serif !important;
   font-size: 1.25rem !important;
   color: #1E3A8A !important;
   font-weight: 800 !important;

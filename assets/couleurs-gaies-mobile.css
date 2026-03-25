@@ -173,6 +173,6 @@
 .book-card:hover,
 .product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(74, 105, 189, 0.15) !important;
-  border-color: #4a69bd !important;
+  box-shadow: 0 8px 25px rgba(74, 105, 189, 0.15);
+  border-color: #4a69bd;
 }
