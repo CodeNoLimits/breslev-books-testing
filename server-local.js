@@ -1425,7 +1425,7 @@ app.get("/", (req, res) => {
             {t:"La bonté et la rigueur",f:"La-bont-et-la-rigueur."},
             {t:"L'importance de la émouna",f:"L-importance-de-la-mouna."},
             {t:"Tout est pour le bien",f:"Tout-est-pour-le-bien."}
-          ].map(v => '<div style="background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);"><video controls preload="none" poster="" style="width:100%;aspect-ratio:16/9;background:#000;" controlsList="nodownload"><source src="/videos/avatar/'+v.f+'.mp4" type="video/mp4"></video><div style="padding:1rem;"><h4 style="color:var(--color-gold);font-size:0.95rem;margin:0;">'+v.t+'</h4></div></div>').join('')}
+          ].map(v => '<div style="background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);"><video controls preload="none" poster="" style="width:100%;aspect-ratio:16/9;background:#000;" controlsList="nodownload"><source src="https://raw.githubusercontent.com/CodeNoLimits/breslev-books-testing/main/public/videos/avatar/'+v.f+'.mp4" type="video/mp4"></video><div style="padding:1rem;"><h4 style="color:var(--color-gold);font-size:0.95rem;margin:0;">'+v.t+'</h4></div></div>').join('')}
         </div>
       </div>
     </section>
