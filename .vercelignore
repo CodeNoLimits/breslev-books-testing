@@ -30,7 +30,7 @@ assets/images/nan-banana/
 .methodology/
 
 # Videos too large for serverless (host separately later)
-# public/videos/avatar/ (included)
+public/videos/avatar/
 
 # Fichiers config dev
 .cursor/
