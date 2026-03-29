@@ -179,7 +179,8 @@ app.post(
         process.env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (err) {
-      return res.status(400).send(`Webhook Error: ${err.message}`);
+      console.error("Webhook signature error:", err.message);
+      return res.status(400).send("Webhook signature verification failed");
     }
 
     if (event.type === "checkout.session.completed") {
@@ -247,6 +248,15 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), staticOpts))
 app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 // Simple in-memory rate limiter
 const rateLimits = new Map();
@@ -583,6 +593,23 @@ app.post("/api/create-payment-intent", async (req, res) => {
 
   const { amount, currency, paymentMethodId, cart, shipping } = req.body;
 
+  // Server-side validation: verify amount matches catalog
+  if (!amount || amount < 100 || amount > 100000) {
+    return res.status(400).json({ error: "Montant invalide" });
+  }
+  if (cart && Array.isArray(cart)) {
+    const expectedTotal = cart.reduce((sum, item) => {
+      const catalogItem = catalog.find(p => p.id == item.id || p.slug === item.slug);
+      if (!catalogItem) return sum;
+      const price = Math.round((catalogItem.price_physical || 0) * 100);
+      return sum + price * (item.quantity || 1);
+    }, 0);
+    if (expectedTotal > 0 && Math.abs(amount - expectedTotal) > 100) {
+      console.warn(`[SECURITY] Payment amount mismatch: received ${amount}, expected ${expectedTotal}`);
+      return res.status(400).json({ error: "Montant ne correspond pas au panier" });
+    }
+  }
+
   try {
     const params = {
       amount: amount, // Amount in cents
@@ -606,7 +633,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.error("Stripe error:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
   }
 });
 
@@ -664,7 +691,7 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
     res.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error("Stripe subscription error:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
   }
 });
 
@@ -676,6 +703,18 @@ app.post("/api/checkout", async (req, res) => {
 
   if (!items || !items.length) {
     return res.status(400).json({ error: "Panier vide" });
+  }
+
+  // Server-side price validation against catalog
+  for (const item of items) {
+    const catalogItem = catalog.find(p => p.id == item.id || p.slug === item.slug);
+    if (catalogItem) {
+      const catalogPrice = catalogItem.price_physical || 0;
+      if (Math.abs(item.price - catalogPrice) > 1) {
+        console.warn(`[SECURITY] Price mismatch for ${item.id}: received ${item.price}, catalog ${catalogPrice}`);
+        return res.status(400).json({ error: "Prix invalide détecté" });
+      }
+    }
   }
 
   try {
@@ -748,7 +787,7 @@ app.post("/api/connect/onboard", async (req, res) => {
     res.json({ accountId: account.id, onboardingUrl: accountLink.url });
   } catch (error) {
     console.error("Connect error:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
   }
 });
 
@@ -913,7 +952,7 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <!-- Stripe Integration — loaded async, only init on payment pages -->
       <script src="https://js.stripe.com/v3/" async></script>
       <script>
-        window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || 'pk_live_JbJRtjb23Aujij7TTHOft6jR008MOj8TLY'}";
+        window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || ''}";
       </script>
 
       <script src="/cart-system.js" defer></script>
@@ -2335,8 +2374,12 @@ app.get("/reader/:bookSlug", (req, res) => {
 
 // PayPal: Créer commande
 app.post("/api/paypal/create-order", async (req, res) => {
+  if (rateLimit(req.ip + ':paypal', 5)) return res.status(429).json({ error: 'Trop de requêtes' });
   try {
     const { amount, currency } = req.body;
+    if (!amount || amount < 100 || amount > 100000) {
+      return res.status(400).json({ error: "Montant invalide" });
+    }
     const accessToken = await getPayPalAccessToken();
 
     const response = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
@@ -2367,6 +2410,7 @@ app.post("/api/paypal/create-order", async (req, res) => {
 
 // PayPal: Capturer paiement
 app.post("/api/paypal/capture-order", async (req, res) => {
+  if (rateLimit(req.ip + ':paypal-capture', 5)) return res.status(429).json({ error: 'Trop de requêtes' });
   try {
     const { orderID } = req.body;
     const accessToken = await getPayPalAccessToken();
@@ -2405,18 +2449,8 @@ app.get("/subscription-success", async (req, res) => {
         plan: session.amount_total === 99000 ? "annuel" : "mensuel",
       };
 
-      // Sauvegarder l'abonnement dans Supabase
-      if (supabase && session.customer_email) {
-        const { error } = await supabase.from("subscriptions").insert([
-          {
-            email: session.customer_email,
-            plan_type: subscriptionInfo.plan,
-            status: "active",
-            stripe_subscription_id: session.subscription,
-            stripe_customer_id: session.customer,
-            created_at: new Date().toISOString(),
-          },
-        ]);
+      // Subscription is saved by the webhook handler — no duplicate insert here
+      if (false) {
         if (error) console.error("Erreur sauvegarde abonnement:", error);
       }
     } catch (err) {
@@ -2604,42 +2638,7 @@ app.get("/account", (req, res) => {
   res.send(getLayout(content, "Mon Compte"));
 });
 
-// Page compte test pour Esther IFRAH
-app.get("/test-account", (req, res) => {
-  const content = `
-    <div class="container mt-12 mb-12" style="text-align: center;">
-      <div style="max-width: 500px; margin: 0 auto; background: var(--color-bg-card); border: 2px solid var(--color-gold); border-radius: 16px; padding: 3rem;">
-        <h1 style="margin-bottom: 2rem;">Compte Test Esther IFRAH</h1>
-        <p class="text-muted mb-6">Ce bouton vous connecte automatiquement avec un compte de test administrateur.</p>
-
-        <button onclick="loginAsEsther()" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-          <i class="fas fa-sign-in-alt"></i> Se connecter comme Esther IFRAH
-        </button>
-
-        <p class="text-muted" style="font-size: 0.8rem;">Email: estherifra@breslev.com</p>
-      </div>
-    </div>
-
-    <script>
-      function loginAsEsther() {
-        // Créer un utilisateur test
-        const testUser = {
-          id: 'test-esther-ifra',
-          email: 'estherifra@breslev.com',
-          created_at: new Date().toISOString(),
-          user_metadata: { full_name: 'Esther IFRAH' }
-        };
-
-        localStorage.setItem('breslev_user', JSON.stringify(testUser));
-        localStorage.setItem('breslev_session', JSON.stringify({ access_token: 'test-token' }));
-
-        alert('Connecté en tant que Esther IFRAH (Admin)');
-        window.location.href = '/account';
-      }
-    </script>
-  `;
-  res.send(getLayout(content, "Compte Test"));
-});
+// /test-account removed for security — was giving admin access to anyone
 
 // Route callback Google OAuth
 app.get("/auth/callback", (req, res) => {
@@ -3457,7 +3456,7 @@ app.get("/admin/login", (req, res) => {
 
 app.post("/admin/login", express.urlencoded({ extended: false }), (req, res) => {
   if (req.body.password === ADMIN_PASSWORD) {
-    res.setHeader("Set-Cookie", `admin_token=${ADMIN_TOKEN}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`);
+    res.setHeader("Set-Cookie", `admin_token=${ADMIN_TOKEN}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=86400`);
     res.redirect("/admin");
   } else {
     res.redirect("/admin/login?error=1");
@@ -3485,7 +3484,7 @@ app.get("/admin", async (req, res) => {
         <td style="padding:1rem;font-weight:600">${c.titre}</td>
         <td style="padding:1rem"><span style="background:#e8f4fd;color:#1E3A8A;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem">${c.categorie||"-"}</span></td>
         <td style="padding:1rem">${c.fichier?`<a href="/uploads/cours/${c.fichier}" target="_blank" style="color:#1E3A8A">📎 ${c.fichier.slice(0,20)}...</a>`:"Texte seulement"}</td>
-        <td style="padding:1rem"><a href="/admin/delete-cours/${c.id}" onclick="return confirm('Supprimer ?')" style="color:#ef4444;font-size:0.85rem">🗑️ Suppr.</a></td>
+        <td style="padding:1rem"><form method="POST" action="/admin/delete-cours/${c.id}" style="display:inline" onsubmit="return confirm('Supprimer ?')"><button type="submit" style="background:none;border:none;color:#ef4444;font-size:0.85rem;cursor:pointer">🗑️ Suppr.</button></form></td>
       </tr>`).join("")
     : `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#888">Aucun cours encore</td></tr>`;
 
@@ -3623,7 +3622,7 @@ app.post("/api/admin/upload-cours", (req, res, next) => {
 });
 
 // API: Delete cours
-app.get("/admin/delete-cours/:id", async (req, res) => {
+app.post("/admin/delete-cours/:id", async (req, res) => {
   const token = req.cookies?.admin_token;
   if (token !== ADMIN_TOKEN) return res.redirect("/admin/login");
   await deleteCoursDB(req.params.id);
@@ -3656,6 +3655,17 @@ app.get("/api/audio-lessons", (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).send(getLayout('<div class="container mt-12 mb-12" style="text-align:center"><h1>Page non trouvée</h1><p class="text-muted">La page que vous cherchez n\'existe pas.</p><a href="/" class="btn btn-primary mt-4">Retour à l\'accueil</a></div>', '404 - Page non trouvée'));
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('[ERROR]', err.stack || err.message || err);
+  res.status(500).send(getLayout('<div class="container mt-12 mb-12" style="text-align:center"><h1>Erreur serveur</h1><p class="text-muted">Une erreur est survenue. Veuillez réessayer.</p><a href="/" class="btn btn-primary mt-4">Retour à l\'accueil</a></div>', 'Erreur'));
 });
 
 if (require.main === module) {

@@ -1,43 +1,33 @@
-// Service Worker pour PWA DreamNova
-const CACHE_NAME = 'dreamnova-v1'
+// Service Worker — Breslev Books by Esther Ifrah
+const CACHE_NAME = 'breslev-books-v1'
 const urlsToCache = [
   '/',
-  '/dashboard',
-  '/pricing',
-  '/audit',
-  '/audit-results'
+  '/collections/all',
+  '/cours',
+  '/contact',
+  '/a-propos'
 ]
 
-// Installation
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache)
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   )
 })
 
-// Activation
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName)
-          }
+          if (cacheName !== CACHE_NAME) return caches.delete(cacheName)
         })
       )
     })
   )
 })
 
-// Fetch
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request)
-    })
+    caches.match(event.request).then((response) => response || fetch(event.request))
   )
 })
-
