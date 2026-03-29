@@ -10,7 +10,7 @@
     "pages": 218,
     "language": "français",
     "category": "Biographie & Témoignage",
-    "price_physical": 80,
+    "price_physical": 105,
     "price_digital": 50,
     "cover_image": "/images/livres/IMG-20251110-WA0191.jpg",
     "pdf_file": "/pdfs/LaVied'unBreslever.pdf",
@@ -20,7 +20,8 @@
     "weight_g": 350,
     "inStock": true,
     "description_long": "Ce livre unique raconte l'itinéraire spirituel d'un homme qui découvre le chemin de Breslev. À travers des anecdotes personnelles, des enseignements profonds et des moments de grâce, l'auteur nous transporte dans le quotidien d'un hassid de Rabbi Nachman. Un témoignage authentique qui touche le cœur et inspire l'âme. Traduit avec amour par Esther Ifrah, cet ouvrage est devenu une référence pour tous ceux qui souhaitent comprendre ce que signifie vivre selon les enseignements de Rabbi Nachman au quotidien.",
-    "cover_video": "/videos/covers/cover_3.mp4"
+    "cover_video": "/videos/covers/cover_3.mp4",
+    "price_eur": 26
   },
   {
     "id": 2,
@@ -33,7 +34,7 @@
     "pages": 280,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 120,
+    "price_physical": 105,
     "price_digital": 70,
     "cover_image": "/images/livres/IMG-20251031-WA0002.jpg",
     "pdf_file": "/pdfs/LikouteyMoharane1.pdf",
@@ -43,7 +44,8 @@
     "weight_g": 450,
     "inStock": true,
     "description_long": "Le Likoutey Moharan est l'œuvre maîtresse de Rabbi Nachman de Breslev. Ce premier tome contient les Torot fondamentales qui ont révolutionné la pensée hassidique. Chaque Torah est un monde en soi, mêlant Kabbale, halakha, philosophie et poésie spirituelle. La traduction française d'Esther Ifrah rend ces enseignements accessibles tout en préservant leur profondeur mystique. Un livre indispensable pour quiconque souhaite étudier sérieusement les enseignements du Tsadik.",
-    "cover_video": "/videos/covers/cover_8.mp4"
+    "cover_video": "/videos/covers/cover_8.mp4",
+    "price_eur": 26
   },
   {
     "id": 3,
@@ -56,7 +58,7 @@
     "pages": 250,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 120,
+    "price_physical": 105,
     "price_digital": 70,
     "cover_image": "/images/livres/IMG-20251110-WA0193.jpg",
     "pdf_file": "/pdfs/LikouteyMoharane4.pdf",
@@ -65,7 +67,8 @@
     "available_digital": true,
     "weight_g": 420,
     "inStock": true,
-    "description_long": "Le quatrième tome du Likoutey Moharan approfondit les thèmes de la foi, de la prière et du repentir. Rabbi Nachman y dévoile des secrets sur le fonctionnement de l'âme et les moyens de surmonter les obstacles spirituels. Les Torot de ce volume sont particulièrement pertinentes pour notre époque, abordant les défis de la modernité avec une sagesse intemporelle. Traduit fidèlement du texte original hébraïque par Esther Ifrah."
+    "description_long": "Le quatrième tome du Likoutey Moharan approfondit les thèmes de la foi, de la prière et du repentir. Rabbi Nachman y dévoile des secrets sur le fonctionnement de l'âme et les moyens de surmonter les obstacles spirituels. Les Torot de ce volume sont particulièrement pertinentes pour notre époque, abordant les défis de la modernité avec une sagesse intemporelle. Traduit fidèlement du texte original hébraïque par Esther Ifrah.",
+    "price_eur": 26
   },
   {
     "id": 4,
@@ -78,7 +81,7 @@
     "pages": 240,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 115,
+    "price_physical": 105,
     "price_digital": 68,
     "cover_image": "/images/livres/IMG-20251030-WA0165.jpg",
     "pdf_file": "/pdfs/LM5.pdf",
@@ -88,7 +91,8 @@
     "weight_g": 410,
     "inStock": true,
     "description_long": "Ce cinquième tome poursuit l'exploration des enseignements les plus profonds de Rabbi Nachman. On y trouve des leçons sur la joie, le Tikoun (réparation de l'âme), et la connection avec HaChem à travers les épreuves de la vie. Esther Ifrah a su capturer la beauté poétique du texte original tout en le rendant compréhensible pour le lecteur francophone.",
-    "cover_video": "/videos/covers/cover_6.mp4"
+    "cover_video": "/videos/covers/cover_6.mp4",
+    "price_eur": 26
   },
   {
     "id": 5,
@@ -101,7 +105,7 @@
     "pages": 235,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 115,
+    "price_physical": 105,
     "price_digital": 68,
     "cover_image": "/images/livres/lm-tome-6.jpg",
     "pdf_file": "/pdfs/LM6.pdf",
@@ -110,7 +114,8 @@
     "available_digital": true,
     "weight_g": 405,
     "inStock": true,
-    "description_long": "Le tome 6 du Likoutey Moharan contient des enseignements essentiels sur la musique, la danse et la joie comme outils de service divin. Rabbi Nachman y révèle comment transformer la tristesse en joie et comment chaque note de musique peut élever l'âme vers les sphères les plus hautes. Une traduction minutieuse d'Esther Ifrah qui préserve la musicalité du texte original."
+    "description_long": "Le tome 6 du Likoutey Moharan contient des enseignements essentiels sur la musique, la danse et la joie comme outils de service divin. Rabbi Nachman y révèle comment transformer la tristesse en joie et comment chaque note de musique peut élever l'âme vers les sphères les plus hautes. Une traduction minutieuse d'Esther Ifrah qui préserve la musicalité du texte original.",
+    "price_eur": 26
   },
   {
     "id": 6,
@@ -123,7 +128,7 @@
     "pages": 245,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 118,
+    "price_physical": 105,
     "price_digital": 69,
     "cover_image": "/images/livres/IMG-20251030-WA0166.jpg",
     "pdf_file": "/pdfs/LM7.pdf",
@@ -132,7 +137,8 @@
     "available_digital": true,
     "weight_g": 415,
     "inStock": true,
-    "description_long": "La Tinyana (deuxième partie) du Likoutey Moharan contient les derniers enseignements de Rabbi Nachman, considérés comme les plus élevés. Ce septième tome de la collection offre des Torot d'une profondeur inégalée sur la simplicité, l'humilité et la véritable connexion avec le Créateur. Traduit avec une précision remarquable par Esther Ifrah."
+    "description_long": "La Tinyana (deuxième partie) du Likoutey Moharan contient les derniers enseignements de Rabbi Nachman, considérés comme les plus élevés. Ce septième tome de la collection offre des Torot d'une profondeur inégalée sur la simplicité, l'humilité et la véritable connexion avec le Créateur. Traduit avec une précision remarquable par Esther Ifrah.",
+    "price_eur": 26
   },
   {
     "id": 7,
@@ -145,7 +151,7 @@
     "pages": 180,
     "language": "français",
     "category": "Récits & Histoire",
-    "price_physical": 95,
+    "price_physical": 89,
     "price_digital": 45,
     "cover_image": "/images/livres/IMG-20251110-WA0184.jpg",
     "pdf_file": "/pdfs/LevoyagedeRabbiNahman.pdf",
@@ -154,7 +160,8 @@
     "available_digital": true,
     "weight_g": 320,
     "inStock": true,
-    "description_long": "Rabbi Nachman entreprit un voyage mystérieux en Terre Sainte qui transforma profondément sa vie et ses enseignements. Ce récit captivant retrace chaque étape de ce périple spirituel — les tempêtes en mer, les rencontres providentielles, les révélations mystiques. Un livre d'aventure spirituelle qui se lit comme un roman mais qui contient des enseignements profonds sur la foi et le courage."
+    "description_long": "Rabbi Nachman entreprit un voyage mystérieux en Terre Sainte qui transforma profondément sa vie et ses enseignements. Ce récit captivant retrace chaque étape de ce périple spirituel — les tempêtes en mer, les rencontres providentielles, les révélations mystiques. Un livre d'aventure spirituelle qui se lit comme un roman mais qui contient des enseignements profonds sur la foi et le courage.",
+    "price_eur": 22
   },
   {
     "id": 8,
@@ -167,7 +174,7 @@
     "pages": 220,
     "language": "français",
     "category": "Récits & Inspiration",
-    "price_physical": 88,
+    "price_physical": 105,
     "price_digital": 53,
     "cover_image": "/images/livres/IMG-20251110-WA0190.jpg",
     "pdf_file": "/pdfs/conversations.pdf",
@@ -176,7 +183,8 @@
     "available_digital": true,
     "weight_g": 360,
     "inStock": true,
-    "description_long": "Le deuxième tome des Conversations des Anges poursuit la compilation des paroles et enseignements informels de Rabbi Nachman, tels que rapportés par ses disciples. Ces conversations révèlent le côté intime du Tsadik — ses conseils pratiques, ses mots d'encouragement, ses réflexions sur la vie quotidienne. Un trésor de sagesse hassidique traduit avec sensibilité."
+    "description_long": "Le deuxième tome des Conversations des Anges poursuit la compilation des paroles et enseignements informels de Rabbi Nachman, tels que rapportés par ses disciples. Ces conversations révèlent le côté intime du Tsadik — ses conseils pratiques, ses mots d'encouragement, ses réflexions sur la vie quotidienne. Un trésor de sagesse hassidique traduit avec sensibilité.",
+    "price_eur": 26
   },
   {
     "id": 9,
@@ -189,7 +197,7 @@
     "pages": 224,
     "language": "français",
     "category": "Prière & Protection",
-    "price_physical": 65,
+    "price_physical": 105,
     "price_digital": 38,
     "cover_image": "/images/livres/IMG-20251110-WA0181.jpg",
     "pdf_file": "/pdfs/ChemotAtsadikim.pdf",
@@ -199,7 +207,8 @@
     "weight_g": 340,
     "inStock": true,
     "description_long": "Chemot Atsadikim est un recueil unique qui explore les noms et les histoires des grands Tsadikim de la tradition juive. Chaque nom porte en lui un enseignement spirituel et une lumière particulière. Ce livre est à la fois un guide d'étude et un compagnon de méditation pour approfondir sa connection avec les maîtres du passé.",
-    "cover_video": "/videos/covers/cover_1.mp4"
+    "cover_video": "/videos/covers/cover_1.mp4",
+    "price_eur": 26
   },
   {
     "id": 10,
@@ -212,7 +221,7 @@
     "pages": 260,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 120,
+    "price_physical": 105,
     "price_digital": 72,
     "cover_image": "/images/livres/IMG-20251110-WA0187.jpg",
     "pdf_file": null,
@@ -222,7 +231,8 @@
     "available_digital": false,
     "inStock": false,
     "weight_g": 300,
-    "description_long": "Le deuxième tome du Likoutey Moharan poursuit l'enseignement magistral de Rabbi Nachman avec des Torot sur la prière, l'étude de la Torah et la recherche de la vérité. Actuellement indisponible — nous travaillons sur la réédition de ce volume essentiel."
+    "description_long": "Le deuxième tome du Likoutey Moharan poursuit l'enseignement magistral de Rabbi Nachman avec des Torot sur la prière, l'étude de la Torah et la recherche de la vérité. Actuellement indisponible — nous travaillons sur la réédition de ce volume essentiel.",
+    "price_eur": 26
   },
   {
     "id": 11,
@@ -235,7 +245,7 @@
     "pages": 255,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 110,
+    "price_physical": 105,
     "price_digital": 66,
     "cover_image": "/images/livres/IMG-20251110-WA0183.jpg",
     "pdf_file": null,
@@ -245,7 +255,8 @@
     "available_digital": false,
     "inStock": false,
     "weight_g": 300,
-    "description_long": "Le troisième tome contient certaines des Torot les plus citées de Rabbi Nachman, notamment ses enseignements sur la hitbodédout (méditation solitaire) et la recherche du point positif en chaque personne. Actuellement indisponible — réédition en préparation."
+    "description_long": "Le troisième tome contient certaines des Torot les plus citées de Rabbi Nachman, notamment ses enseignements sur la hitbodédout (méditation solitaire) et la recherche du point positif en chaque personne. Actuellement indisponible — réédition en préparation.",
+    "price_eur": 26
   },
   {
     "id": 12,
@@ -258,7 +269,7 @@
     "pages": 200,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 118,
+    "price_physical": 105,
     "price_digital": 71,
     "cover_image": "/images/livres/IMG-20251030-WA0167.jpg",
     "pdf_file": "/pdfs/ליקוטי8.pdf",
@@ -268,7 +279,8 @@
     "inStock": true,
     "weight_g": 300,
     "description_long": "Ce huitième tome de la Tinyana contient les toutes dernières Torot de Rabbi Nachman, prononcées peu avant sa disparition. Ces enseignements sont considérés par les hassidim de Breslev comme les plus élevés et les plus mystérieux. Une traduction fidèle qui honore la profondeur spirituelle de l'original.",
-    "cover_video": "/videos/covers/cover_5.mp4"
+    "cover_video": "/videos/covers/cover_5.mp4",
+    "price_eur": 26
   },
   {
     "id": 13,
@@ -281,7 +293,7 @@
     "pages": 200,
     "language": "français",
     "category": "Prière & Protection",
-    "price_physical": 45,
+    "price_physical": 28,
     "price_digital": 27,
     "cover_image": "/images/livres/IMG-20251031-WA0003.jpg",
     "pdf_file": "/pdfs/TikounHaklali.pdf",
@@ -291,7 +303,8 @@
     "inStock": true,
     "weight_g": 300,
     "description_long": "Le Tikoun HaKlali rassemble les dix Psaumes révélés par Rabbi Nachman comme constituant un tikoun (réparation) général pour l'âme. Ce petit livre est le compagnon quotidien de millions de hassidim à travers le monde. Cette édition bilingue français-hébreu inclut la translittération phonétique pour faciliter la lecture.",
-    "cover_video": "/videos/covers/cover_2.mp4"
+    "cover_video": "/videos/covers/cover_2.mp4",
+    "price_eur": 7
   },
   {
     "id": 14,
@@ -304,7 +317,7 @@
     "pages": 200,
     "language": "français",
     "category": "Prière & Méditation",
-    "price_physical": 90,
+    "price_physical": 117,
     "price_digital": 54,
     "cover_image": "/images/livres/IMG-20251031-WA0004.jpg",
     "pdf_file": "/pdfs/ליקוטיתפילות.pdf",
@@ -314,7 +327,8 @@
     "inStock": true,
     "weight_g": 300,
     "description_long": "Le Likouté Tefilot est un recueil de prières composées par Rabbi Natan, le principal disciple de Rabbi Nachman, basées sur les enseignements du Likoutey Moharan. Chaque prière est un chef-d'œuvre de dévotion qui transforme les concepts intellectuels en appels du cœur. Un outil puissant pour enrichir sa vie spirituelle.",
-    "cover_video": "/videos/covers/cover_7.mp4"
+    "cover_video": "/videos/covers/cover_7.mp4",
+    "price_eur": 29
   },
   {
     "id": 15,
@@ -327,7 +341,7 @@
     "pages": 200,
     "language": "français",
     "category": "Récits & Histoire",
-    "price_physical": 85,
+    "price_physical": 117,
     "price_digital": 51,
     "cover_image": "/images/livres/IMG-20251103-WA0120.jpg",
     "pdf_file": "/pdfs/AgeDorBreslev1.pdf",
@@ -337,7 +351,8 @@
     "inStock": true,
     "weight_g": 300,
     "description_long": "L'Âge d'Or de Breslev retrace l'histoire fascinante du mouvement hassidique de Breslev depuis sa fondation jusqu'à aujourd'hui. Ce premier tome couvre la période classique — Rabbi Nachman lui-même, ses disciples directs, et les premières générations qui ont préservé ses enseignements malgré les persécutions.",
-    "cover_video": "/videos/covers/cover_4.mp4"
+    "cover_video": "/videos/covers/cover_4.mp4",
+    "price_eur": 29
   },
   {
     "id": 16,
@@ -350,7 +365,7 @@
     "pages": 200,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 75,
+    "price_physical": 105,
     "price_digital": 45,
     "cover_image": "/images/livres/la-couronne.jpg",
     "pdf_file": null,
@@ -359,7 +374,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "La Couronne est un ouvrage qui explore les enseignements de Rabbi Nachman sur la royauté divine et la couronne spirituelle que chaque juif porte. Un livre profond et poétique qui élève l'âme et inspire la recherche de l'excellence spirituelle."
+    "description_long": "La Couronne est un ouvrage qui explore les enseignements de Rabbi Nachman sur la royauté divine et la couronne spirituelle que chaque juif porte. Un livre profond et poétique qui élève l'âme et inspire la recherche de l'excellence spirituelle.",
+    "price_eur": 26
   },
   {
     "id": 17,
@@ -372,7 +388,7 @@
     "pages": 200,
     "language": "français",
     "category": "Récits & Inspiration",
-    "price_physical": 75,
+    "price_physical": 117,
     "price_digital": 45,
     "cover_image": "/images/livres/IMG-20251031-WA0005.jpg",
     "pdf_file": null,
@@ -381,7 +397,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Les Cahiers du Coeur est un journal spirituel qui invite le lecteur à noter ses propres réflexions, prières et insights en parallèle avec des enseignements choisis de Rabbi Nachman. Un format unique qui combine étude et introspection personnelle."
+    "description_long": "Les Cahiers du Coeur est un journal spirituel qui invite le lecteur à noter ses propres réflexions, prières et insights en parallèle avec des enseignements choisis de Rabbi Nachman. Un format unique qui combine étude et introspection personnelle.",
+    "price_eur": 29
   },
   {
     "id": 18,
@@ -394,7 +411,7 @@
     "pages": 220,
     "language": "français",
     "category": "Biographie & Témoignage",
-    "price_physical": 70,
+    "price_physical": 117,
     "price_digital": 42,
     "cover_image": "/images/livres/IMG-20251110-WA0194.jpg",
     "pdf_file": "/pdfs/RabbiNahman2014.pdf",
@@ -403,7 +420,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Cette biographie complète retrace la vie extraordinaire de Rabbi Nachman de Breslev — de sa naissance à Medzhybizh en 1772 jusqu'à sa mort à Uman en 1810. On y découvre un personnage complexe : mystique visionnaire, conteur de génie, voyageur infatigable et guide spirituel révolutionnaire. Richement documenté et passionnant à lire."
+    "description_long": "Cette biographie complète retrace la vie extraordinaire de Rabbi Nachman de Breslev — de sa naissance à Medzhybizh en 1772 jusqu'à sa mort à Uman en 1810. On y découvre un personnage complexe : mystique visionnaire, conteur de génie, voyageur infatigable et guide spirituel révolutionnaire. Richement documenté et passionnant à lire.",
+    "price_eur": 29
   },
   {
     "id": 19,
@@ -416,7 +434,7 @@
     "pages": 200,
     "language": "français",
     "category": "Récits & Inspiration",
-    "price_physical": 88,
+    "price_physical": 105,
     "price_digital": 53,
     "cover_image": "/images/livres/conversations-anges-t1.jpg",
     "pdf_file": null,
@@ -425,7 +443,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Le premier tome des Conversations des Anges compile les paroles quotidiennes de Rabbi Nachman telles que rapportées par ses disciples les plus proches. Ces conversations informelles révèlent la sagesse pratique du Tsadik — ses conseils sur l'éducation des enfants, la vie conjugale, le commerce et la santé. Un guide de vie hassidique complet."
+    "description_long": "Le premier tome des Conversations des Anges compile les paroles quotidiennes de Rabbi Nachman telles que rapportées par ses disciples les plus proches. Ces conversations informelles révèlent la sagesse pratique du Tsadik — ses conseils sur l'éducation des enfants, la vie conjugale, le commerce et la santé. Un guide de vie hassidique complet.",
+    "price_eur": 26
   },
   {
     "id": 20,
@@ -438,7 +457,7 @@
     "pages": 60,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 25,
+    "price_physical": 49,
     "price_digital": 15,
     "cover_image": "/images/livres/azamra.jpg",
     "pdf_file": null,
@@ -447,7 +466,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 100,
-    "description_long": "Azamra (\"Je chanterai\") est l'un des enseignements les plus célèbres et les plus aimés de Rabbi Nachman. Il enseigne l'art de chercher le point positif en chaque personne et en chaque situation. Ce petit livre est un concentré de lumière et d'optimisme qui a le pouvoir de transformer le regard que nous portons sur nous-mêmes et sur le monde."
+    "description_long": "Azamra (\"Je chanterai\") est l'un des enseignements les plus célèbres et les plus aimés de Rabbi Nachman. Il enseigne l'art de chercher le point positif en chaque personne et en chaque situation. Ce petit livre est un concentré de lumière et d'optimisme qui a le pouvoir de transformer le regard que nous portons sur nous-mêmes et sur le monde.",
+    "price_eur": 12
   },
   {
     "id": 21,
@@ -460,7 +480,7 @@
     "pages": 200,
     "language": "français",
     "category": "Récits & Contes",
-    "price_physical": 100,
+    "price_physical": 113,
     "price_digital": 60,
     "cover_image": "/images/livres/sipourey-maasiot-v2.jpg",
     "pdf_file": null,
@@ -469,7 +489,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 350,
-    "description_long": "Les Sipourey Maasiot sont les treize contes mystiques de Rabbi Nachman, considérés comme des chefs-d'œuvre de la littérature universelle. Chaque histoire — du Fils du Roi au Maître de Prière — est à la fois un conte de fées enchanteur et une allégorie kabbalistique d'une profondeur vertigineuse. Une lecture à plusieurs niveaux qui ne cesse de révéler de nouveaux secrets."
+    "description_long": "Les Sipourey Maasiot sont les treize contes mystiques de Rabbi Nachman, considérés comme des chefs-d'œuvre de la littérature universelle. Chaque histoire — du Fils du Roi au Maître de Prière — est à la fois un conte de fées enchanteur et une allégorie kabbalistique d'une profondeur vertigineuse. Une lecture à plusieurs niveaux qui ne cesse de révéler de nouveaux secrets.",
+    "price_eur": 28
   },
   {
     "id": 22,
@@ -482,7 +503,7 @@
     "pages": 300,
     "language": "français",
     "category": "Enseignements Fondamentaux",
-    "price_physical": 130,
+    "price_physical": 117,
     "price_digital": 80,
     "cover_image": "/images/livres/likoutey-halakhot-v2.jpg",
     "pdf_file": null,
@@ -491,7 +512,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 480,
-    "description_long": "Le Likoutey Halakhot est l'œuvre monumentale de Rabbi Natan qui relie chaque halakha (loi juive) aux enseignements mystiques de Rabbi Nachman. Ce livre unique montre comment chaque détail de la loi juive contient des secrets spirituels infinis. Une traduction ambitieuse qui ouvre de nouveaux horizons d'étude."
+    "description_long": "Le Likoutey Halakhot est l'œuvre monumentale de Rabbi Natan qui relie chaque halakha (loi juive) aux enseignements mystiques de Rabbi Nachman. Ce livre unique montre comment chaque détail de la loi juive contient des secrets spirituels infinis. Une traduction ambitieuse qui ouvre de nouveaux horizons d'étude.",
+    "price_eur": 29
   },
   {
     "id": 23,
@@ -504,7 +526,7 @@
     "pages": 100,
     "language": "français",
     "category": "Prière & Méditation",
-    "price_physical": 45,
+    "price_physical": 89,
     "price_digital": 28,
     "cover_image": "/images/livres/hishtapkhout-v2.jpg",
     "pdf_file": null,
@@ -513,7 +535,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 150,
-    "description_long": "Hishtapkhout HaNefesh (L'Épanchement de l'Âme) est le guide pratique de la hitbodédout — la méditation solitaire enseignée par Rabbi Nachman. Ce livre enseigne comment parler avec Dieu dans ses propres mots, comment transformer ses larmes en prières et ses doutes en foi. Un compagnon spirituel indispensable."
+    "description_long": "Hishtapkhout HaNefesh (L'Épanchement de l'Âme) est le guide pratique de la hitbodédout — la méditation solitaire enseignée par Rabbi Nachman. Ce livre enseigne comment parler avec Dieu dans ses propres mots, comment transformer ses larmes en prières et ses doutes en foi. Un compagnon spirituel indispensable.",
+    "price_eur": 22
   },
   {
     "id": 24,
@@ -526,7 +549,7 @@
     "pages": 220,
     "language": "français",
     "category": "Biographie & Témoignage",
-    "price_physical": 75,
+    "price_physical": 117,
     "price_digital": 45,
     "cover_image": "/images/livres/IMG-20251103-WA0121.jpg",
     "pdf_file": null,
@@ -535,7 +558,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 350,
-    "description_long": "Cette édition spéciale Coeur d'Or de la biographie de Rabbi Nachman est enrichie d'illustrations, de photos de lieux saints et de documents d'époque. Un beau livre à offrir qui rend hommage à la grandeur du Tsadik tout en étant accessible aux néophytes."
+    "description_long": "Cette édition spéciale Coeur d'Or de la biographie de Rabbi Nachman est enrichie d'illustrations, de photos de lieux saints et de documents d'époque. Un beau livre à offrir qui rend hommage à la grandeur du Tsadik tout en étant accessible aux néophytes.",
+    "price_eur": 29
   },
   {
     "id": 25,
@@ -548,7 +572,7 @@
     "pages": 100,
     "language": "français",
     "category": "Accessoires & Cahiers",
-    "price_physical": 15,
+    "price_physical": 36,
     "price_digital": null,
     "cover_image": "/images/livres/cahier-breslev.jpg",
     "pdf_file": "/pdfs/CahierBreslev.pdf",
@@ -557,6 +581,7 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 150,
-    "description_long": "Ce cahier au format pratique 15x21 cm est orné de motifs Breslev et de citations inspirantes de Rabbi Nachman. Idéal pour prendre des notes d'étude, écrire ses prières personnelles ou tenir un journal spirituel. Un bel objet qui accompagne le quotidien du hassid moderne."
+    "description_long": "Ce cahier au format pratique 15x21 cm est orné de motifs Breslev et de citations inspirantes de Rabbi Nachman. Idéal pour prendre des notes d'étude, écrire ses prières personnelles ou tenir un journal spirituel. Un bel objet qui accompagne le quotidien du hassid moderne.",
+    "price_eur": 9
   }
 ]

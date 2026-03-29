@@ -1336,7 +1336,7 @@ app.get("/", (req, res) => {
               <div class="book-author">${product.author}</div>
               <h3 class="book-title">${product.title_fr}</h3>
             </div>
-            <div class="book-price">${product.price_physical}₪</div>
+            <div class="book-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
           </div>
         </a>
         <div style="padding: 0 1.5rem 1.5rem;">
@@ -1585,7 +1585,7 @@ app.get("/collections/all", (req, res) => {
               <div class="book-author">${product.author}</div>
               <h3 class="book-title">${product.title_fr}</h3>
             </div>
-            <div class="book-price">${product.price_physical}₪</div>
+            <div class="book-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
           </div>
         </a>
         <div style="padding: 0 1.5rem 1.5rem; background: #ffffff; margin-top: -1px; z-index: 2; position: relative;">
@@ -1845,7 +1845,7 @@ app.get("/products/:id", (req, res, next) => {
           </h1>
           
           <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem; ${typeof window === "undefined" ? "" : "justify-content: flex-start;"}">
-            <div class="product-price">${product.price_physical}₪</div>
+            <div class="product-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
             ${product.available_digital ? `<div style="color: #666;">ou <span style="color: #22C55E; font-weight: 600;">${product.price_digital}₪</span> en numérique</div>` : ""}
           </div>
 
@@ -1913,7 +1913,7 @@ app.get("/products/:id", (req, res, next) => {
                 <div class="info">
                   <div style="font-size: 0.85rem; color: #888;">${book.author}</div>
                   <h4 style="color: #2c3e50; font-size: 1rem; margin: 0.5rem 0;">${book.title_fr}</h4>
-                  <div style="color: #1E3A8A; font-weight: 600;">${book.price_physical}₪</div>
+                  <div style="color: #1E3A8A; font-weight: 600;">${book.price_eur || Math.round(book.price_physical/4)}€</div>
                 </div>
               </a>
             `,
