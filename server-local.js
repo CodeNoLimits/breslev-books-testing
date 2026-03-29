@@ -2310,6 +2310,15 @@ app.get("/cart", (req, res) => {
           <strong>Banque :</strong> France Pay, 10 rue de Penthièvre, 75008 Paris
         </p>
       </div>
+      <div style="background:white; padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #e0d5c0;">
+        <h4 style="color:#D4AF37; margin:0 0 0.5rem;">🇮🇱 Virement Israël</h4>
+        <p style="font-size:0.85rem; color:#333; margin:0; line-height:1.6;">
+          <strong>Titulaire :</strong> Joelle Ifrah (ג'ואל יפרח)<br>
+          <strong>Banque :</strong> הבינלאומי (Beinleumi) — Code 031<br>
+          <strong>Agence :</strong> 012<br>
+          <strong>N° compte :</strong> 904597
+        </p>
+      </div>
       <p style="font-size:0.8rem; color:#888;">Mentionnez votre nom et email en référence du virement.</p>
     </div>
     <script>
