@@ -992,9 +992,9 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <span></span>
           </button>
           <a href="/" class="navbar__logo" style="white-space: nowrap;"><i class="fas fa-book-open"></i> BRESLEV <span style="font-size: 0.65em; font-weight: 400; opacity: 0.9;">by Esther Ifrah</span></a>
-          <ul class="navbar__nav" id="navMenu">
+          <ul class="navbar__nav" id="navMenu" style="display:flex;flex-wrap:nowrap;gap:0.3rem;font-size:0.8rem;">
             <li><a href="/" class="navbar__nav-link">Accueil</a></li>
-            <li><a href="/collections/all" class="navbar__nav-link" style="font-weight: 700; color: var(--gold) !important; letter-spacing: 0.15em;">Bibliothèque</a></li>
+            <li><a href="/collections/all" class="navbar__nav-link" style="font-weight:700;color:var(--gold)!important;letter-spacing:0.1em;">Bibliothèque</a></li>
             <li><a href="/audio" class="navbar__nav-link"><i class="fas fa-headphones"></i> Audio</a></li>
             <li><a href="/cours" class="navbar__nav-link"><i class="fas fa-graduation-cap"></i> Cours</a></li>
             <li><a href="/etudes" class="navbar__nav-link"><i class="fas fa-star-of-david"></i> Études</a></li>
@@ -1003,7 +1003,6 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <li><a href="/pages/abonnement" class="navbar__nav-link">Abonnement</a></li>
             <li><a href="/account" class="navbar__nav-link"><i class="fas fa-user"></i> Compte</a></li>
             <li><a href="/contact" class="navbar__nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
-            <!-- Search moved to navbar__actions -->
           </ul>
           <div class="navbar__actions">
             <a href="/search" class="navbar__icon-btn" aria-label="Rechercher" style="color: rgba(255,255,255,0.85); font-size: 1.1rem;">
@@ -1401,6 +1400,32 @@ app.get("/", (req, res) => {
     </section>
   `;
 
+  // Section Vidéos Avatar - Esther Enseigne
+  const videoAvatarHTML = `
+    <section style="background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); padding: 4rem 0; color: white;">
+      <div class="container">
+        <div class="text-center mb-8">
+          <span style="background: rgba(212, 175, 55, 0.2); color: var(--color-gold); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">🎬 ESTHER ENSEIGNE</span>
+          <h2 class="text-gold-animated" style="margin-top: 1rem; font-size: 2.5rem;">Cours Vidéo</h2>
+          <p style="color: rgba(255,255,255,0.8); max-width: 600px; margin: 1rem auto;">Esther Ifrah vous enseigne la cacheroute et l'émounah en vidéo</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto;">
+          ${[
+            {t:"L'importance de la cacheroute",f:"L-importance-de-la-cacheroute"},
+            {t:"Règle concernant le vin",f:"R-gle-concernant-le-vin."},
+            {t:"Les animaux cachers",f:"Les-animaux-cachers"},
+            {t:"Le lait et la viande",f:"Le-lait-et-la-viande."},
+            {t:"L'organisation de la cuisine",f:"L-organisation-de-la-cuisine.-Lait-et-viande"},
+            {t:"L'ablution des kelim",f:"L-importance-de-l-ablution-des-kelim"},
+            {t:"La bonté et la rigueur",f:"La-bont-et-la-rigueur."},
+            {t:"L'importance de la émouna",f:"L-importance-de-la-mouna."},
+            {t:"Tout est pour le bien",f:"Tout-est-pour-le-bien."}
+          ].map(v => '<div style="background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);"><video controls preload="none" poster="" style="width:100%;aspect-ratio:16/9;background:#000;" controlsList="nodownload"><source src="/videos/avatar/'+v.f+'.mp4" type="video/mp4"></video><div style="padding:1rem;"><h4 style="color:var(--color-gold);font-size:0.95rem;margin:0;">'+v.t+'</h4></div></div>').join('')}
+        </div>
+      </div>
+    </section>
+  `;
+
   // Section Témoignages
   const testimonialsSectionHTML = `
     <section class="testimonials-section" style="background: linear-gradient(135deg, #FEFEFE 0%, #F5F0E6 100%); padding: 4rem 0;">
@@ -1488,7 +1513,7 @@ app.get("/", (req, res) => {
 
   res.send(
     getLayout(
-      heroHTML + coursJourHTML + productsHTML + audioSectionHTML + testimonialsSectionHTML + suivezEstherHTML,
+      heroHTML + coursJourHTML + productsHTML + audioSectionHTML + videoAvatarHTML + testimonialsSectionHTML + suivezEstherHTML,
     ),
   );
 });
