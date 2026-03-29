@@ -1510,8 +1510,8 @@ app.get("/collections/all", (req, res) => {
           </div>
         </a>
         <div style="padding: 0 1.5rem 1.5rem; background: #ffffff; margin-top: -1px; z-index: 2; position: relative;">
-          <button 
-            class="btn ${isIndisponible ? '' : 'btn-add-to-cart goldPulse hover-glow'}" 
+          <button
+            class="btn ${isIndisponible ? '' : 'btn-add-to-cart goldPulse hover-glow'}"
             ${isIndisponible ? 'disabled' : `
             data-product-id="${product.id}"
             data-product-title="${product.title_fr}"
@@ -1521,6 +1521,7 @@ app.get("/collections/all", (req, res) => {
             style="width:100%; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid #dcdcdc' : '1px solid var(--color-gold)'}; color: ${isIndisponible ? '#888' : 'var(--color-gold)'}; background: transparent;">
             <i class="fas ${isIndisponible ? 'fa-times' : 'fa-shopping-cart'}"></i> ${isIndisponible ? 'Indisponible' : 'Ajouter au panier'}
           </button>
+          ${product.pdf_file ? '<a href="/reader/' + product.slug + '" style="display:block;margin-top:0.5rem;text-align:center;color:var(--color-gold);font-size:0.85rem;text-decoration:none;"><i class="fas fa-book-reader"></i> Feuilleter</a>' : ''}
         </div>
       </div>
     `;
@@ -2221,21 +2222,55 @@ app.get("/cart", (req, res) => {
   res.send(getLayout(content, "Panier & Checkout"));
 });
 
-// Route pour le lecteur numerique (page-flip local)
+// Route pour le lecteur numerique (PDF.js flipbook)
 app.get("/reader/:bookSlug", (req, res) => {
   const { bookSlug } = req.params;
   const book = catalog.find(b => (b.slug || b.id) === bookSlug || b.id == bookSlug);
-  const bookTitle = book ? (book.title_fr || book.title || bookSlug) : bookSlug;
-  const bookAuthor = book ? (book.author || '') : '';
-  const pdfFile = book ? (book.pdf_file || '') : '';
-  const coverImage = book ? (book.cover_image || FALLBACK_COVER) : FALLBACK_COVER;
+
+  if (!book) {
+    return res.status(404).send(getLayout(
+      '<div class="container mt-12 mb-12 text-center"><h1>Livre non trouvé</h1><a href="/collections/all" class="btn btn-primary mt-4">Retour à la bibliothèque</a></div>',
+      'Livre non trouvé'
+    ));
+  }
+
+  const bookTitle = book.title_fr || book.title || bookSlug;
+  const bookAuthor = book.author || '';
+  const pdfFile = book.pdf_file || '';
+  const coverImage = book.cover_image || FALLBACK_COVER;
+
+  // Check if user is logged in or in testing mode
+  const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
+  const isTesting = process.env.TESTING_MODE === 'true' || process.env.NODE_ENV !== 'production';
+
+  if (!pdfFile) {
+    // Book has no PDF — show cover with message
+    const content = `
+      <div class="container mt-12 mb-12" style="text-align: center;">
+        <div style="margin-bottom: 1.5rem;">
+          <a href="/products/${book.id}" style="color: var(--color-gold); text-decoration: none;"><i class="fas fa-arrow-left"></i> Retour au livre</a>
+        </div>
+        <img src="${coverImage}" alt="${bookTitle}" style="max-width: 300px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 2rem;">
+        <h2 style="color: #1E3A8A;">${bookTitle}</h2>
+        <p style="color: #666; margin-bottom: 2rem;">La version numérique de ce livre sera bientôt disponible.</p>
+        <a href="/products/${book.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Acheter le livre physique</a>
+      </div>
+    `;
+    return res.send(getLayout(content, "Lecteur - " + bookTitle));
+  }
 
   const content = `
     <link rel="stylesheet" href="/flipbook-styles.css">
     <script src="/page-flip.browser.js"></script>
+    <script src="/flipbook-viewer.js"></script>
 
-    <div class="container mt-12 mb-12">
-      <div style="max-width: 1000px; margin: 0 auto;">
+    <div class="container mt-8 mb-12">
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <a href="/products/${book.id}" style="color: var(--color-gold); text-decoration: none;"><i class="fas fa-arrow-left"></i> Retour au livre</a>
+        <a href="/collections/all" style="color: #666; text-decoration: none; font-size: 0.9rem;"><i class="fas fa-th"></i> Tous les livres</a>
+      </div>
+
+      <div style="max-width: 900px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); padding: 1.5rem 2rem; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 1rem;">
           <i class="fas fa-book-open" style="color: #D4AF37; font-size: 1.5rem;"></i>
           <div>
@@ -2244,132 +2279,33 @@ app.get("/reader/:bookSlug", (req, res) => {
           </div>
         </div>
 
-        <div id="reader-container" style="background: #f8f6f3; border: 1px solid rgba(212,175,55,0.2); border-top: none; border-radius: 0 0 12px 12px; padding: 2rem; min-height: 500px; display: flex; align-items: center; justify-content: center;">
-          <div id="page-flip-book" style="margin: 0 auto;"></div>
-          <div id="reader-fallback" style="display:none; width:100%; text-align:center;">
-            <div id="fallback-gallery" style="display:flex; flex-direction:column; align-items:center; gap:1rem;"></div>
-          </div>
-        </div>
-
-        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-          <button onclick="if(window.pageFlip) window.pageFlip.flipPrev()" class="btn btn-outline" style="border-color:#D4AF37;color:#D4AF37;">
-            <i class="fas fa-chevron-left"></i> Page precedente
-          </button>
-          <span id="page-indicator" style="display:flex;align-items:center;color:#6B7280;font-size:0.9rem;">Page 1</span>
-          <button onclick="if(window.pageFlip) window.pageFlip.flipNext()" class="btn btn-outline" style="border-color:#D4AF37;color:#D4AF37;">
-            Page suivante <i class="fas fa-chevron-right"></i>
-          </button>
+        <div style="background: #f8f6f3; border: 1px solid rgba(212,175,55,0.2); border-top: none; border-radius: 0 0 12px 12px; padding: 2rem; min-height: 500px;">
+          <div id="flipbook-container"></div>
         </div>
 
         <div style="margin-top: 2rem; text-align: center;">
-          <a href="/products/${book ? book.id : 1}" class="btn btn-primary">
+          <a href="/products/${book.id}" class="btn btn-primary" style="margin-right: 1rem;">
             <i class="fas fa-shopping-cart"></i> Acheter ce livre
+          </a>
+          <a href="/collections/all" class="btn btn-outline" style="border-color: var(--color-gold); color: var(--color-gold);">
+            <i class="fas fa-books"></i> Voir tous les livres
           </a>
         </div>
       </div>
     </div>
 
     <script>
-      (function() {
-        var pdfFile = '${pdfFile}';
-        var coverImage = '${coverImage}';
-        var container = document.getElementById('page-flip-book');
-        var fallbackDiv = document.getElementById('reader-fallback');
-        var fallbackGallery = document.getElementById('fallback-gallery');
-        var indicator = document.getElementById('page-indicator');
-
-        // Build page images: use cover as first page, then PDF pages if available
-        var pageImages = [coverImage];
-        if (pdfFile) {
-          // Convention: PDF pages stored as /images/pages/SLUG-1.jpg, SLUG-2.jpg, etc.
-          for (var i = 1; i <= 20; i++) {
-            pageImages.push('/images/pages/${bookSlug}-' + i + '.jpg');
-          }
-        }
-
-        function initPageFlip() {
-          try {
-            if (typeof St === 'undefined' && typeof StPageFlip === 'undefined') throw new Error('StPageFlip not loaded');
-            var PageFlipClass = (typeof StPageFlip !== 'undefined') ? StPageFlip.PageFlip : St.PageFlip;
-
-            window.pageFlip = new PageFlipClass(container, {
-              width: 400,
-              height: 560,
-              size: 'stretch',
-              minWidth: 280,
-              maxWidth: 600,
-              minHeight: 400,
-              maxHeight: 840,
-              showCover: true,
-              drawShadow: true,
-              flippingTime: 600,
-              usePortrait: true,
-              startZIndex: 0,
-              autoSize: true,
-              maxShadowOpacity: 0.5,
-              mobileScrollSupport: true
-            });
-
-            var pagesLoaded = 0;
-            pageImages.forEach(function(src) {
-              var img = new Image();
-              img.onload = function() {
-                pagesLoaded++;
-                if (pagesLoaded === 1 || pagesLoaded === pageImages.length) {
-                  tryRender();
-                }
-              };
-              img.onerror = function() { pagesLoaded++; };
-              img.src = src;
-            });
-
-            function tryRender() {
-              var validPages = [];
-              pageImages.forEach(function(src) {
-                validPages.push('<div class="page-content" style="background:#fff;display:flex;align-items:center;justify-content:center;"><img src="' + src + '" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.parentElement.style.display=\\'none\\'"></div>');
-              });
-              if (validPages.length > 0) {
-                container.innerHTML = validPages.join('');
-                window.pageFlip.loadFromHTML(container.querySelectorAll('.page-content'));
-                window.pageFlip.on('flip', function(e) {
-                  indicator.textContent = 'Page ' + (e.data + 1);
-                });
-              }
-            }
-
-            // Start rendering after a short delay for image loading
-            setTimeout(tryRender, 1500);
-
-          } catch(err) {
-            console.warn('PageFlip init failed, using fallback gallery:', err);
-            showFallback();
-          }
-        }
-
-        function showFallback() {
-          container.style.display = 'none';
-          fallbackDiv.style.display = 'block';
-          pageImages.forEach(function(src, i) {
-            var img = document.createElement('img');
-            img.src = src;
-            img.alt = 'Page ' + (i + 1);
-            img.style.cssText = 'max-width:100%;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-bottom:1rem;';
-            img.loading = 'lazy';
-            img.onerror = function() { this.style.display = 'none'; };
-            fallbackGallery.appendChild(img);
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initFlipbook === 'function') {
+          initFlipbook('flipbook-container', '${pdfFile}', {
+            isPaid: ${isLoggedIn || isTesting},
+            userName: 'Lecteur'
           });
         }
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initPageFlip);
-        } else {
-          initPageFlip();
-        }
-      })();
+      });
     </script>
   `;
-
-  res.send(getLayout(content, "Lecteur - " + bookTitle));
+  res.send(getLayout(content, "Lire - " + bookTitle));
 });
 
 // PayPal: Créer commande
@@ -3148,20 +3084,20 @@ app.get("/audio/:categoryId", (req, res) => {
         ${tracks
           .map(
             (track, index) => `
-          <div class="audio-track-item" style="background: white; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; transition: all 0.3s ease;">
-            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, ${category.color} 0%, ${category.color}99 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; flex-shrink: 0;">
-              <i class="fas fa-play"></i>
+          <div class="audio-track-item" style="background: white; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+              <div style="width: 50px; height: 50px; background: linear-gradient(135deg, ${category.color} 0%, ${category.color}99 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; flex-shrink: 0;">
+                ${track.url ? '<i class="fas fa-play"></i>' : '<i class="fas fa-clock"></i>'}
+              </div>
+              <div style="flex: 1;">
+                <h4 style="color: #2c3e50; margin-bottom: 0.25rem;">${track.title}</h4>
+                <p style="color: #888; font-size: 0.9rem; margin: 0;">${track.description}</p>
+              </div>
+              <div style="text-align: right; flex-shrink: 0;">
+                <div style="color: ${category.color}; font-weight: 600;">${track.duration}</div>
+              </div>
             </div>
-            <div style="flex: 1;">
-              <h4 style="color: #2c3e50; margin-bottom: 0.25rem;">${track.title}</h4>
-              <p style="color: #888; font-size: 0.9rem; margin: 0;">${track.description}</p>
-            </div>
-            <div style="text-align: right; flex-shrink: 0;">
-              <div style="color: ${category.color}; font-weight: 600;">${track.duration}</div>
-              <button class="play-audio-btn" data-track-id="${track.id}" style="background: ${category.color}20; color: ${category.color}; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-top: 0.5rem; font-size: 0.85rem;">
-                <i class="fas fa-headphones"></i> Écouter
-              </button>
-            </div>
+            ${track.url ? '<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(212,175,55,0.1);"><audio controls preload="none" controlsList="nodownload" style="width: 100%; height: 40px;"><source src="' + track.url + '" type="audio/' + (track.url.endsWith('.ogg') ? 'ogg' : track.url.endsWith('.opus') ? 'ogg' : 'mpeg') + '">Votre navigateur ne supporte pas le lecteur audio.</audio></div>' : '<div style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: rgba(212,175,55,0.08); border-radius: 8px; text-align: center;"><span style="color: #B8860B; font-size: 0.85rem;"><i class="fas fa-clock"></i> Bientôt disponible</span></div>'}
           </div>
         `,
           )
@@ -3185,39 +3121,6 @@ app.get("/audio/:categoryId", (req, res) => {
       </div>
     </div>
 
-    <!-- Bannière "Prochainement" audio -->
-    <div id="audio-coming-soon-banner" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); padding: 1.25rem 2rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.3); z-index: 1000; align-items: center; justify-content: space-between; border-top: 3px solid var(--color-gold);">
-      <div style="display: flex; align-items: center; gap: 1rem; color: white;">
-        <div style="width: 44px; height: 44px; background: rgba(212,175,55,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
-          🎧
-        </div>
-        <div>
-          <h4 id="audio-banner-title" class="text-gold-animated" style="margin: 0; font-size: 1rem;"></h4>
-          <div style="font-size: 0.85rem; color: rgba(255,255,255,0.75);">⏳ Cours audio disponible prochainement — Esther Ifrah prépare le contenu</div>
-        </div>
-      </div>
-      <button id="audio-banner-close" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">✕</button>
-    </div>
-
-    <script>
-      const comingSoonBanner = document.getElementById('audio-coming-soon-banner');
-      const bannerTitle = document.getElementById('audio-banner-title');
-      const bannerClose = document.getElementById('audio-banner-close');
-
-      document.querySelectorAll('.play-audio-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const trackContainer = this.closest('.audio-track-item');
-          const title = trackContainer.querySelector('h4').innerText;
-          bannerTitle.innerText = title;
-          comingSoonBanner.style.display = 'flex';
-        });
-      });
-
-      bannerClose.addEventListener('click', () => {
-        comingSoonBanner.style.display = 'none';
-      });
-    </script>
   `;
   res.send(getLayout(content, category.name + " | Audio"));
 });
