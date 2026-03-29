@@ -327,6 +327,14 @@ const audioCategories = [
     icon: "🙏",
     color: "#7C3AED",
   },
+  {
+    id: "cacherout",
+    name: "Cours de Cacheroute",
+    icon: "🍽️",
+    description: "Les lois alimentaires du judaïsme par Esther Ifrah — étude du livre de la Cacheroute",
+    color: "#22C55E",
+    count: "14 cours",
+  },
 ];
 
 const audioContent = {
@@ -474,6 +482,22 @@ const audioContent = {
       duration: "45:00",
       description: "Le plus long chapitre des Psaumes",
     },
+  ],
+  "cacherout": [
+    { id: 101, title: "Le pain cuit par un non-juif (Pas Akum)", description: "Halakha sur le pain: les conditions pour consommer du pain non-juif", duration: "~5 min", url: "/audios/AUD-20260318-WA0023.mp3" },
+    { id: 102, title: "Gâteaux, biscuits et cacheroute", description: "Les produits de boulangerie et leur statut halakhique", duration: "~5 min", url: "/audios/AUD-20260318-WA0024.mp3" },
+    { id: 103, title: "Chocolats, bonbons et commerce tarèf", description: "La cacheroute des confiseries et l'interdiction du commerce d'aliments tarèf", duration: "~5 min", url: "/audios/AUD-20260318-WA0025.mp3" },
+    { id: 104, title: "Le lait — Chalav Yisrael", description: "Les lois de la surveillance de la traite et du lait cacher", duration: "~8 min", url: "/audios/AUD-20260318-WA0026.mp3" },
+    { id: 105, title: "Surveillance de la traite", description: "Comment superviser la traite du lait et le stockage", duration: "~8 min", url: "/audios/AUD-20260318-WA0027.mp3" },
+    { id: 106, title: "Beurre et fromage", description: "Les lois du beurre, des fromages durs et mous", duration: "~5 min", url: "/audios/AUD-20260318-WA0028.mp3" },
+    { id: 107, title: "Le vin des non-juifs", description: "Pourquoi le vin non-juif est interdit et les liens avec les mariages mixtes", duration: "~5 min", url: "/audios/AUD-20260318-WA0029.mp3" },
+    { id: 108, title: "Vin cacher manipulé par un non-juif", description: "Les 7 cas où le vin cacher devient interdit", duration: "~5 min", url: "/audios/AUD-20260318-WA0030.mp3" },
+    { id: 109, title: "Les poissons — reconnaître un poisson cacher", description: "Écailles, filets et œufs de poisson: les règles", duration: "~5 min", url: "/audios/AUD-20260318-WA0031.mp3" },
+    { id: 110, title: "Les oeufs", description: "Reconnaître un oeuf cacher et les règles d'achat", duration: "~5 min", url: "/audios/AUD-20260318-WA0032.mp3" },
+    { id: 111, title: "Viande cachère et volaille", description: "Les animaux cachers, la shechita et la boucherie", duration: "~5 min", url: "/audios/AUD-20260318-WA0033.mp3" },
+    { id: 112, title: "Le salage de la viande", description: "La cachérisation et les lois du sang", duration: "~5 min", url: "/audios/AUD-20260318-WA0034.mp3" },
+    { id: 113, title: "Organisation de la cuisine", description: "Séparation bassari/halavi: ustensiles, éviers et torchons", duration: "~8 min", url: "/audios/AUD-20260318-WA0038.mp3" },
+    { id: 114, title: "Immersion des ustensiles (Tevilat Kelim)", description: "Les règles d'immersion au Mikvé avant utilisation", duration: "~8 min", url: "/audios/AUD-20260318-WA0040.mp3" },
   ],
 };
 
