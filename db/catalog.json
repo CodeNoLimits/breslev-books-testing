@@ -19,7 +19,8 @@
     "available_digital": true,
     "weight_g": 350,
     "inStock": true,
-    "description_long": "Ce livre unique raconte l'itinéraire spirituel d'un homme qui découvre le chemin de Breslev. À travers des anecdotes personnelles, des enseignements profonds et des moments de grâce, l'auteur nous transporte dans le quotidien d'un hassid de Rabbi Nachman. Un témoignage authentique qui touche le cœur et inspire l'âme. Traduit avec amour par Esther Ifrah, cet ouvrage est devenu une référence pour tous ceux qui souhaitent comprendre ce que signifie vivre selon les enseignements de Rabbi Nachman au quotidien."
+    "description_long": "Ce livre unique raconte l'itinéraire spirituel d'un homme qui découvre le chemin de Breslev. À travers des anecdotes personnelles, des enseignements profonds et des moments de grâce, l'auteur nous transporte dans le quotidien d'un hassid de Rabbi Nachman. Un témoignage authentique qui touche le cœur et inspire l'âme. Traduit avec amour par Esther Ifrah, cet ouvrage est devenu une référence pour tous ceux qui souhaitent comprendre ce que signifie vivre selon les enseignements de Rabbi Nachman au quotidien.",
+    "cover_video": "/videos/covers/cover_3.mp4"
   },
   {
     "id": 2,
@@ -85,7 +86,8 @@
     "available_digital": true,
     "weight_g": 410,
     "inStock": true,
-    "description_long": "Ce cinquième tome poursuit l'exploration des enseignements les plus profonds de Rabbi Nachman. On y trouve des leçons sur la joie, le Tikoun (réparation de l'âme), et la connection avec HaChem à travers les épreuves de la vie. Esther Ifrah a su capturer la beauté poétique du texte original tout en le rendant compréhensible pour le lecteur francophone."
+    "description_long": "Ce cinquième tome poursuit l'exploration des enseignements les plus profonds de Rabbi Nachman. On y trouve des leçons sur la joie, le Tikoun (réparation de l'âme), et la connection avec HaChem à travers les épreuves de la vie. Esther Ifrah a su capturer la beauté poétique du texte original tout en le rendant compréhensible pour le lecteur francophone.",
+    "cover_video": "/videos/covers/cover_6.mp4"
   },
   {
     "id": 5,
@@ -195,7 +197,8 @@
     "available_digital": false,
     "weight_g": 340,
     "inStock": true,
-    "description_long": "Chemot Atsadikim est un recueil unique qui explore les noms et les histoires des grands Tsadikim de la tradition juive. Chaque nom porte en lui un enseignement spirituel et une lumière particulière. Ce livre est à la fois un guide d'étude et un compagnon de méditation pour approfondir sa connection avec les maîtres du passé."
+    "description_long": "Chemot Atsadikim est un recueil unique qui explore les noms et les histoires des grands Tsadikim de la tradition juive. Chaque nom porte en lui un enseignement spirituel et une lumière particulière. Ce livre est à la fois un guide d'étude et un compagnon de méditation pour approfondir sa connection avec les maîtres du passé.",
+    "cover_video": "/videos/covers/cover_1.mp4"
   },
   {
     "id": 10,
@@ -263,7 +266,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Ce huitième tome de la Tinyana contient les toutes dernières Torot de Rabbi Nachman, prononcées peu avant sa disparition. Ces enseignements sont considérés par les hassidim de Breslev comme les plus élevés et les plus mystérieux. Une traduction fidèle qui honore la profondeur spirituelle de l'original."
+    "description_long": "Ce huitième tome de la Tinyana contient les toutes dernières Torot de Rabbi Nachman, prononcées peu avant sa disparition. Ces enseignements sont considérés par les hassidim de Breslev comme les plus élevés et les plus mystérieux. Une traduction fidèle qui honore la profondeur spirituelle de l'original.",
+    "cover_video": "/videos/covers/cover_5.mp4"
   },
   {
     "id": 13,
@@ -285,7 +289,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Le Tikoun HaKlali rassemble les dix Psaumes révélés par Rabbi Nachman comme constituant un tikoun (réparation) général pour l'âme. Ce petit livre est le compagnon quotidien de millions de hassidim à travers le monde. Cette édition bilingue français-hébreu inclut la translittération phonétique pour faciliter la lecture."
+    "description_long": "Le Tikoun HaKlali rassemble les dix Psaumes révélés par Rabbi Nachman comme constituant un tikoun (réparation) général pour l'âme. Ce petit livre est le compagnon quotidien de millions de hassidim à travers le monde. Cette édition bilingue français-hébreu inclut la translittération phonétique pour faciliter la lecture.",
+    "cover_video": "/videos/covers/cover_2.mp4"
   },
   {
     "id": 14,
@@ -307,7 +312,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "Le Likouté Tefilot est un recueil de prières composées par Rabbi Natan, le principal disciple de Rabbi Nachman, basées sur les enseignements du Likoutey Moharan. Chaque prière est un chef-d'œuvre de dévotion qui transforme les concepts intellectuels en appels du cœur. Un outil puissant pour enrichir sa vie spirituelle."
+    "description_long": "Le Likouté Tefilot est un recueil de prières composées par Rabbi Natan, le principal disciple de Rabbi Nachman, basées sur les enseignements du Likoutey Moharan. Chaque prière est un chef-d'œuvre de dévotion qui transforme les concepts intellectuels en appels du cœur. Un outil puissant pour enrichir sa vie spirituelle.",
+    "cover_video": "/videos/covers/cover_7.mp4"
   },
   {
     "id": 15,
@@ -329,7 +335,8 @@
     "available_digital": false,
     "inStock": true,
     "weight_g": 300,
-    "description_long": "L'Âge d'Or de Breslev retrace l'histoire fascinante du mouvement hassidique de Breslev depuis sa fondation jusqu'à aujourd'hui. Ce premier tome couvre la période classique — Rabbi Nachman lui-même, ses disciples directs, et les premières générations qui ont préservé ses enseignements malgré les persécutions."
+    "description_long": "L'Âge d'Or de Breslev retrace l'histoire fascinante du mouvement hassidique de Breslev depuis sa fondation jusqu'à aujourd'hui. Ce premier tome couvre la période classique — Rabbi Nachman lui-même, ses disciples directs, et les premières générations qui ont préservé ses enseignements malgré les persécutions.",
+    "cover_video": "/videos/covers/cover_4.mp4"
   },
   {
     "id": 16,

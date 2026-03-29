@@ -1324,7 +1324,10 @@ app.get("/", (req, res) => {
       <div class="book-card fade-in hover-lift glare-card" style="${cardOpacity}">
         <a href="${isIndisponible ? '#' : '/products/' + product.id}" style="text-decoration: none; color: inherit; ${isIndisponible ? 'cursor: not-allowed;' : ''}">
           <div class="book-cover-container">
-            <img src="${product.cover_image}" alt="${product.title_fr}" class="book-cover" loading="lazy" style="${imgFilter}">
+            ${product.cover_video ?
+              '<video autoplay loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;' + imgFilter + '"><source src="' + product.cover_video + '" type="video/mp4"></video>' :
+              '<img src="' + product.cover_image + '" alt="' + product.title_fr + '" class="book-cover" loading="lazy" style="' + imgFilter + '">'
+            }
             ${indisponibleBadge}
             ${product.fliphtml5_url ? '<div class="badge-digital">📖 LECTURE EN LIGNE</div>' : ""}
           </div>
@@ -1570,7 +1573,10 @@ app.get("/collections/all", (req, res) => {
       <div class="book-card fade-in hover-lift glare-card" style="${cardOpacity}">
         <a href="${isIndisponible ? '#' : '/products/' + product.id}" style="text-decoration: none; color: inherit; ${isIndisponible ? 'cursor: not-allowed;' : ''}">
           <div class="book-cover-container">
-            <img src="${product.cover_image}" alt="${product.title_fr}" class="book-cover" loading="lazy" style="${imgFilter}">
+            ${product.cover_video ?
+              '<video autoplay loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;' + imgFilter + '"><source src="' + product.cover_video + '" type="video/mp4"></video>' :
+              '<img src="' + product.cover_image + '" alt="' + product.title_fr + '" class="book-cover" loading="lazy" style="' + imgFilter + '">'
+            }
             ${indisponibleBadge}
             ${product.fliphtml5_url ? '<div class="badge-digital">📖 LECTURE EN LIGNE</div>' : ""}
           </div>
