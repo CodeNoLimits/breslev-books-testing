@@ -49,3 +49,7 @@ layout/
 # Build helpers
 gen_audio.js
 gen_catalog.js
+
+# More duplicate/non-essential images
+assets/images/livres/
+assets/og-image.png
