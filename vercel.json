@@ -3,7 +3,22 @@
   "builds": [
     {
       "src": "server-local.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "db/**",
+          "public/**",
+          "assets/*.js",
+          "assets/*.css",
+          "assets/*.svg",
+          "assets/*.png",
+          "assets/images/**",
+          "assets/livres/**",
+          "assets/pdfs/**",
+          "assets/videos/**",
+          "assets/audios/**"
+        ]
+      }
     }
   ],
   "routes": [
