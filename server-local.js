@@ -219,7 +219,7 @@ app.post(
             <div style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:20px;margin:20px 0;">
               <p style="margin:0;font-size:0.9rem;">Référence commande: <code style="color:#D4AF37;">${session.id}</code></p>
             </div>
-            <a href="https://breslev-books-preview.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Retour à la boutique</a>
+            <a href="https://breslev-books-testing.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Retour à la boutique</a>
             <p style="color:#555;font-size:0.85rem;margin-top:30px;border-top:1px solid #333;padding-top:16px;">Na Nach Nachma Nachman MeUman</p>
           </div>`
         });
@@ -564,7 +564,7 @@ app.post("/api/auth/signup", async (req, res) => {
       <h1 style="color:#D4AF37;">Bienvenue, ${fullName || email} !</h1>
       <p style="margin:16px 0;">Votre compte est créé sur <strong>Breslev by Esther Ifrah</strong>.</p>
       <p style="color:#aaa;">Explorez notre catalogue de livres de Rabbi Nachman de Breslev en français.</p>
-      <a href="https://breslev-books-preview.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
+      <a href="https://breslev-books-testing.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
       <p style="color:#555;font-size:0.85rem;margin-top:30px;border-top:1px solid #333;padding-top:16px;">Na Nach Nachma Nachman MeUman</p>
     </div>`
   });
@@ -772,7 +772,7 @@ app.post("/api/connect/onboard", async (req, res) => {
       email: "hayil.fr@gmail.com",
       capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
       business_type: "individual",
-      business_profile: { name: "Breslev by Esther Ifrah", url: "https://breslev-books-preview.vercel.app" },
+      business_profile: { name: "Breslev by Esther Ifrah", url: "https://breslev-books-testing.vercel.app" },
     });
 
     // Create onboarding link
@@ -845,7 +845,7 @@ app.get("/api/check-subscription", async (req, res) => {
 // ==========================================
 
 function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
-  const siteUrl = "https://breslev-books-preview.vercel.app";
+  const siteUrl = "https://breslev-books-testing.vercel.app";
   const defaultDescription =
     "Livres et enseignements de Rabbi Nachman de Breslev traduits en francais par Esther Ifrah. Likoutey Moharan, Likoutey Tefilot et plus de 30 ouvrages authentiques.";
   const description = options.description || defaultDescription;
@@ -1531,9 +1531,11 @@ app.get("/collections/all", (req, res) => {
   res.send(getLayout(content, "Bibliothèque"));
 });
 
-app.get("/products/:id", (req, res) => {
-  const product = catalog.find((p) => p.id == req.params.id);
-  if (!product) return res.status(404).send("Livre non trouvé");
+app.get("/products/:id", (req, res, next) => {
+  // Skip .js requests — handled by /products/:id.js route below
+  if (req.params.id.endsWith('.js')) return next();
+  const product = catalog.find((p) => p.id == req.params.id || p.slug === req.params.id);
+  if (!product) return res.status(404).send(getLayout('<div class="container mt-12 mb-12 text-center"><h1>Livre non trouvé</h1><a href="/collections/all" class="btn btn-primary mt-4">Retour à la bibliothèque</a></div>', '404 - Livre non trouvé'));
 
   // Check if user is logged in (via Supabase token cookie)
   const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
@@ -1891,7 +1893,7 @@ app.get("/products/:id.js", (req, res) => {
 });
 
 app.get("/pages/abonnement", (req, res) => {
-  const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+  const stripeKey = process.env.STRIPE_PUBLIC_KEY || "";
   const content = `
     <script src="https://js.stripe.com/v3/"></script>
     <div class="container mt-12 mb-12">
@@ -2125,7 +2127,7 @@ app.get("/pages/abonnement", (req, res) => {
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const redirectTo = isLocalhost 
             ? window.location.origin + '/auth/callback'
-            : 'https://breslev-books-preview.vercel.app/auth/callback';
+            : 'https://breslev-books-testing.vercel.app/auth/callback';
 
         const authUrl = supabaseUrl + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(redirectTo);
 
@@ -2200,7 +2202,7 @@ app.get("/pages/abonnement", (req, res) => {
 });
 
 app.get("/cart", (req, res) => {
-  const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+  const stripeKey = process.env.STRIPE_PUBLIC_KEY || "";
   const paypalClientId = process.env.PAYPAL_CLIENT_ID || "";
 
   const content = `
@@ -2216,7 +2218,7 @@ app.get("/cart", (req, res) => {
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS&disable-funding=credit,card"></script>
+    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS&disable-funding=credit,card"></script>` : '<!-- PayPal: configure PAYPAL_CLIENT_ID to enable -->'}
     <script src="/checkout-system.js"></script>
   `;
   res.send(getLayout(content, "Panier & Checkout"));
@@ -2755,7 +2757,7 @@ app.post("/api/contact", async (req, res) => {
         '<hr style="border:1px solid #D4AF37;margin:1rem 0;">' +
         '<p style="white-space:pre-wrap;">' + message.replace(/</g, '&lt;') + '</p>' +
         '<hr style="border:1px solid #eee;margin:1rem 0;">' +
-        '<p style="color:#999;font-size:0.85rem;">Via breslev-books-preview.vercel.app</p></div>'
+        '<p style="color:#999;font-size:0.85rem;">Via breslev-books-testing.vercel.app</p></div>'
     });
 
     // Auto-reply to sender
