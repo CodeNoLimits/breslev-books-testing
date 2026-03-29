@@ -997,7 +997,7 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
       <noscript><link rel="stylesheet" href="/premium-upgrades.css"><link rel="stylesheet" href="/checkout-styles.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
       <!-- Stripe Integration — loaded async, only init on payment pages -->
-      <script src="https://js.stripe.com/v3/" async></script>
+      <!-- Stripe removed - PayPal only -->
       <script>
         window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || ''}";
       </script>
