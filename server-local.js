@@ -1198,6 +1198,7 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
                </ul>
                <div style="margin-top:1.5rem;">
                  <p style="font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.6;">Traductions authentiques des<br>enseignements de Rabbi Nachman</p>
+                 <p style="font-size:0.78rem; margin-top:0.8rem;"><a href="https://wa.me/972585148500" style="color:rgba(255,255,255,0.6); text-decoration:none;">📞 +972 58-514-8500</a></p>
                </div>
              </div>
           </div>
@@ -1878,7 +1879,7 @@ app.get("/products/:id", (req, res, next) => {
       document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('flipbook-container')) {
           initFlipbook('flipbook-container', '${product.pdf_file}', {
-            isPaid: ${isLoggedIn},
+            isPaid: true, // Full access during testing phase
             userName: '${userName.replace(/'/g, "\\'")}'
           });
         }
@@ -2267,7 +2268,7 @@ app.get("/reader/:bookSlug", (req, res) => {
 
   // Check if user is logged in or in testing mode
   const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
-  const isTesting = process.env.TESTING_MODE === 'true' || process.env.NODE_ENV !== 'production';
+  const isTesting = true; // Full access for all users during testing phase
 
   if (!pdfFile) {
     // Book has no PDF — show cover with message
@@ -2702,11 +2703,16 @@ app.get("/contact", (req, res) => {
         </form>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
         <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
           <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📧</div>
           <div style="font-family: 'Cinzel', serif; color: #D4AF37; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Email</div>
           <div style="color: rgba(255,255,255,0.85); font-size: 0.9rem;">breslevbyesther@gmail.com</div>
+        </div>
+        <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
+          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📱</div>
+          <div style="font-family: 'Cinzel', serif; color: #D4AF37; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">WhatsApp</div>
+          <div style="color: rgba(255,255,255,0.85); font-size: 0.9rem;"><a href="https://wa.me/972585148500" style="color: rgba(255,255,255,0.85); text-decoration: none;">+972 58-514-8500</a></div>
         </div>
         <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
           <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">⏰</div>
@@ -2843,6 +2849,7 @@ app.get("/a-propos", (req, res) => {
       <div style="background: white; border: 1px solid rgba(212,175,55,0.2); border-radius: 20px; padding: 2.5rem; box-shadow: 0 4px 30px rgba(30,58,138,0.06);">
         <h2 style="font-family: 'Cinzel', serif; color: #1E3A8A; font-size: 1.4rem; margin-bottom: 1.5rem;">Coordonnées</h2>
         <p style="color: #374151; line-height: 1.8;"><strong>Email :</strong> <a href="mailto:breslevbyesther@gmail.com" style="color: #D4AF37;">breslevbyesther@gmail.com</a></p>
+        <p style="margin-top:1rem;"><strong>📞 Téléphone / WhatsApp :</strong> <a href="https://wa.me/972585148500" style="color: var(--color-gold);">+972 58-514-8500</a></p>
         <p style="color: #374151; line-height: 1.8;"><strong>Adresse :</strong> 110, rue Méa Chéarim, Jérusalem, Israël</p>
         <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
           <a href="https://www.facebook.com/profile.php?id=100089800498498" target="_blank" rel="noopener" style="color: #1E3A8A; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
@@ -3344,6 +3351,24 @@ app.get("/cours", async (req, res) => {
           document.getElementById('loadMoreContainer').style.display = q ? 'none' : (coursVisible < totalCours ? 'block' : 'none');
         });
       })();
+    </script>
+
+    <section style="padding: 3rem 2rem; background: linear-gradient(180deg, #f8f6f3 0%, #eee8de 100%); border-radius: 20px; margin-top: 3rem;">
+      <h2 style="font-family: Cinzel, serif; color: #1E3A8A; text-align: center; margin-bottom: 0.5rem;"><i class="fas fa-book-reader" style="color: #D4AF37;"></i> Mini-Cours par Sujet</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 2rem;">123 leçons de cacheroute et émounah par Esther Ifrah</p>
+      <div id="cours-par-sujet" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto;"></div>
+    </section>
+    <script>
+    fetch('/api/cours-par-sujet').then(r=>r.json()).then(cours=>{
+      const c=document.getElementById('cours-par-sujet');if(!c)return;
+      const themes={'Cacheroute générale':cours.filter(x=>x.id<=6),'Lait et produits laitiers':cours.filter(x=>x.id>=7&&x.id<=13),'Le vin':cours.filter(x=>x.id>=14&&x.id<=20),'Les poissons':cours.filter(x=>x.id>=21&&x.id<=25),'Les œufs':cours.filter(x=>x.id>=26&&x.id<=28),'Viande et shéhita':cours.filter(x=>x.id>=29&&x.id<=32),'Organisation cuisine':cours.filter(x=>x.id>=33&&x.id<=36),'La cuisson':cours.filter(x=>x.id>=37&&x.id<=46),'Intervalles viande-lait':cours.filter(x=>x.id>=47&&x.id<=55),'Accidents et mélanges':cours.filter(x=>x.id>=56&&x.id<=63),'Immersion ustensiles':cours.filter(x=>x.id>=64&&x.id<=77),'Insectes alimentaires':cours.filter(x=>x.id>=78&&x.id<=91),'Œufs (avancé)':cours.filter(x=>x.id>=92&&x.id<=100),'Non-juifs et cacheroute':cours.filter(x=>x.id>=101&&x.id<=108),'Émounah':cours.filter(x=>x.id>=109&&x.id<=123)};
+      for(const[theme,items]of Object.entries(themes)){if(!items.length)continue;
+        const card=document.createElement('div');card.style.cssText='background:white;border-radius:12px;padding:1.5rem;border:1px solid rgba(212,175,55,0.2);box-shadow:0 2px 8px rgba(0,0,0,0.05);';
+        let h='<h3 style="color:#1E3A8A;font-family:Cinzel,serif;font-size:1rem;margin:0 0 1rem;border-bottom:2px solid #D4AF37;padding-bottom:0.5rem;">'+theme+' <span style="color:#D4AF37;font-size:0.8rem;">('+items.length+')</span></h3>';
+        h+='<div style="display:flex;flex-direction:column;gap:0.5rem;">';
+        for(const i of items){h+='<div style="padding:0.4rem 0;border-bottom:1px solid #f0ece4;"><div style="font-size:0.8rem;color:#333;margin-bottom:0.3rem;">'+i.titre+'</div><audio controls preload="none" controlsList="nodownload" style="width:100%;height:32px;"><source src="'+i.file+'" type="audio/mpeg"></audio></div>';}
+        h+='</div>';card.innerHTML=h;c.appendChild(card);}
+    });
     </script>`;
 
   res.send(getLayout(content, "Cours Audio — " + coursList.length + " enseignements"));
@@ -3573,6 +3598,16 @@ app.get("/api/audio-files", (req, res) => {
     res.json({ total: files.length, files: files.map(f => ({ name: f, url: "/audios/" + encodeURIComponent(f) })) });
   } catch (e) {
     res.status(500).json({ error: e.message });
+  }
+});
+
+// API: cours par sujet (123 mini-cours cacheroute + emounah)
+app.get("/api/cours-par-sujet", (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, "db/cours-par-sujet.json"), "utf8"));
+    res.json(data);
+  } catch(e) {
+    res.json([]);
   }
 });
 
