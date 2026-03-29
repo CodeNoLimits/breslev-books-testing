@@ -53,3 +53,7 @@ gen_catalog.js
 # More duplicate/non-essential images
 assets/images/livres/
 assets/og-image.png
+
+# Old WhatsApp opus recordings (served via /cours from audioLessons.json but too heavy)  
+assets/audios/*.opus
+assets/audios/WhatsApp*
