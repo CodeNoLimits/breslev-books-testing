@@ -955,6 +955,24 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
           .navbar__nav { gap: 0.2rem !important; font-size: 0.78rem !important; }
           .navbar__nav-link { padding: 0.4rem 0.5rem !important; white-space: nowrap; }
         }
+        /* Book covers: always fit inside frame, never truncated */
+        .book-cover, .book-card img, .book-cover-container img {
+          object-fit: contain !important;
+          object-position: center !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: 350px;
+          background: #f8f6f3;
+        }
+        .book-cover-container {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background: #f8f6f3 !important;
+          min-height: 280px;
+          overflow: hidden;
+          border-radius: 8px 8px 0 0;
+        }
         /* Hero card: fond bleu-marine + bouton doré (demande David 16 mars) */
         .hero-content {
           background: rgba(15, 30, 80, 0.95) !important;
