@@ -29,6 +29,9 @@ assets/images/nan-banana/
 # Non-essential assets
 .methodology/
 
+# Videos too large for serverless (host separately later)
+public/videos/avatar/
+
 # Fichiers config dev
 .cursor/
 .DS_Store
