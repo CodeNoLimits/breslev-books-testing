@@ -2293,12 +2293,29 @@ app.get("/cart", (req, res) => {
     </div>
 
     <script>
-      window.STRIPE_PUBLISHABLE_KEY = '${stripeKey}';
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
-    <script src="https://js.stripe.com/v3/"></script>
-    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS&disable-funding=credit,card"></script>` : '<!-- PayPal: configure PAYPAL_CLIENT_ID to enable -->'}
+    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS"></script>` : ''}
     <script src="/checkout-system.js"></script>
+
+    <div id="bank-transfer-info" style="display:none; max-width:600px; margin:2rem auto; background:#f8f6f3; border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:2rem;">
+      <h3 style="color:#1E3A8A; margin-bottom:1rem;"><i class="fas fa-university"></i> Paiement par virement bancaire</h3>
+      <p style="color:#666; margin-bottom:1rem;">Vous pouvez aussi payer par virement :</p>
+      <div style="background:white; padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #e0d5c0;">
+        <h4 style="color:#D4AF37; margin:0 0 0.5rem;">🇫🇷 Virement France</h4>
+        <p style="font-size:0.85rem; color:#333; margin:0; line-height:1.6;">
+          <strong>Titulaire :</strong> Mme Joelle Ifrah<br>
+          <strong>IBAN :</strong> FR76 1652 8001 7100 0004 3621 064<br>
+          <strong>BIC :</strong> SMOEFRP1<br>
+          <strong>Banque :</strong> France Pay, 10 rue de Penthièvre, 75008 Paris
+        </p>
+      </div>
+      <p style="font-size:0.8rem; color:#888;">Mentionnez votre nom et email en référence du virement.</p>
+    </div>
+    <script>
+      // Show bank transfer after cart loads
+      setTimeout(function(){ var el=document.getElementById('bank-transfer-info'); if(el) el.style.display='block'; }, 1500);
+    </script>
   `;
   res.send(getLayout(content, "Panier & Checkout"));
 });
