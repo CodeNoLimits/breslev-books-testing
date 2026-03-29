@@ -950,6 +950,11 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       </script>
       <link rel="stylesheet" href="/breslev-premium.css">
       <style>
+        /* Desktop nav compact */
+        @media (min-width: 769px) {
+          .navbar__nav { gap: 0.2rem !important; font-size: 0.78rem !important; }
+          .navbar__nav-link { padding: 0.4rem 0.5rem !important; white-space: nowrap; }
+        }
         /* Hero card: fond bleu-marine + bouton doré (demande David 16 mars) */
         .hero-content {
           background: rgba(15, 30, 80, 0.95) !important;
@@ -992,7 +997,7 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <span></span>
           </button>
           <a href="/" class="navbar__logo" style="white-space: nowrap;"><i class="fas fa-book-open"></i> BRESLEV <span style="font-size: 0.65em; font-weight: 400; opacity: 0.9;">by Esther Ifrah</span></a>
-          <ul class="navbar__nav" id="navMenu" style="display:flex;flex-wrap:nowrap;gap:0.3rem;font-size:0.8rem;">
+          <ul class="navbar__nav" id="navMenu">
             <li><a href="/" class="navbar__nav-link">Accueil</a></li>
             <li><a href="/collections/all" class="navbar__nav-link" style="font-weight:700;color:var(--gold)!important;letter-spacing:0.1em;">Bibliothèque</a></li>
             <li><a href="/audio" class="navbar__nav-link"><i class="fas fa-headphones"></i> Audio</a></li>
