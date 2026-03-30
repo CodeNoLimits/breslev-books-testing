@@ -950,38 +950,93 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       </script>
       <link rel="stylesheet" href="/breslev-premium.css">
       <style>
+        :root {
+          --cream: #FAFAF9;
+          --navy: #2C3E50;
+          --gold: #D4AF37;
+        }
+        body { background-color: var(--cream); color: var(--navy); }
+        
+        /* Navbar - Header plus leger (#FAFAF9) */
+        .navbar {
+          background-color: var(--cream) !important;
+          border-bottom: 1px solid rgba(44, 62, 80, 0.1) !important;
+          box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        }
+        .navbar__logo, .navbar__nav-link, .navbar__actions a {
+          color: var(--navy) !important;
+          font-weight: 500;
+        }
+        .mobile-menu-toggle span { background-color: var(--navy) !important; }
+        .navbar__nav-link:hover { color: var(--gold) !important; }
+
         /* Desktop nav compact */
         @media (min-width: 769px) {
-          .navbar__nav { gap: 0.2rem !important; font-size: 0.78rem !important; }
-          .navbar__nav-link { padding: 0.4rem 0.5rem !important; white-space: nowrap; }
+          .navbar__nav { gap: 1rem !important; font-size: 0.85rem !important; }
+          .navbar__nav-link { padding: 0.5rem 0.6rem !important; white-space: nowrap; }
         }
+        
         /* Book covers: always fit inside frame, never truncated */
         .book-cover, .book-card img, .book-cover-container img {
           object-fit: contain !important;
           object-position: center !important;
           width: 100% !important;
           height: auto !important;
-          max-height: 350px;
-          background: #f8f6f3;
+          max-height: 280px;
+          background: transparent;
         }
         .book-cover-container {
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          background: #f8f6f3 !important;
-          min-height: 280px;
+          background: #FAFAF9 !important;
+          min-height: 240px;
           overflow: hidden;
           border-radius: 8px 8px 0 0;
+          padding: 1.5rem;
         }
-        /* Hero card: fond bleu-marine + bouton doré (demande David 16 mars) */
+
+        /* Hero: plus lisible */
+        .hero-overlay {
+          background: linear-gradient(to bottom, rgba(44,62,80,0.6), rgba(44,62,80,0.85)) !important;
+        }
         .hero-content {
-          background: rgba(15, 30, 80, 0.95) !important;
-          border: 2px solid #d4af37 !important;
+          background: transparent !important;
+          border: none !important;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 2rem 1rem !important;
+          box-shadow: none !important;
+          text-align: center;
         }
-        .hero-content p { color: #ffffff !important; }
+        .hero-content p { color: #FAFAF9 !important; font-size: 1.25rem !important; }
+        .hero-title {
+          font-size: clamp(2.5rem, 6vw, 4rem) !important;
+          color: #FAFAF9 !important;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+          letter-spacing: 0.05em;
+        }
+        
+        /* Catalogue epure */
+        .book-card {
+          border: 1px solid rgba(44,62,80,0.08) !important;
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.03) !important;
+          background: #FFFFFF !important;
+          border-radius: 12px;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .book-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 25px rgba(44,62,80,0.08) !important;
+        }
+        .book-info { padding: 1.2rem !important; text-align: center; }
+        .book-title { font-size: 1.05rem !important; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+        .book-author { font-size: 0.8rem !important; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; }
+        .book-price { font-size: 1.1rem !important; color: var(--gold); font-weight: 600; }
+        
         .hero-content .btn-primary {
-          background: #d4af37 !important;
-          color: #1e3a8a !important;
+          background: #D4AF37 !important;
+          color: #2C3E50 !important;
           font-weight: 600 !important;
         }
         .hero-content .btn-primary:hover {
@@ -1028,10 +1083,10 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <li><a href="/contact" class="navbar__nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
           </ul>
           <div class="navbar__actions">
-            <a href="/search" class="navbar__icon-btn" aria-label="Rechercher" style="color: rgba(255,255,255,0.85); font-size: 1.1rem;">
+            <a href="/search" class="navbar__icon-btn" aria-label="Rechercher" style="color: var(--navy); font-size: 1.1rem;">
               <i class="fas fa-search"></i>
             </a>
-            <a href="/cart" class="btn btn-outline" style="border:none; position: relative;">
+            <a href="/cart" class="btn btn-outline" style="border:none; position: relative; color: var(--navy);">
               <i class="fas fa-shopping-cart" style="font-size: 1.3rem;"></i>
               <span class="cart-badge" style="display: none;">0</span>
             </a>
@@ -1245,11 +1300,11 @@ app.get("/", (req, res) => {
       <div class="hero-overlay"></div>
       <div class="hero-content fade-in">
         <h1 class="hero-title text-gold-animated" style="font-family: var(--font-cinzel); font-weight: 700; text-transform: uppercase;">Breslev Esther IFRAH</h1>
-        <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 2.5rem; font-family: var(--font-cormorant); font-style: italic; font-weight: 600; color: rgba(253, 230, 138, 0.9); letter-spacing: 0.02em;">Traductions authentiques des enseignements de Rabbi Nachman</p>
+        <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 2.5rem; font-family: var(--font-cormorant); font-style: italic; font-weight: 600; color: #FAFAF9; letter-spacing: 0.02em;">Traductions authentiques des enseignements de Rabbi Nachman</p>
         <div style="display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; align-items: center;">
-          <a href="/collections/all" class="btn" style="padding: 1rem 2.5rem; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; background: #D4AF37; color: #0F172A; border: none; font-family: var(--font-sans); text-decoration: none; transition: all 0.3s ease;">Explorer les Livres</a>
-          <button onclick="document.getElementById('heroAudio').paused ? document.getElementById('heroAudio').play() : document.getElementById('heroAudio').pause(); this.querySelector('i').classList.toggle('fa-play'); this.querySelector('i').classList.toggle('fa-pause');" style="padding: 1rem 2.5rem; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; background: transparent; border: 1px solid rgba(212,175,55,0.5); color: #E8D5A3; cursor: pointer; font-family: var(--font-sans); transition: all 0.3s ease;">
-            <i class="fas fa-play"></i> Écouter Esther
+          <a href="/collections/all" class="btn" style="padding: 1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; background: #D4AF37; color: #2C3E50; border: none; font-family: var(--font-sans); text-decoration: none; border-radius: 4px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">Explorer les Livres</a>
+          <button onclick="document.getElementById('heroAudio').paused ? document.getElementById('heroAudio').play() : document.getElementById('heroAudio').pause(); this.querySelector('i').classList.toggle('fa-play'); this.querySelector('i').classList.toggle('fa-pause');" style="padding: 1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; background: rgba(44,62,80,0.6); border: 1px solid #FAFAF9; color: #FAFAF9; cursor: pointer; font-family: var(--font-sans); border-radius: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px);">
+            <i class="fas fa-play" style="margin-right: 8px;"></i> Écouter Esther
           </button>
           <audio id="heroAudio" preload="none" src="/audios/esther-welcome.mp3"></audio>
         </div>
@@ -1348,7 +1403,7 @@ app.get("/", (req, res) => {
             data-product-author="${product.author}"
             data-product-price="${product.price_physical}"
             data-product-image="${product.cover_image}"`}
-            style="width:100%; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid #dcdcdc' : '1px solid var(--color-gold)'}; color: ${isIndisponible ? '#888' : 'var(--color-gold)'}; background: transparent;">
+            style="width:100%; padding: 0.9rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid currentColor' : '1px solid var(--navy)'}; color: ${isIndisponible ? '#888' : 'var(--navy)'}; background: transparent;">
             <i class="fas ${isIndisponible ? 'fa-times' : 'fa-shopping-cart'}"></i> ${isIndisponible ? 'Indisponible' : 'Ajouter au panier'}
           </button>
         </div>
@@ -1597,7 +1652,7 @@ app.get("/collections/all", (req, res) => {
             data-product-author="${product.author}"
             data-product-price="${product.price_physical}"
             data-product-image="${product.cover_image}"`}
-            style="width:100%; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid #dcdcdc' : '1px solid var(--color-gold)'}; color: ${isIndisponible ? '#888' : 'var(--color-gold)'}; background: transparent;">
+            style="width:100%; padding: 0.9rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid currentColor' : '1px solid var(--navy)'}; color: ${isIndisponible ? '#888' : 'var(--navy)'}; background: transparent;">
             <i class="fas ${isIndisponible ? 'fa-times' : 'fa-shopping-cart'}"></i> ${isIndisponible ? 'Indisponible' : 'Ajouter au panier'}
           </button>
           ${product.pdf_file ? '<a href="/reader/' + product.slug + '" style="display:block;margin-top:0.5rem;text-align:center;color:var(--color-gold);font-size:0.85rem;text-decoration:none;"><i class="fas fa-book-reader"></i> Feuilleter</a>' : ''}
