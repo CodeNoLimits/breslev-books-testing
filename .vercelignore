@@ -1,61 +1,11 @@
-# Vercel Ignore - Exclure fichiers lourds
-
-# Node modules
+covers/
+assets/audios/
+assets/images/
+assets/pdfs/
+public/videos/
+public/images/livres/
 node_modules/
-
-# Images PNG originales (on garde seulement les WebP optimisées)
-public/images/nan-banana/*.png
-
-# Fichiers développement
-.git/
-.claude-code-sync/
-agents/
-scripts/
-
-# Documentation
+package-lock.json
 *.md
-!README.md
-
-# Ressources lourdes
-ressources-esther-ifra/
-Discussion*
-TurboScribe*
-LIVRES PDF/
-
-# Duplicate image directories (public/images/livres/ has all of them)
-assets/images/books/
-assets/images/nan-banana/
-
-# Non-essential assets
+.git/
 .methodology/
-
-# Videos too large for serverless (host separately later)
-public/videos/avatar/
-
-# Fichiers config dev
-.cursor/
-.DS_Store
-.env*
-.gitignore
-
-# Templates Shopify (pas nécessaires pour preview)
-templates/
-sections/
-snippets/
-locales/
-config/
-layout/
-
-# Build helpers
-gen_audio.js
-gen_catalog.js
-
-# More duplicate/non-essential images
-assets/images/livres/
-assets/og-image.png
-
-# Old WhatsApp opus recordings (served via /cours from audioLessons.json but too heavy)  
-assets/audios/*.opus
-assets/audios/WhatsApp*
-covers
-node_modules
