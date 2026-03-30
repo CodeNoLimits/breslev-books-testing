@@ -57,3 +57,5 @@ assets/og-image.png
 # Old WhatsApp opus recordings (served via /cours from audioLessons.json but too heavy)  
 assets/audios/*.opus
 assets/audios/WhatsApp*
+covers
+node_modules
