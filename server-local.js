@@ -2321,6 +2321,18 @@ app.get("/cart", (req, res) => {
       </div>
       <p style="font-size:0.8rem; color:#888;">Mentionnez votre nom et email en référence du virement.</p>
     </div>
+    <div style="max-width:600px; margin:1.5rem auto; background:#f8f6f3; border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:2rem;">
+      <h3 style="color:#1E3A8A; margin-bottom:1rem;"><i class="fas fa-money-check-alt"></i> Paiement par chèque</h3>
+      <p style="color:#666; margin-bottom:1rem;">Vous pouvez envoyer un chèque à l'ordre de :</p>
+      <div style="background:white; padding:1rem; border-radius:8px; border:1px solid #e0d5c0;">
+        <p style="font-size:0.9rem; color:#333; margin:0; line-height:1.8;">
+          <strong>À l'ordre de :</strong> Mme Joelle Ifrah<br>
+          <strong>Adresse :</strong> Esther Ifrah — Librairie Breslev<br>
+          <strong>Montant :</strong> Le total de votre commande en EUR<br>
+        </p>
+        <p style="font-size:0.8rem; color:#888; margin-top:0.5rem;">Inscrivez votre email au dos du chèque. La commande sera traitée à réception du chèque. Contactez-nous pour l'adresse d'envoi.</p>
+      </div>
+    </div>
     <script>
       // Show bank transfer after cart loads
       setTimeout(function(){ var el=document.getElementById('bank-transfer-info'); if(el) el.style.display='block'; }, 1500);
