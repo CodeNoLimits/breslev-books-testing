@@ -59,12 +59,16 @@
 
   /* Logo smaller on mobile */
   .navbar__logo {
-    font-size: 1rem;
-    white-space: nowrap;
+    font-size: 0.85rem !important;
+    gap: 0.4rem !important;
   }
 
   .navbar__logo i {
-    font-size: 1.2rem;
+    font-size: 1rem;
+  }
+  
+  .navbar__logo span:nth-child(2) {
+    font-size: 1.1em;
   }
 
   /* Hide nav by default on mobile */
@@ -331,7 +335,8 @@
 }
 @media (max-width: 900px) {
   .mobile-menu-toggle { display: block; }
-  .navbar__nav { display: none; }
+  .navbar__nav:not(.active) { display: none; }
+  .navbar__nav.active { display: flex; }
 }
 
 /* ============================================

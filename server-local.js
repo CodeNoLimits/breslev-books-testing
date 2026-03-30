@@ -66,11 +66,10 @@ const upload = multer({
 });
 
 // Admin auth middleware
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-const ADMIN_TOKEN = ADMIN_PASSWORD ? crypto.createHash("sha256").update(ADMIN_PASSWORD).digest("hex").slice(0, 32) : null;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "esther2026breslev";
+const ADMIN_TOKEN = crypto.createHash("sha256").update(ADMIN_PASSWORD).digest("hex").slice(0, 32);
 
 function requireAdmin(req, res, next) {
-  if (!ADMIN_TOKEN) return res.status(401).send("Non autorisé — ADMIN_PASSWORD non configuré");
   const token = req.headers["x-admin-token"] || req.query.token || req.cookies?.admin_token;
   if (token === ADMIN_TOKEN) return next();
   res.status(401).send("Non autorisé");
@@ -121,15 +120,14 @@ function saveCours(data) {
   fs.writeFileSync(COURS_FILE, JSON.stringify(data, null, 2));
 }
 
-// PayPal API base URLs
+// PayPal API base URL — env var PAYPAL_API overrides default (trim whitespace)
 const PAYPAL_API =
-  process.env.NODE_ENV === "production"
-    ? "https://api-m.paypal.com"
-    : "https://api-m.sandbox.paypal.com";
+  (process.env.PAYPAL_API || "").trim() ||
+  "https://api-m.paypal.com";
 
 const getPayPalAccessToken = async () => {
-  const clientId = process.env.PAYPAL_CLIENT_ID || "sb";
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET || "";
+  const clientId = (process.env.PAYPAL_CLIENT_ID || "sb").trim();
+  const clientSecret = (process.env.PAYPAL_SECRET || process.env.PAYPAL_CLIENT_SECRET || "").trim();
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
   const response = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
@@ -142,6 +140,14 @@ const getPayPalAccessToken = async () => {
   });
 
   const data = await response.json();
+  if (!data.access_token) {
+    const tokenErr = { api: PAYPAL_API, error: data.error, desc: data.error_description, cidLen: clientId.length, secLen: clientSecret.length };
+    console.error('[PayPal] Token error:', JSON.stringify(tokenErr));
+    // Attach debug to the returned undefined so create-order can surface it
+    const err = new Error('PayPal auth failed');
+    err._paypalDebug = tokenErr;
+    throw err;
+  }
   return data.access_token;
 };
 
@@ -179,14 +185,13 @@ app.post(
         process.env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (err) {
-      console.error("Webhook signature error:", err.message);
-      return res.status(400).send("Webhook signature verification failed");
+      return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       if (supabase && session.client_reference_id) {
-        const planType = session.amount_total === 99000 ? "annuel" : "mensuel";
+        const planType = session.amount_total === 27900 ? "annuel" : "mensuel";
         const { error } = await supabase.from("subscriptions").insert([
           {
             user_id: session.client_reference_id,
@@ -207,7 +212,7 @@ app.post(
       // Send order confirmation email (fire-and-forget)
       const customerEmail = session.customer_details?.email || session.customer_email;
       const customerName = session.customer_details?.name || 'Client';
-      const amountFormatted = session.amount_total ? (session.amount_total / 100).toFixed(2) + '₪' : '';
+      const amountFormatted = session.amount_total ? (session.amount_total / 100).toFixed(2) + ' €' : '';
       if (customerEmail) {
         sendEmail({
           to: customerEmail,
@@ -219,7 +224,7 @@ app.post(
             <div style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:20px;margin:20px 0;">
               <p style="margin:0;font-size:0.9rem;">Référence commande: <code style="color:#D4AF37;">${session.id}</code></p>
             </div>
-            <a href="https://breslev-books-testing.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Retour à la boutique</a>
+            <a href="https://breslev-books-preview.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Retour à la boutique</a>
             <p style="color:#555;font-size:0.85rem;margin-top:30px;border-top:1px solid #333;padding-top:16px;">Na Nach Nachma Nachman MeUman</p>
           </div>`
         });
@@ -232,7 +237,6 @@ app.post(
 
 const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
-app.use(express.static(path.join(__dirname, "public"), staticOpts));
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
 app.use(
   "/images/books",
@@ -248,27 +252,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), staticOpts))
 app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Security headers
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
-});
-
-// Simple in-memory rate limiter
-const rateLimits = new Map();
-function rateLimit(key, maxPerMin = 10) {
-  const now = Date.now();
-  const window = 60000;
-  if (!rateLimits.has(key)) rateLimits.set(key, []);
-  const hits = rateLimits.get(key).filter(t => now - t < window);
-  hits.push(now);
-  rateLimits.set(key, hits);
-  return hits.length > maxPerMin;
-}
 
 // Simple cookie parser (no dep)
 app.use((req, res, next) => {
@@ -300,206 +283,153 @@ try {
 // ==========================================
 const audioCategories = [
   {
-    id: "likoutey-moharan",
-    name: "Likoutey Moharan Audio",
-    description: "Les enseignements de Rabbi Nachman lus et expliqués",
-    icon: "📚",
+    id: "cacheroute",
+    name: "Halakhot Cacheroute",
+    description: "82 cours sur les lois alimentaires juives par Esther Ifrah",
+    icon: "🍽️",
     color: "#1E3A8A",
   },
   {
-    id: "cours-quotidiens",
-    name: "Cours Quotidiens",
-    description: "Cours audio pour votre étude quotidienne",
-    icon: "🎓",
+    id: "emounah",
+    name: "Emounah & Spiritualité",
+    description: "41 cours sur la foi, la confiance en Hachem et la croissance spirituelle",
+    icon: "✨",
     color: "#D4AF37",
-  },
-  {
-    id: "histoires-rabbi-nachman",
-    name: "Histoires de Rabbi Nachman",
-    description: "Les 13 contes mystiques racontés",
-    icon: "📖",
-    color: "#2563EB",
-  },
-  {
-    id: "tefilot",
-    name: "Prières & Tikounim",
-    description: "Récitation du Tikoun Haklali et prières",
-    icon: "🙏",
-    color: "#7C3AED",
-  },
-  {
-    id: "cacherout",
-    name: "Cours de Cacheroute",
-    icon: "🍽️",
-    description: "Les lois alimentaires du judaïsme par Esther Ifrah — étude du livre de la Cacheroute",
-    color: "#22C55E",
-    count: "14 cours",
   },
 ];
 
 const audioContent = {
-  "likoutey-moharan": [
-    // === VRAIS FICHIERS OGG D'ESTHER IFRAH — Envoyés le 26 fév 2026 ===
-    // Thora Alef (Cours 1-18)
-    { id: 1,  title: "Thora Alef — Cours 1",  duration: "~20 min", description: "Premier enseignement du Likoutey Moharan par Esther Ifrah",   url: "/audios/wpp_20260226_1845_esther_0EB595.ogg" },
-    { id: 2,  title: "Thora Alef — Cours 2",  duration: "~20 min", description: "Deuxième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_00F8D4.ogg" },
-    { id: 3,  title: "Thora Alef — Cours 3",  duration: "~20 min", description: "Troisième enseignement de la série Thora Alef",               url: "/audios/wpp_20260226_2328_esther_0D77F4.ogg" },
-    { id: 4,  title: "Thora Alef — Cours 4",  duration: "~20 min", description: "Quatrième enseignement de la série Thora Alef",               url: "/audios/wpp_20260226_2328_esther_157FD1.ogg" },
-    { id: 5,  title: "Thora Alef — Cours 5",  duration: "~20 min", description: "Cinquième enseignement de la série Thora Alef",               url: "/audios/wpp_20260226_2328_esther_20F23C.ogg" },
-    { id: 6,  title: "Thora Alef — Cours 6",  duration: "~20 min", description: "Sixième enseignement de la série Thora Alef",                 url: "/audios/wpp_20260226_2328_esther_28F70C.ogg" },
-    { id: 7,  title: "Thora Alef — Cours 7",  duration: "~20 min", description: "Septième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_2AF8FB.ogg" },
-    { id: 8,  title: "Thora Alef — Cours 8",  duration: "~20 min", description: "Huitième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_38F7DE.ogg" },
-    { id: 9,  title: "Thora Alef — Cours 9",  duration: "~20 min", description: "Neuvième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_3992C7.ogg" },
-    { id: 10, title: "Thora Alef — Cours 10", duration: "~20 min", description: "Dixième enseignement de la série Thora Alef",                 url: "/audios/wpp_20260226_2328_esther_39D5AC.ogg" },
-    { id: 11, title: "Thora Alef — Cours 11", duration: "~20 min", description: "Onzième enseignement de la série Thora Alef",                 url: "/audios/wpp_20260226_2328_esther_404981.ogg" },
-    { id: 12, title: "Thora Alef — Cours 12", duration: "~20 min", description: "Douzième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_476C4D.ogg" },
-    { id: 13, title: "Thora Alef — Cours 13", duration: "~20 min", description: "Treizième enseignement de la série Thora Alef",               url: "/audios/wpp_20260226_2328_esther_585D0E.ogg" },
-    { id: 14, title: "Thora Alef — Cours 14", duration: "~20 min", description: "Quatorzième enseignement de la série Thora Alef",             url: "/audios/wpp_20260226_2328_esther_5FDF84.ogg" },
-    { id: 15, title: "Thora Alef — Cours 15", duration: "~20 min", description: "Quinzième enseignement de la série Thora Alef",               url: "/audios/wpp_20260226_2328_esther_627E1E.ogg" },
-    { id: 16, title: "Thora Alef — Cours 16", duration: "~20 min", description: "Seizième enseignement de la série Thora Alef",                url: "/audios/wpp_20260226_2328_esther_695455.ogg" },
-    { id: 17, title: "Thora Alef — Cours 17", duration: "~20 min", description: "Dix-septième enseignement de la série Thora Alef",            url: "/audios/wpp_20260226_2328_esther_6A0622.ogg" },
-    { id: 18, title: "Thora Alef — Cours 18", duration: "~20 min", description: "Dix-huitième enseignement de la série Thora Alef",            url: "/audios/wpp_20260226_2328_esther_6D80DB.ogg" },
-    // Thora Beth (Cours 19-34)
-    { id: 19, title: "Thora Beth — Cours 1",  duration: "~20 min", description: "Premier enseignement de la deuxième série Thora Beth",        url: "/audios/wpp_20260226_2328_esther_7143DA.ogg" },
-    { id: 20, title: "Thora Beth — Cours 2",  duration: "~20 min", description: "Deuxième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_7270AF.ogg" },
-    { id: 21, title: "Thora Beth — Cours 3",  duration: "~20 min", description: "Troisième enseignement de la série Thora Beth",               url: "/audios/wpp_20260226_2328_esther_819F43.ogg" },
-    { id: 22, title: "Thora Beth — Cours 4",  duration: "~20 min", description: "Quatrième enseignement de la série Thora Beth",               url: "/audios/wpp_20260226_2328_esther_83D2C1.ogg" },
-    { id: 23, title: "Thora Beth — Cours 5",  duration: "~20 min", description: "Cinquième enseignement de la série Thora Beth",               url: "/audios/wpp_20260226_2328_esther_8AAEB0.ogg" },
-    { id: 24, title: "Thora Beth — Cours 6",  duration: "~20 min", description: "Sixième enseignement de la série Thora Beth",                 url: "/audios/wpp_20260226_2328_esther_92F6EA.ogg" },
-    { id: 25, title: "Thora Beth — Cours 7",  duration: "~20 min", description: "Septième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_9B23C7.ogg" },
-    { id: 26, title: "Thora Beth — Cours 8",  duration: "~20 min", description: "Huitième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_A872D8.ogg" },
-    { id: 27, title: "Thora Beth — Cours 9",  duration: "~20 min", description: "Neuvième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_AF495D.ogg" },
-    { id: 28, title: "Thora Beth — Cours 10", duration: "~20 min", description: "Dixième enseignement de la série Thora Beth",                 url: "/audios/wpp_20260226_2328_esther_B13A8C.ogg" },
-    { id: 29, title: "Thora Beth — Cours 11", duration: "~20 min", description: "Onzième enseignement de la série Thora Beth",                 url: "/audios/wpp_20260226_2328_esther_B8A68C.ogg" },
-    { id: 30, title: "Thora Beth — Cours 12", duration: "~20 min", description: "Douzième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_C6E9FD.ogg" },
-    { id: 31, title: "Thora Beth — Cours 13", duration: "~20 min", description: "Treizième enseignement de la série Thora Beth",               url: "/audios/wpp_20260226_2328_esther_C8AE91.ogg" },
-    { id: 32, title: "Thora Beth — Cours 14", duration: "~20 min", description: "Quatorzième enseignement de la série Thora Beth",             url: "/audios/wpp_20260226_2328_esther_CFB7D2.ogg" },
-    { id: 33, title: "Thora Beth — Cours 15", duration: "~20 min", description: "Quinzième enseignement de la série Thora Beth",               url: "/audios/wpp_20260226_2328_esther_DCE22D.ogg" },
-    { id: 34, title: "Thora Beth — Cours 16", duration: "~20 min", description: "Seizième enseignement de la série Thora Beth",                url: "/audios/wpp_20260226_2328_esther_E30310.ogg" },
-    // Thora 3 (Cours 35-37)
-    { id: 35, title: "Thora 3 — Cours 1",     duration: "~20 min", description: "Premier enseignement de la troisième série",                  url: "/audios/wpp_20260226_2328_esther_E4CD93.ogg" },
-    { id: 36, title: "Thora 3 — Cours 2",     duration: "~20 min", description: "Deuxième enseignement de la troisième série",                 url: "/audios/wpp_20260226_2328_esther_F74B03.ogg" },
-    { id: 37, title: "Thora 3 — Cours 3",     duration: "~20 min", description: "Troisième enseignement (à venir — Esther en cours d'envoi)",  url: "" },
+  "cacheroute": [
+    // === 82 VRAIS COURS DE CACHEROUTE par Esther Ifrah ===
+    { id: 1, title: "Règles cachères du pain non-juif", url: "/audios/ESTHER_01_Regles_cacheres_du_pain_non-juif.mp3" },
+    { id: 2, title: "Kashrut gâteaux, biscuits et cuisson non-juive", url: "/audios/ESTHER_02_Kashrut_gateaux-biscuits_et_cuisson_non-juive.mp3" },
+    { id: 3, title: "Défis Kashrut — aliments préparés en usine", url: "/audios/ESTHER_03_Defis_Kashrut_aliments_prepares_en_usine.mp3" },
+    { id: 4, title: "Certification rabbinique et exceptions alimentaires", url: "/audios/ESTHER_04_Certification_rabbinique_et_exceptions_alimentaire.mp3" },
+    { id: 5, title: "Cachérisation produits gras et laitiers", url: "/audios/ESTHER_05_Cacherisation_produits_gras_et_laitiers.mp3" },
+    { id: 6, title: "Problème lait-beurre et commerce non-cacher", url: "/audios/ESTHER_06_Probleme_lait-beurre_et_commerce_non-cacher.mp3" },
+    { id: 7, title: "Nécessité surveillance du lait non-juif", url: "/audios/ESTHER_07_Necessite_surveillance_du_lait_non-juif.mp3" },
+    { id: 8, title: "Solutions et justifications du Chalav Stam", url: "/audios/ESTHER_08_Solutions_et_justifications_du_Chalav_Stam.mp3" },
+    { id: 9, title: "Règles de surveillance et gestion d'erreurs", url: "/audios/ESTHER_09_Regles_de_surveillance_et_gestion_derreurs.mp3" },
+    { id: 10, title: "Mesures de protection et supervision du lait", url: "/audios/ESTHER_10_Mesures_de_protection_et_supervision_du_lait.mp3" },
+    { id: 11, title: "Les règles de Cacheroute du Beurre", url: "/audios/ESTHER_11_Les_regles_de_Cacheroute_du_Beurre.mp3" },
+    { id: 12, title: "Cacheroute du Fromage Dur — application générale", url: "/audios/ESTHER_12_Cacheroute_du_Fromage_Dur_et_application_generale.mp3" },
+    { id: 13, title: "Cacheroute Fromages Mous, Crème et Laitages", url: "/audios/ESTHER_13_Cacheroute_Fromages_Mous_Creme_et_Laitages.mp3" },
+    { id: 14, title: "Origine et persistance interdiction vin non-juif", url: "/audios/ESTHER_14_Origine_et_persistance_interdiction_vin_non-juif.mp3" },
+    { id: 15, title: "Raisons supplémentaires et limites des relations", url: "/audios/ESTHER_15_Raisons_supplementaires_et_limites_des_relations.mp3" },
+    { id: 16, title: "Interdictions commerce et dons de vin non-cachère", url: "/audios/ESTHER_16_Interdictions_commerce_et_dons_de_vin_non-cachere.mp3" },
+    { id: 17, title: "Vin manipulé par non-Juif — conditions et recours", url: "/audios/ESTHER_17_Vin_manipule_par_non-Juif-_conditions_recours.mp3" },
+    { id: 18, title: "Interdiction mélange vin cacher-non-cacher", url: "/audios/ESTHER_18_Interdiction_melange_vin_cacher-non-cacher.mp3" },
+    { id: 19, title: "Définition vin cacheroute produits dérivés", url: "/audios/ESTHER_19_Definition_vin_cacherout_produits_derives.mp3" },
+    { id: 20, title: "Recommandations liqueurs vin sans surveillance", url: "/audios/ESTHER_20_Recommandations_liqueurs_vin_sans_surveillance.mp3" },
+    { id: 21, title: "Critères de cacheroute des poissons", url: "/audios/ESTHER_21_Criteres_de_cacheroute_des_poissons.mp3" },
+    { id: 22, title: "Identification d'un poisson entier cacher", url: "/audios/ESTHER_22_Identification_dun_poisson_entier_cacher.mp3" },
+    { id: 23, title: "Règles pour l'achat et livraison de filets de poisson", url: "/audios/ESTHER_23_Regles_pour_lachat_et_livraison_de_filets_de_poiss.mp3" },
+    { id: 24, title: "Cacheroute des œufs de poisson (rogue)", url: "/audios/ESTHER_24_Cacheroute_des_œufs_de_poisson_rogue.mp3" },
+    { id: 25, title: "Cacheroute du poisson transformé et fumé", url: "/audios/ESTHER_25_Cacheroute_du_poisson_transforme_et_fume.mp3" },
+    { id: 26, title: "Règles générales et vérification des œufs", url: "/audios/ESTHER_26_Regles_generales_et_verification_des_œufs.mp3" },
+    { id: 27, title: "Identifier œufs cachères et non cachères par forme", url: "/audios/ESTHER_27_Identifier_œufs_cacheres_et_non_cacheres_par_forme.mp3" },
+    { id: 28, title: "Cacheroute des œufs à l'origine inconnue", url: "/audios/ESTHER_28_Cacheroute_des_œufs_a_lorigine_inconnue.mp3" },
+    { id: 29, title: "Animaux terrestres et volaille cacher", url: "/audios/ESTHER_29_Animaux_terrestres_et_volaille_casher.mp3" },
+    { id: 30, title: "Shechita, certification des bouchers et transport", url: "/audios/ESTHER_30_Shechita_certification_des_bouchers_et_transport.mp3" },
+    { id: 31, title: "Parties interdites et leur retrait de la viande", url: "/audios/ESTHER_31_Parties_interdites_et_leur_retrait_de_la_viande.mp3" },
+    { id: 32, title: "Vérification de la cashérisation de la viande salée", url: "/audios/ESTHER_32_Verification_de_la_kasherisation_de_la_viande_sal.mp3" },
+    { id: 33, title: "Principes de séparation Bassari-Halavi", url: "/audios/ESTHER_33_Principes_de_separation_Bassari-Halavi.mp3" },
+    { id: 34, title: "Séparation des outils et ustensiles de cuisine", url: "/audios/ESTHER_34_Separation_des_outils_et_ustensiles_de_cuisine.mp3" },
+    { id: 35, title: "Aménagement des éviers en cuisine cachère", url: "/audios/ESTHER_35_Amenagement_des_eviers_en_cuisine_cachere.mp3" },
+    { id: 36, title: "Gestion vaisselle, savon, égouttoirs et lavage", url: "/audios/ESTHER_36_Gestion_vaisselle_savon_egouttoirs_et_lavage_des.mp3" },
+    { id: 37, title: "Cuisson — Problème de contact", url: "/audios/ESTHER_37_Cuisson_Probleme_de_contact.mp3" },
+    { id: 38, title: "Nécessité d'éviter tout contact", url: "/audios/ESTHER_38_Necessite_deviter_tout_contact.mp3" },
+    { id: 39, title: "Solutions pour plaques de cuisson", url: "/audios/ESTHER_39_Solutions_pour_plaques_de_cuisson.mp3" },
+    { id: 40, title: "Précautions pour surfaces de cuisson", url: "/audios/ESTHER_40_Precautions_pour_surfaces_de_cuisson.mp3" },
+    { id: 41, title: "Gestion des éclaboussures en cuisine", url: "/audios/ESTHER_41_Gestion_des_eclaboussures_en_cuisine.mp3" },
+    { id: 42, title: "Gestion vapeur dans cuisine cachère", url: "/audios/ESTHER_42_Gestion_vapeur_dans_cuisine_cachere.mp3" },
+    { id: 43, title: "Gestion des odeurs en cuisine cachère", url: "/audios/ESTHER_43_Gestion_des_odeurs_en_cuisine_cachere.mp3" },
+    { id: 44, title: "Gestion des fours en cacheroute", url: "/audios/ESTHER_44_Gestion_des_fours_en_cacheroute.mp3" },
+    { id: 45, title: "Micro-ondes en cacheroute moderne", url: "/audios/ESTHER_45_Micro-ondes_en_cacheroute_moderne.mp3" },
+    { id: 46, title: "Ustensiles spéciaux et mixeurs", url: "/audios/ESTHER_46_Ustensiles_speciaux_et_mixeurs.mp3" },
+    { id: 47, title: "Intervalles viande-lait — conditions générales", url: "/audios/ESTHER_47_Intervalles_viande-lait_conditions_generales.mp3" },
+    { id: 48, title: "Conditions fin attente viande-lait", url: "/audios/ESTHER_48_Conditions_fin_attente_viande-lait.mp3" },
+    { id: 49, title: "Attente viande-lait pour enfants et malades", url: "/audios/ESTHER_49_Attente_viande-lait_pour_enfants_et_malades.mp3" },
+    { id: 50, title: "Avant viande — que vérifier", url: "/audios/ESTHER_50_Avant_viande_que_verifier.mp3" },
+    { id: 51, title: "Avant laitage — que vérifier", url: "/audios/ESTHER_51_Avant_laitage_que_verifier.mp3" },
+    { id: 52, title: "Poisson et viande — dangers et précautions", url: "/audios/ESTHER_52_Poisson_et_viande_dangers_et_precautions.mp3" },
+    { id: 53, title: "Consommation interdite de sang — détails", url: "/audios/ESTHER_53_Consommation_interdite_de_sang_details.mp3" },
+    { id: 54, title: "Sang dans les œufs et viandes — que faire", url: "/audios/ESTHER_54_Sang_dans_les_oeufs_et_viandes_que_faire.mp3" },
+    { id: 55, title: "Problèmes alimentaires — insectes et vers", url: "/audios/ESTHER_55_Problemes_alimentaires_insectes_et_vers.mp3" },
+    { id: 56, title: "Vérification et nettoyage aliments infestables", url: "/audios/ESTHER_56_Verification_et_nettoyage_aliments_infestables.mp3" },
+    { id: 57, title: "Aliments Taref — Interdiction de profit et complexité", url: "/audios/ESTHER_57_Aliments_Taref_Interdiction_de_profit_et_complexi.mp3" },
+    { id: 58, title: "Conséquences ustensile laitier dans plat carné", url: "/audios/ESTHER_58_Consequences_ustensile_laitier_dans_plat_carne.mp3" },
+    { id: 59, title: "Annulation erreur cacher — 1 pour 60", url: "/audios/ESTHER_59_Annulation_erreur_cacher_1_pour_60.mp3" },
+    { id: 60, title: "Différence Bitul BeShishim et Min BeMino", url: "/audios/ESTHER_60_Difference_Bitul_BeShishim_et_Min_BeMino.mp3" },
+    { id: 61, title: "Expertise requise situations Noten Taam", url: "/audios/ESTHER_61_Expertise_requise_situations_Noten_Taam.mp3" },
+    { id: 62, title: "Cachérisation ustensiles — méthodes et techniques", url: "/audios/ESTHER_62_Cacherisation_ustensiles_methodes_et_techniques.mp3" },
+    { id: 63, title: "Cachérisation par ébullition — procédure complète", url: "/audios/ESTHER_63_Cacherisation_par_ebullition_procedure_complete.mp3" },
+    { id: 64, title: "Cachérisation avancée — chalumeau et cuisson directe", url: "/audios/ESTHER_64_Cacherisation_avancee_chalumeau_et_cuisson_directe.mp3" },
+    { id: 65, title: "Impact du goût résiduel sur les ustensiles", url: "/audios/ESTHER_65_Impact_du_gout_residuel_sur_les_ustensiles.mp3" },
+    { id: 66, title: "Matériaux d'ustensiles et cachérisation possible", url: "/audios/ESTHER_66_Materiaux_dustensiles_et_cacherisation_possible.mp3" },
+    { id: 67, title: "Quand contacter un rabbin pour la cacheroute", url: "/audios/ESTHER_67_Quand_contacter_un_rabbin_pour_la_cacheroute.mp3" },
+    { id: 68, title: "Cuisson par un non-juif — Bishoul Akum", url: "/audios/ESTHER_68_Cuisson_par_un_non-juif_Bishoul_Akum.mp3" },
+    { id: 69, title: "Bishoul Akum — différentes approches", url: "/audios/ESTHER_69_Bishoul_Akum_differentes_approches.mp3" },
+    { id: 70, title: "Cacheroute chez le traiteur et au restaurant", url: "/audios/ESTHER_70_Cacheroute_chez_le_traiteur_et_au_restaurant.mp3" },
+    { id: 71, title: "Cuisiner pendant Shabbat — les principes", url: "/audios/ESTHER_71_Cuisiner_pendant_Shabbat_les_principes.mp3" },
+    { id: 72, title: "Immersion des ustensiles neufs — Tevilat Kelim", url: "/audios/ESTHER_72_Immersion_des_ustensiles_neufs_Tevilat_Kelim.mp3" },
+    { id: 73, title: "Quels ustensiles nécessitent la Tevila", url: "/audios/ESTHER_73_Quels_ustensiles_necessitent_la_Tevila.mp3" },
+    { id: 74, title: "Ustensiles nécessitant bénédiction — liste", url: "/audios/ESTHER_74_Ustensiles_necessitant_benediction_liste.mp3" },
+    { id: 75, title: "Ustensiles sans bénédiction — liste", url: "/audios/ESTHER_75_Ustensiles_sans_benediction_liste.mp3" },
+    { id: 76, title: "Procédure complète de l'immersion au Mikvé", url: "/audios/ESTHER_76_Procedure_complete_de_limmersion_au_Mikve.mp3" },
+    { id: 77, title: "Aliments d'un magasin non-cacher — précautions", url: "/audios/ESTHER_77_Aliments_dun_magasin_non-cacher_precautions.mp3" },
+    { id: 78, title: "Aliments surveillés et non surveillés — tableau", url: "/audios/ESTHER_78_Aliments_surveilles_et_non_surveilles_tableau.mp3" },
+    { id: 79, title: "Aliments achetables sans surveillance rabbinique", url: "/audios/ESTHER_79_Aliments_achetables_sans_surveillance_rabbinique.mp3" },
+    { id: 80, title: "Aliments nécessitant surveillance pour Pessah", url: "/audios/ESTHER_80_Aliments_necessitant_surveillance_pour_Pessah.mp3" },
+    { id: 81, title: "Aliments avec inspection obligatoire — Catégories 1", url: "/audios/ESTHER_81_Aliments_avec_inspection_obligatoire_Categories_1.mp3" },
+    { id: 82, title: "Aliments avec inspection obligatoire — Catégories 2", url: "/audios/ESTHER_82_Aliments_avec_inspection_obligatoire_Categories_2.mp3" },
   ],
-  "cours-quotidiens": [
-    {
-      id: 1,
-      title: "Hitbodédout - Cours 1",
-      duration: "25:00",
-      description: "Introduction à la méditation solitaire",
-    },
-    {
-      id: 2,
-      title: "Hitbodédout - Cours 2",
-      duration: "28:30",
-      description: "Parler à Hashem comme à un ami",
-    },
-    {
-      id: 3,
-      title: "Émouna - La Foi",
-      duration: "32:15",
-      description: "Renforcer sa foi au quotidien",
-    },
-    {
-      id: 4,
-      title: "Bitahon - La Confiance",
-      duration: "30:00",
-      description: "Avoir confiance en Hashem",
-    },
-    {
-      id: 5,
-      title: "Simha - La Joie",
-      duration: "27:45",
-      description: "Être joyeux malgré les épreuves",
-    },
-    {
-      id: 6,
-      title: "Tshouva - Le Retour",
-      duration: "35:20",
-      description: "Comment faire téchouva chaque jour",
-    },
-  ],
-  "histoires-rabbi-nachman": [
-    {
-      id: 1,
-      title: "Le Fils du Roi Perdu",
-      duration: "1:15:00",
-      description: "L'histoire du prince qui cherche la princesse",
-    },
-    {
-      id: 2,
-      title: "Les Sept Mendiants",
-      duration: "2:30:00",
-      description: "Le conte le plus profond et mystérieux",
-    },
-    {
-      id: 3,
-      title: "Le Maître de Prière",
-      duration: "1:45:00",
-      description: "Histoire du guide spirituel",
-    },
-    {
-      id: 4,
-      title: "La Princesse Disparue",
-      duration: "58:00",
-      description: "La quête de la rédemption",
-    },
-    {
-      id: 5,
-      title: "Le Sage et le Simple",
-      duration: "42:00",
-      description: "Sagesse vs simplicité",
-    },
-  ],
-  tefilot: [
-    {
-      id: 1,
-      title: "Tikoun Haklali Complet",
-      duration: "25:00",
-      description: "Les 10 psaumes du remède général",
-    },
-    {
-      id: 2,
-      title: "Tikoun Haklali - Lent",
-      duration: "35:00",
-      description: "Version lente pour apprendre",
-    },
-    {
-      id: 3,
-      title: "Prière avant l'étude",
-      duration: "5:00",
-      description: "Préparation spirituelle",
-    },
-    {
-      id: 4,
-      title: "Kriat Shma al HaMita",
-      duration: "12:00",
-      description: "Lecture du Shma au coucher",
-    },
-    {
-      id: 5,
-      title: "Téhilim 119",
-      duration: "45:00",
-      description: "Le plus long chapitre des Psaumes",
-    },
-  ],
-  "cacherout": [
-    { id: 101, title: "Le pain cuit par un non-juif (Pas Akum)", description: "Halakha sur le pain: les conditions pour consommer du pain non-juif", duration: "~5 min", url: "/audios/AUD-20260318-WA0023.mp3" },
-    { id: 102, title: "Gâteaux, biscuits et cacheroute", description: "Les produits de boulangerie et leur statut halakhique", duration: "~5 min", url: "/audios/AUD-20260318-WA0024.mp3" },
-    { id: 103, title: "Chocolats, bonbons et commerce tarèf", description: "La cacheroute des confiseries et l'interdiction du commerce d'aliments tarèf", duration: "~5 min", url: "/audios/AUD-20260318-WA0025.mp3" },
-    { id: 104, title: "Le lait — Chalav Yisrael", description: "Les lois de la surveillance de la traite et du lait cacher", duration: "~8 min", url: "/audios/AUD-20260318-WA0026.mp3" },
-    { id: 105, title: "Surveillance de la traite", description: "Comment superviser la traite du lait et le stockage", duration: "~8 min", url: "/audios/AUD-20260318-WA0027.mp3" },
-    { id: 106, title: "Beurre et fromage", description: "Les lois du beurre, des fromages durs et mous", duration: "~5 min", url: "/audios/AUD-20260318-WA0028.mp3" },
-    { id: 107, title: "Le vin des non-juifs", description: "Pourquoi le vin non-juif est interdit et les liens avec les mariages mixtes", duration: "~5 min", url: "/audios/AUD-20260318-WA0029.mp3" },
-    { id: 108, title: "Vin cacher manipulé par un non-juif", description: "Les 7 cas où le vin cacher devient interdit", duration: "~5 min", url: "/audios/AUD-20260318-WA0030.mp3" },
-    { id: 109, title: "Les poissons — reconnaître un poisson cacher", description: "Écailles, filets et œufs de poisson: les règles", duration: "~5 min", url: "/audios/AUD-20260318-WA0031.mp3" },
-    { id: 110, title: "Les oeufs", description: "Reconnaître un oeuf cacher et les règles d'achat", duration: "~5 min", url: "/audios/AUD-20260318-WA0032.mp3" },
-    { id: 111, title: "Viande cachère et volaille", description: "Les animaux cachers, la shechita et la boucherie", duration: "~5 min", url: "/audios/AUD-20260318-WA0033.mp3" },
-    { id: 112, title: "Le salage de la viande", description: "La cachérisation et les lois du sang", duration: "~5 min", url: "/audios/AUD-20260318-WA0034.mp3" },
-    { id: 113, title: "Organisation de la cuisine", description: "Séparation bassari/halavi: ustensiles, éviers et torchons", duration: "~8 min", url: "/audios/AUD-20260318-WA0038.mp3" },
-    { id: 114, title: "Immersion des ustensiles (Tevilat Kelim)", description: "Les règles d'immersion au Mikvé avant utilisation", duration: "~8 min", url: "/audios/AUD-20260318-WA0040.mp3" },
+  "emounah": [
+    // === 41 COURS EMOUNAH & SPIRITUALITÉ par Esther Ifrah ===
+    { id: 83, title: "Toute souffrance a une raison divine", url: "/audios/ESTHER_83_Toute_souffrance_a_une_raison_divine.mp3" },
+    { id: 84, title: "Souffrance comme outil de purification de l'âme", url: "/audios/ESTHER_84_Souffrance_comme_outil_de_purification_de_lame.mp3" },
+    { id: 85, title: "Les souffrances protègent du Guéhinam", url: "/audios/ESTHER_85_Les_souffrances_protegent_du_Gehinam.mp3" },
+    { id: 86, title: "Comment traverser l'épreuve avec foi", url: "/audios/ESTHER_86_Comment_traverser_lepreuve_avec_foi.mp3" },
+    { id: 87, title: "Souffrances d'amour — concept et mérite", url: "/audios/ESTHER_87_Souffrances_damour_concept_et_merite.mp3" },
+    { id: 88, title: "Acceptation des souffrances d'amour", url: "/audios/ESTHER_88_Acceptation_des_souffrances_damour.mp3" },
+    { id: 89, title: "Limites de souffrance — quand prier", url: "/audios/ESTHER_89_Limites_de_souffrance_quand_prier.mp3" },
+    { id: 90, title: "Souffrances du juste et justice divine", url: "/audios/ESTHER_90_Souffrances_du_juste_et_justice_divine.mp3" },
+    { id: 91, title: "Méchants prospères — pourquoi", url: "/audios/ESTHER_91_Mechants_prosperes_pourquoi.mp3" },
+    { id: 92, title: "Tout est orchestré — Hashgaha Pratit", url: "/audios/ESTHER_92_Tout_est_orchestre_Hashgaha_Pratit.mp3" },
+    { id: 93, title: "Aucun mal ne vient de Hachem", url: "/audios/ESTHER_93_Aucun_mal_ne_vient_de_Hachem.mp3" },
+    { id: 94, title: "Comment le mal apparent mène au bien", url: "/audios/ESTHER_94_Comment_le_mal_apparent_mene_au_bien.mp3" },
+    { id: 95, title: "Exemples bibliques du bien caché", url: "/audios/ESTHER_95_Exemples_bibliques_du_bien_cache.mp3" },
+    { id: 96, title: "Œufs froids ou cuits — impacts ustensiles et casseroles", url: "/audios/ESTHER_96_Œufs_froids_ou_cuits_impacts_ustensiles_et_cassero.mp3" },
+    { id: 97, title: "Accepter les souffrances avec joie — bonheur", url: "/audios/ESTHER_97_Accepter_les_souffrances_avec_joie_bonheur.mp3" },
+    { id: 98, title: "Souffrances causées par nos fautes", url: "/audios/ESTHER_98_Souffrances_causees_par_nos_fautes.mp3" },
+    { id: 99, title: "Réflexion sur soi après épreuve", url: "/audios/ESTHER_99_Reflexion_sur_soi_apres_epreuve.mp3" },
+    { id: 100, title: "Souffrances et prière — guide pratique", url: "/audios/ESTHER_100_Souffrances_et_priere_guide_pratique.mp3" },
+    { id: 101, title: "Emounah simple — fondements", url: "/audios/ESTHER_101_Emounah_simple_fondements.mp3" },
+    { id: 102, title: "Emounah et intellect — harmonie", url: "/audios/ESTHER_102_Emounah_et_intellect_harmonie.mp3" },
+    { id: 103, title: "Foi en Hachem malgré les doutes", url: "/audios/ESTHER_103_Foi_en_Hachem_malgre_les_doutes.mp3" },
+    { id: 104, title: "Le monde reflète la grandeur d'Hachem", url: "/audios/ESTHER_104_Le_monde_reflete_la_grandeur_dHachem.mp3" },
+    { id: 105, title: "Emounah quotidienne — exercices pratiques", url: "/audios/ESTHER_105_Emounah_quotidienne_exercices_pratiques.mp3" },
+    { id: 106, title: "Bitahon — la confiance active en Hachem", url: "/audios/ESTHER_106_Bitahon_la_confiance_active_en_Hachem.mp3" },
+    { id: 107, title: "Bitahon dans la parnassa (subsistance)", url: "/audios/ESTHER_107_Bitahon_dans_la_parnassa_subsistance.mp3" },
+    { id: 108, title: "Prière et Hitbodédout — parler à Hachem", url: "/audios/ESTHER_108_Priere_et_Hitbodedout_parler_a_Hachem.mp3" },
+    { id: 109, title: "Gratitude quotidienne — Modé Ani", url: "/audios/ESTHER_109_Gratitude_quotidienne_Mode_Ani.mp3" },
+    { id: 110, title: "Étude de Torah avec joie", url: "/audios/ESTHER_110_Etude_de_Torah_avec_joie.mp3" },
+    { id: 111, title: "Mitsvot avec enthousiasme — Zérizout", url: "/audios/ESTHER_111_Mitsvot_avec_enthousiasme_Zerizout.mp3" },
+    { id: 112, title: "Sanctifier Hachem au quotidien", url: "/audios/ESTHER_112_Sanctifier_Hachem_au_quotidien.mp3" },
+    { id: 113, title: "Téchouva — retour sincère", url: "/audios/ESTHER_113_Techouva_retour_sincere.mp3" },
+    { id: 114, title: "Humilité — clé de la grandeur", url: "/audios/ESTHER_114_Humilite_cle_de_la_grandeur.mp3" },
+    { id: 115, title: "Ahavat Israël — amour du prochain", url: "/audios/ESTHER_115_Ahavat_Israel_amour_du_prochain.mp3" },
+    { id: 116, title: "Paix dans le foyer — Shalom Bayit", url: "/audios/ESTHER_116_Paix_dans_le_foyer_Shalom_Bayit.mp3" },
+    { id: 117, title: "Éducation des enfants avec douceur", url: "/audios/ESTHER_117_Education_des_enfants_avec_douceur.mp3" },
+    { id: 118, title: "Tsniout — la pudeur comme force", url: "/audios/ESTHER_118_Tsniout_la_pudeur_comme_force.mp3" },
+    { id: 119, title: "Shabbat — îlot de paix dans la semaine", url: "/audios/ESTHER_119_Shabbat_ilot_de_paix_dans_la_semaine.mp3" },
+    { id: 120, title: "Forces du Yetser Hara — comment résister", url: "/audios/ESTHER_120_Forces_du_Yetser_Hara_comment_resister.mp3" },
+    { id: 121, title: "Daat parfait — Tout est pour le bien", url: "/audios/ESTHER_121_Daat_parfait_Tout_est_pour_le_bien.mp3" },
+    { id: 122, title: "Ère messianique — Seul le bien perçu", url: "/audios/ESTHER_122_Ère_messianique_Seul_le_bien_percu.mp3" },
+    { id: 123, title: "Conclusion — Mériter Emounah Shéléma", url: "/audios/ESTHER_123_Conclusion_Meriter_Emunah_Shelema.mp3" },
   ],
 };
+
 
 // ==========================================
 // TÉMOIGNAGES
@@ -563,7 +493,6 @@ const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, 'db/catalog.json
 
 // Auth: Inscription
 app.post("/api/auth/signup", async (req, res) => {
-  if (rateLimit(req.ip + ':signup', 5)) return res.status(429).json({error: 'Trop de requêtes'});
   if (!supabase)
     return res.status(503).json({ error: "Supabase not configured" });
 
@@ -588,7 +517,7 @@ app.post("/api/auth/signup", async (req, res) => {
       <h1 style="color:#D4AF37;">Bienvenue, ${fullName || email} !</h1>
       <p style="margin:16px 0;">Votre compte est créé sur <strong>Breslev by Esther Ifrah</strong>.</p>
       <p style="color:#aaa;">Explorez notre catalogue de livres de Rabbi Nachman de Breslev en français.</p>
-      <a href="https://breslev-books-testing.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
+      <a href="https://breslev-books-preview.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
       <p style="color:#555;font-size:0.85rem;margin-top:30px;border-top:1px solid #333;padding-top:16px;">Na Nach Nachma Nachman MeUman</p>
     </div>`
   });
@@ -596,7 +525,6 @@ app.post("/api/auth/signup", async (req, res) => {
 
 // Auth: Connexion
 app.post("/api/auth/login", async (req, res) => {
-  if (rateLimit(req.ip + ':login', 10)) return res.status(429).json({error: 'Trop de requêtes'});
   if (!supabase)
     return res.status(503).json({ error: "Supabase not configured" });
 
@@ -616,23 +544,6 @@ app.post("/api/create-payment-intent", async (req, res) => {
   if (!stripe) return res.status(503).json({ error: "Stripe not configured" });
 
   const { amount, currency, paymentMethodId, cart, shipping } = req.body;
-
-  // Server-side validation: verify amount matches catalog
-  if (!amount || amount < 100 || amount > 100000) {
-    return res.status(400).json({ error: "Montant invalide" });
-  }
-  if (cart && Array.isArray(cart)) {
-    const expectedTotal = cart.reduce((sum, item) => {
-      const catalogItem = catalog.find(p => p.id == item.id || p.slug === item.slug);
-      if (!catalogItem) return sum;
-      const price = Math.round((catalogItem.price_physical || 0) * 100);
-      return sum + price * (item.quantity || 1);
-    }, 0);
-    if (expectedTotal > 0 && Math.abs(amount - expectedTotal) > 100) {
-      console.warn(`[SECURITY] Payment amount mismatch: received ${amount}, expected ${expectedTotal}`);
-      return res.status(400).json({ error: "Montant ne correspond pas au panier" });
-    }
-  }
 
   try {
     const params = {
@@ -657,7 +568,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.error("Stripe error:", error);
-    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -668,8 +579,8 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
   const { plan, email, user_id } = req.body; // plan: 'monthly' ou 'annual'
 
   const prices = {
-    monthly: { amount: 9900, trial_days: 7, name: "Abonnement Mensuel" },
-    annual: { amount: 99000, trial_days: 14, name: "Abonnement Annuel" },
+    monthly: { amount: 2900, trial_days: 7, name: "Abonnement Mensuel" },
+    annual: { amount: 27900, trial_days: 14, name: "Abonnement Annuel" },
   };
 
   const selectedPlan = prices[plan];
@@ -683,7 +594,7 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "ils",
+            currency: "eur",
             product_data: {
               name: selectedPlan.name,
               description:
@@ -715,7 +626,7 @@ app.post("/api/create-subscription-checkout", async (req, res) => {
     res.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error("Stripe subscription error:", error);
-    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -727,18 +638,6 @@ app.post("/api/checkout", async (req, res) => {
 
   if (!items || !items.length) {
     return res.status(400).json({ error: "Panier vide" });
-  }
-
-  // Server-side price validation against catalog
-  for (const item of items) {
-    const catalogItem = catalog.find(p => p.id == item.id || p.slug === item.slug);
-    if (catalogItem) {
-      const catalogPrice = catalogItem.price_physical || 0;
-      if (Math.abs(item.price - catalogPrice) > 1) {
-        console.warn(`[SECURITY] Price mismatch for ${item.id}: received ${item.price}, catalog ${catalogPrice}`);
-        return res.status(400).json({ error: "Prix invalide détecté" });
-      }
-    }
   }
 
   try {
@@ -796,7 +695,7 @@ app.post("/api/connect/onboard", async (req, res) => {
       email: "hayil.fr@gmail.com",
       capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
       business_type: "individual",
-      business_profile: { name: "Breslev by Esther Ifrah", url: "https://breslev-books-testing.vercel.app" },
+      business_profile: { name: "Breslev by Esther Ifrah", url: "https://breslev-books-preview.vercel.app" },
     });
 
     // Create onboarding link
@@ -811,7 +710,7 @@ app.post("/api/connect/onboard", async (req, res) => {
     res.json({ accountId: account.id, onboardingUrl: accountLink.url });
   } catch (error) {
     console.error("Connect error:", error);
-    res.status(500).json({ error: "Erreur de paiement. Veuillez réessayer." });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -869,7 +768,7 @@ app.get("/api/check-subscription", async (req, res) => {
 // ==========================================
 
 function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
-  const siteUrl = "https://breslev-books-testing.vercel.app";
+  const siteUrl = "https://breslev-books-preview.vercel.app";
   const defaultDescription =
     "Livres et enseignements de Rabbi Nachman de Breslev traduits en francais par Esther Ifrah. Likoutey Moharan, Likoutey Tefilot et plus de 30 ouvrages authentiques.";
   const description = options.description || defaultDescription;
@@ -920,10 +819,13 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <link rel="dns-prefetch" href="https://js.stripe.com">
       <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-      <!-- Google Fonts — 3 fonts only: Cinzel (headings), Cormorant Garamond (body), Frank Ruhl Libre (Hebrew) -->
+      <!-- Google Fonts — preconnect + preload critical, lazy load rest -->
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap">
+      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+      <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
 
       <!-- JSON-LD Structured Data for Google -->
       <script type="application/ld+json">
@@ -950,93 +852,15 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       </script>
       <link rel="stylesheet" href="/breslev-premium.css">
       <style>
-        :root {
-          --cream: #FAFAF9;
-          --navy: #2C3E50;
-          --gold: #D4AF37;
-        }
-        body { background-color: var(--cream); color: var(--navy); }
-        
-        /* Navbar - Header plus leger (#FAFAF9) */
-        .navbar {
-          background-color: var(--cream) !important;
-          border-bottom: 1px solid rgba(44, 62, 80, 0.1) !important;
-          box-shadow: 0 2px 15px rgba(0,0,0,0.03);
-        }
-        .navbar__logo, .navbar__nav-link, .navbar__actions a {
-          color: var(--navy) !important;
-          font-weight: 500;
-        }
-        .mobile-menu-toggle span { background-color: var(--navy) !important; }
-        .navbar__nav-link:hover { color: var(--gold) !important; }
-
-        /* Desktop nav compact */
-        @media (min-width: 769px) {
-          .navbar__nav { gap: 1rem !important; font-size: 0.85rem !important; }
-          .navbar__nav-link { padding: 0.5rem 0.6rem !important; white-space: nowrap; }
-        }
-        
-        /* Book covers: always fit inside frame, never truncated */
-        .book-cover, .book-card img, .book-cover-container img {
-          object-fit: contain !important;
-          object-position: center !important;
-          width: 100% !important;
-          height: auto !important;
-          max-height: 280px;
-          background: transparent;
-        }
-        .book-cover-container {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          background: #FAFAF9 !important;
-          min-height: 240px;
-          overflow: hidden;
-          border-radius: 8px 8px 0 0;
-          padding: 1.5rem;
-        }
-
-        /* Hero: plus lisible */
-        .hero-overlay {
-          background: linear-gradient(to bottom, rgba(44,62,80,0.6), rgba(44,62,80,0.85)) !important;
-        }
+        /* Hero card: fond bleu-marine + bouton doré (demande David 16 mars) */
         .hero-content {
-          background: transparent !important;
-          border: none !important;
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 2rem 1rem !important;
-          box-shadow: none !important;
-          text-align: center;
+          background: rgba(15, 30, 80, 0.95) !important;
+          border: 2px solid #d4af37 !important;
         }
-        .hero-content p { color: #FAFAF9 !important; font-size: 1.25rem !important; }
-        .hero-title {
-          font-size: clamp(2.5rem, 6vw, 4rem) !important;
-          color: #FAFAF9 !important;
-          text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-          letter-spacing: 0.05em;
-        }
-        
-        /* Catalogue epure */
-        .book-card {
-          border: 1px solid rgba(44,62,80,0.08) !important;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.03) !important;
-          background: #FFFFFF !important;
-          border-radius: 12px;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .book-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 12px 25px rgba(44,62,80,0.08) !important;
-        }
-        .book-info { padding: 1.2rem !important; text-align: center; }
-        .book-title { font-size: 1.05rem !important; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
-        .book-author { font-size: 0.8rem !important; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; }
-        .book-price { font-size: 1.1rem !important; color: var(--gold); font-weight: 600; }
-        
+        .hero-content p { color: #ffffff !important; }
         .hero-content .btn-primary {
-          background: #D4AF37 !important;
-          color: #2C3E50 !important;
+          background: #d4af37 !important;
+          color: #1e3a8a !important;
           font-weight: 600 !important;
         }
         .hero-content .btn-primary:hover {
@@ -1052,9 +876,9 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
       <noscript><link rel="stylesheet" href="/premium-upgrades.css"><link rel="stylesheet" href="/checkout-styles.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
       <!-- Stripe Integration — loaded async, only init on payment pages -->
-      <!-- Stripe removed - PayPal only -->
+      <script src="https://js.stripe.com/v3/" async></script>
       <script>
-        window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || ''}";
+        window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || 'pk_live_JbJRtjb23Aujij7TTHOft6jR008MOj8TLY'}";
       </script>
 
       <script src="/cart-system.js" defer></script>
@@ -1069,30 +893,30 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
             <span></span>
             <span></span>
           </button>
-          <a href="/" class="navbar__logo" style="white-space: nowrap;"><i class="fas fa-book-open"></i> BRESLEV <span style="font-size: 0.65em; font-weight: 400; opacity: 0.9;">by Esther Ifrah</span></a>
+          <a href="/" class="navbar__logo" style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="background: linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37); width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-book-open" style="color: #1a1a2e; font-size: 1.1rem;"></i></span>
+          <span style="font-weight: 800; letter-spacing: 0.08em;">BRESLEV</span>
+          <span style="font-size: 0.6em; font-weight: 300; opacity: 0.7; margin-left: -0.3rem;">by Esther Ifrah</span>
+        </a>
           <ul class="navbar__nav" id="navMenu">
             <li><a href="/" class="navbar__nav-link">Accueil</a></li>
-            <li><a href="/collections/all" class="navbar__nav-link" style="font-weight:700;color:var(--gold)!important;letter-spacing:0.1em;">Bibliothèque</a></li>
+            <li><a href="/collections/all" class="navbar__nav-link" style="font-weight: 700; color: var(--gold) !important; letter-spacing: 0.15em;">Bibliothèque</a></li>
             <li><a href="/audio" class="navbar__nav-link"><i class="fas fa-headphones"></i> Audio</a></li>
-            <li><a href="/cours" class="navbar__nav-link"><i class="fas fa-graduation-cap"></i> Cours</a></li>
+            <li><a href="/cours" class="navbar__nav-link"><i class="fas fa-graduation-cap"></i> Cours du Jour</a></li>
             <li><a href="/etudes" class="navbar__nav-link"><i class="fas fa-star-of-david"></i> Études</a></li>
-            <li><a href="/voyages" class="navbar__nav-link"><i class="fas fa-plane"></i> Voyages</a></li>
-            <li><a href="/a-propos" class="navbar__nav-link">Infos</a></li>
-            <li><a href="/pages/abonnement" class="navbar__nav-link">Abonnement</a></li>
-            <li><a href="/account" class="navbar__nav-link"><i class="fas fa-user"></i> Compte</a></li>
+            <li><a href="/a-propos" class="navbar__nav-link">À propos</a></li>
             <li><a href="/contact" class="navbar__nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+            <li><a href="/search" class="navbar__nav-link"><i class="fas fa-search"></i></a></li>
           </ul>
           <div class="navbar__actions">
-            <a href="/search" class="navbar__icon-btn" aria-label="Rechercher" style="color: var(--navy); font-size: 1.1rem;">
-              <i class="fas fa-search"></i>
-            </a>
-            <a href="/cart" class="btn btn-outline" style="border:none; position: relative; color: var(--navy);">
-              <i class="fas fa-shopping-cart" style="font-size: 1.3rem;"></i>
-              <span class="cart-badge" style="display: none;">0</span>
+            <a href="/cart" class="btn btn-outline" style="border: 1.5px solid rgba(212,175,55,0.4); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.3s ease;">
+              <i class="fas fa-shopping-cart" style="font-size: 1.1rem; color: #D4AF37;"></i>
+              <span class="cart-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: linear-gradient(135deg, #D4AF37, #F5E6A3); color: #1a1a2e; font-size: 0.65rem; font-weight: 700; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">0</span>
             </a>
           </div>
         </div>
       </nav>
+      <div style="height: 2px; background: linear-gradient(90deg, transparent, #D4AF37, #F5E6A3, #D4AF37, transparent);"></div>
       <main style="padding-top: 80px; min-height: 100vh;">${content}</main>
       <script>
         // ===== 3D TILT EFFECT ON BOOK CARDS =====
@@ -1275,7 +1099,6 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
                </ul>
                <div style="margin-top:1.5rem;">
                  <p style="font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.6;">Traductions authentiques des<br>enseignements de Rabbi Nachman</p>
-                 <p style="font-size:0.78rem; margin-top:0.8rem;"><a href="https://wa.me/972585148500" style="color:rgba(255,255,255,0.6); text-decoration:none;">📞 +972 58-514-8500</a></p>
                </div>
              </div>
           </div>
@@ -1300,11 +1123,11 @@ app.get("/", (req, res) => {
       <div class="hero-overlay"></div>
       <div class="hero-content fade-in">
         <h1 class="hero-title text-gold-animated" style="font-family: var(--font-cinzel); font-weight: 700; text-transform: uppercase;">Breslev Esther IFRAH</h1>
-        <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 2.5rem; font-family: var(--font-cormorant); font-style: italic; font-weight: 600; color: #FAFAF9; letter-spacing: 0.02em;">Traductions authentiques des enseignements de Rabbi Nachman</p>
+        <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-bottom: 2.5rem; font-family: var(--font-cormorant); font-style: italic; font-weight: 600; color: rgba(253, 230, 138, 0.9); letter-spacing: 0.02em;">Traductions authentiques des enseignements de Rabbi Nachman</p>
         <div style="display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; align-items: center;">
-          <a href="/collections/all" class="btn" style="padding: 1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; background: #D4AF37; color: #2C3E50; border: none; font-family: var(--font-sans); text-decoration: none; border-radius: 4px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">Explorer les Livres</a>
-          <button onclick="document.getElementById('heroAudio').paused ? document.getElementById('heroAudio').play() : document.getElementById('heroAudio').pause(); this.querySelector('i').classList.toggle('fa-play'); this.querySelector('i').classList.toggle('fa-pause');" style="padding: 1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; background: rgba(44,62,80,0.6); border: 1px solid #FAFAF9; color: #FAFAF9; cursor: pointer; font-family: var(--font-sans); border-radius: 4px; transition: all 0.3s ease; backdrop-filter: blur(4px);">
-            <i class="fas fa-play" style="margin-right: 8px;"></i> Écouter Esther
+          <a href="/collections/all" class="btn" style="padding: 1rem 2.5rem; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; background: #D4AF37; color: #0F172A; border: none; font-family: var(--font-sans); text-decoration: none; transition: all 0.3s ease;">Explorer les Livres</a>
+          <button onclick="document.getElementById('heroAudio').paused ? document.getElementById('heroAudio').play() : document.getElementById('heroAudio').pause(); this.querySelector('i').classList.toggle('fa-play'); this.querySelector('i').classList.toggle('fa-pause');" style="padding: 1rem 2.5rem; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; background: transparent; border: 1px solid rgba(212,175,55,0.5); color: #E8D5A3; cursor: pointer; font-family: var(--font-sans); transition: all 0.3s ease;">
+            <i class="fas fa-play"></i> Écouter Esther
           </button>
           <audio id="heroAudio" preload="none" src="/audios/esther-welcome.mp3"></audio>
         </div>
@@ -1379,10 +1202,7 @@ app.get("/", (req, res) => {
       <div class="book-card fade-in hover-lift glare-card" style="${cardOpacity}">
         <a href="${isIndisponible ? '#' : '/products/' + product.id}" style="text-decoration: none; color: inherit; ${isIndisponible ? 'cursor: not-allowed;' : ''}">
           <div class="book-cover-container">
-            ${product.cover_video ?
-              '<video autoplay loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;' + imgFilter + '"><source src="' + product.cover_video + '" type="video/mp4"></video>' :
-              '<img src="' + product.cover_image + '" alt="' + product.title_fr + '" class="book-cover" loading="lazy" style="' + imgFilter + '">'
-            }
+            <img src="${product.cover_image}" alt="${product.title_fr}" class="book-cover" loading="lazy" style="${imgFilter}">
             ${indisponibleBadge}
             ${product.fliphtml5_url ? '<div class="badge-digital">📖 LECTURE EN LIGNE</div>' : ""}
           </div>
@@ -1391,7 +1211,7 @@ app.get("/", (req, res) => {
               <div class="book-author">${product.author}</div>
               <h3 class="book-title">${product.title_fr}</h3>
             </div>
-            <div class="book-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
+            <div class="book-price">${product.price_eur || product.price_physical}€</div>
           </div>
         </a>
         <div style="padding: 0 1.5rem 1.5rem;">
@@ -1401,9 +1221,9 @@ app.get("/", (req, res) => {
             data-product-id="${product.id}"
             data-product-title="${product.title_fr}"
             data-product-author="${product.author}"
-            data-product-price="${product.price_physical}"
+            data-product-price="${product.price_eur || product.price_physical}"
             data-product-image="${product.cover_image}"`}
-            style="width:100%; padding: 0.9rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid currentColor' : '1px solid var(--navy)'}; color: ${isIndisponible ? '#888' : 'var(--navy)'}; background: transparent;">
+            style="width:100%; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid #dcdcdc' : '1px solid var(--color-gold)'}; color: ${isIndisponible ? '#888' : 'var(--color-gold)'}; background: transparent;">
             <i class="fas ${isIndisponible ? 'fa-times' : 'fa-shopping-cart'}"></i> ${isIndisponible ? 'Indisponible' : 'Ajouter au panier'}
           </button>
         </div>
@@ -1419,8 +1239,7 @@ app.get("/", (req, res) => {
     if (audioList.length > 0) {
       const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
       // Prefer Thora OGG courses for homepage feature
-      const oggCours = audioList.filter(c => c.url && c.url.includes('.ogg'));
-      const featuredList = oggCours.length > 0 ? oggCours : audioList;
+      const featuredList = audioList;
       const todayIndex = dayOfYear % featuredList.length;
       const dernierCours = featuredList[todayIndex];
       coursJourHTML = `
@@ -1476,32 +1295,6 @@ app.get("/", (req, res) => {
           <a href="/audio" class="btn btn-primary hover-glow" style="background: var(--color-gold); color: #1E3A8A; padding: 1rem 2.5rem; font-size: 1.1rem;">
             <i class="fas fa-play-circle"></i> Explorer tous les cours audio
           </a>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // Section Vidéos Avatar - Esther Enseigne
-  const videoAvatarHTML = `
-    <section style="background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); padding: 4rem 0; color: white;">
-      <div class="container">
-        <div class="text-center mb-8">
-          <span style="background: rgba(212, 175, 55, 0.2); color: var(--color-gold); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">🎬 ESTHER ENSEIGNE</span>
-          <h2 class="text-gold-animated" style="margin-top: 1rem; font-size: 2.5rem;">Cours Vidéo</h2>
-          <p style="color: rgba(255,255,255,0.8); max-width: 600px; margin: 1rem auto;">Esther Ifrah vous enseigne la cacheroute et l'émounah en vidéo</p>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto;">
-          ${[
-            {t:"L'importance de la cacheroute",f:"L-importance-de-la-cacheroute"},
-            {t:"Règle concernant le vin",f:"R-gle-concernant-le-vin."},
-            {t:"Les animaux cachers",f:"Les-animaux-cachers"},
-            {t:"Le lait et la viande",f:"Le-lait-et-la-viande."},
-            {t:"L'organisation de la cuisine",f:"L-organisation-de-la-cuisine.-Lait-et-viande"},
-            {t:"L'ablution des kelim",f:"L-importance-de-l-ablution-des-kelim"},
-            {t:"La bonté et la rigueur",f:"La-bont-et-la-rigueur."},
-            {t:"L'importance de la émouna",f:"L-importance-de-la-mouna."},
-            {t:"Tout est pour le bien",f:"Tout-est-pour-le-bien."}
-          ].map(v => '<div style="background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);"><video controls preload="none" poster="" style="width:100%;aspect-ratio:16/9;background:#000;" controlsList="nodownload"><source src="https://raw.githubusercontent.com/CodeNoLimits/breslev-books-testing/main/public/videos/avatar/'+v.f+'.mp4" type="video/mp4"></video><div style="padding:1rem;"><h4 style="color:var(--color-gold);font-size:0.95rem;margin:0;">'+v.t+'</h4></div></div>').join('')}
         </div>
       </div>
     </section>
@@ -1594,7 +1387,7 @@ app.get("/", (req, res) => {
 
   res.send(
     getLayout(
-      heroHTML + coursJourHTML + productsHTML + audioSectionHTML + videoAvatarHTML + testimonialsSectionHTML + suivezEstherHTML,
+      heroHTML + coursJourHTML + productsHTML + audioSectionHTML + testimonialsSectionHTML + suivezEstherHTML,
     ),
   );
 });
@@ -1628,10 +1421,7 @@ app.get("/collections/all", (req, res) => {
       <div class="book-card fade-in hover-lift glare-card" style="${cardOpacity}">
         <a href="${isIndisponible ? '#' : '/products/' + product.id}" style="text-decoration: none; color: inherit; ${isIndisponible ? 'cursor: not-allowed;' : ''}">
           <div class="book-cover-container">
-            ${product.cover_video ?
-              '<video autoplay loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;' + imgFilter + '"><source src="' + product.cover_video + '" type="video/mp4"></video>' :
-              '<img src="' + product.cover_image + '" alt="' + product.title_fr + '" class="book-cover" loading="lazy" style="' + imgFilter + '">'
-            }
+            <img src="${product.cover_image}" alt="${product.title_fr}" class="book-cover" loading="lazy" style="${imgFilter}">
             ${indisponibleBadge}
             ${product.fliphtml5_url ? '<div class="badge-digital">📖 LECTURE EN LIGNE</div>' : ""}
           </div>
@@ -1640,7 +1430,7 @@ app.get("/collections/all", (req, res) => {
               <div class="book-author">${product.author}</div>
               <h3 class="book-title">${product.title_fr}</h3>
             </div>
-            <div class="book-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
+            <div class="book-price">${product.price_eur || product.price_physical}€</div>
           </div>
         </a>
         <div style="padding: 0 1.5rem 1.5rem; background: #ffffff; margin-top: -1px; z-index: 2; position: relative;">
@@ -1650,12 +1440,11 @@ app.get("/collections/all", (req, res) => {
             data-product-id="${product.id}"
             data-product-title="${product.title_fr}"
             data-product-author="${product.author}"
-            data-product-price="${product.price_physical}"
+            data-product-price="${product.price_eur || product.price_physical}"
             data-product-image="${product.cover_image}"`}
-            style="width:100%; padding: 0.9rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid currentColor' : '1px solid var(--navy)'}; color: ${isIndisponible ? '#888' : 'var(--navy)'}; background: transparent;">
+            style="width:100%; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: ${isIndisponible ? 'not-allowed' : 'pointer'}; transition: all 0.3s ease; border: ${isIndisponible ? '1px solid #dcdcdc' : '1px solid var(--color-gold)'}; color: ${isIndisponible ? '#888' : 'var(--color-gold)'}; background: transparent;">
             <i class="fas ${isIndisponible ? 'fa-times' : 'fa-shopping-cart'}"></i> ${isIndisponible ? 'Indisponible' : 'Ajouter au panier'}
           </button>
-          ${product.pdf_file ? '<a href="/reader/' + product.slug + '" style="display:block;margin-top:0.5rem;text-align:center;color:var(--color-gold);font-size:0.85rem;text-decoration:none;"><i class="fas fa-book-reader"></i> Feuilleter</a>' : ''}
         </div>
       </div>
     `;
@@ -1665,11 +1454,9 @@ app.get("/collections/all", (req, res) => {
   res.send(getLayout(content, "Bibliothèque"));
 });
 
-app.get("/products/:id", (req, res, next) => {
-  // Skip .js requests — handled by /products/:id.js route below
-  if (req.params.id.endsWith('.js')) return next();
-  const product = catalog.find((p) => p.id == req.params.id || p.slug === req.params.id);
-  if (!product) return res.status(404).send(getLayout('<div class="container mt-12 mb-12 text-center"><h1>Livre non trouvé</h1><a href="/collections/all" class="btn btn-primary mt-4">Retour à la bibliothèque</a></div>', '404 - Livre non trouvé'));
+app.get("/products/:id", (req, res) => {
+  const product = catalog.find((p) => p.id == req.params.id);
+  if (!product) return res.status(404).send("Livre non trouvé");
 
   // Check if user is logged in (via Supabase token cookie)
   const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
@@ -1900,8 +1687,8 @@ app.get("/products/:id", (req, res, next) => {
           </h1>
           
           <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem; ${typeof window === "undefined" ? "" : "justify-content: flex-start;"}">
-            <div class="product-price">${product.price_eur || Math.round(product.price_physical/4)}€ <span style="font-size:0.7em;color:#888;">(${product.price_physical}₪)</span></div>
-            ${product.available_digital ? `<div style="color: #666;">ou <span style="color: #22C55E; font-weight: 600;">${product.price_digital}₪</span> en numérique</div>` : ""}
+            <div class="product-price">${product.price_eur || product.price_physical}€</div>
+            ${product.available_digital ? `<div style="color: #666;">ou <span style="color: #22C55E; font-weight: 600;">${product.price_digital}€</span> en numérique</div>` : ""}
           </div>
 
           <p class="product-description">${product.description_long || product.description_long_fr || product.description_fr}</p>
@@ -1968,7 +1755,7 @@ app.get("/products/:id", (req, res, next) => {
                 <div class="info">
                   <div style="font-size: 0.85rem; color: #888;">${book.author}</div>
                   <h4 style="color: #2c3e50; font-size: 1rem; margin: 0.5rem 0;">${book.title_fr}</h4>
-                  <div style="color: #1E3A8A; font-weight: 600;">${book.price_eur || Math.round(book.price_physical/4)}€</div>
+                  <div style="color: #1E3A8A; font-weight: 600;">${book.price_eur || book.price_physical}€</div>
                 </div>
               </a>
             `,
@@ -1988,7 +1775,7 @@ app.get("/products/:id", (req, res, next) => {
       document.addEventListener('DOMContentLoaded', function() {
         if (document.getElementById('flipbook-container')) {
           initFlipbook('flipbook-container', '${product.pdf_file}', {
-            isPaid: true, // Full access during testing phase
+            isPaid: ${isLoggedIn},
             userName: '${userName.replace(/'/g, "\\'")}'
           });
         }
@@ -2027,7 +1814,7 @@ app.get("/products/:id.js", (req, res) => {
 });
 
 app.get("/pages/abonnement", (req, res) => {
-  const stripeKey = process.env.STRIPE_PUBLIC_KEY || "";
+  const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
   const content = `
     <script src="https://js.stripe.com/v3/"></script>
     <div class="container mt-12 mb-12">
@@ -2105,7 +1892,7 @@ app.get("/pages/abonnement", (req, res) => {
         <div style="background: var(--color-bg-card); border: 2px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 3rem; text-align: center; transition: transform 0.3s ease;">
           <h3 class="mb-4">Mensuel</h3>
           <p class="text-muted mb-6">Flexibilité maximale</p>
-          <div class="mb-6"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">99₪</span><span class="text-muted">/mois</span></div>
+          <div class="mb-6"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">29€</span><span class="text-muted">/mois</span></div>
           <ul style="text-align: left; margin-bottom: 2rem; list-style: none; padding: 0;">
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Accès aux 30+ titres numériques</li>
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Nouveautés incluses automatiquement</li>
@@ -2122,8 +1909,8 @@ app.get("/pages/abonnement", (req, res) => {
           <div style="position: absolute; top: -12px; right: 20px; background: var(--color-gold); color: #000; padding: 4px 12px; font-weight: bold; font-size: 0.8rem; border-radius: 4px;">Économisez 20%</div>
           <h3 class="mb-4">Annuel</h3>
           <p class="text-muted mb-6">Le meilleur rapport qualité-prix</p>
-          <div class="mb-2"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">990₪</span><span class="text-muted">/an</span></div>
-          <div class="text-muted mb-6" style="text-decoration: line-through;">Au lieu de 1188₪</div>
+          <div class="mb-2"><span style="font-size: 3rem; font-weight: bold; color: var(--color-gold);">279€</span><span class="text-muted">/an</span></div>
+          <div class="text-muted mb-6" style="text-decoration: line-through;">Au lieu de 348€</div>
           <ul style="text-align: left; margin-bottom: 2rem; list-style: none; padding: 0;">
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--color-gold); margin-right: 10px;"></i>Tous les avantages du mensuel</li>
             <li style="margin-bottom: 0.5rem;"><i class="fas fa-star" style="color: var(--color-gold); margin-right: 10px;"></i><strong>2 mois GRATUITS</strong></li>
@@ -2261,7 +2048,7 @@ app.get("/pages/abonnement", (req, res) => {
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const redirectTo = isLocalhost 
             ? window.location.origin + '/auth/callback'
-            : 'https://breslev-books-testing.vercel.app/auth/callback';
+            : 'https://breslev-books-preview.vercel.app/auth/callback';
 
         const authUrl = supabaseUrl + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(redirectTo);
 
@@ -2336,7 +2123,7 @@ app.get("/pages/abonnement", (req, res) => {
 });
 
 app.get("/cart", (req, res) => {
-  const stripeKey = process.env.STRIPE_PUBLIC_KEY || "";
+  const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
   const paypalClientId = process.env.PAYPAL_CLIENT_ID || "";
 
   const content = `
@@ -2348,149 +2135,54 @@ app.get("/cart", (req, res) => {
     </div>
 
     <script>
+      window.STRIPE_PUBLISHABLE_KEY = '${stripeKey}';
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
-    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR"></script>` : ''}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS&disable-funding=credit,card"></script>
     <script src="/checkout-system.js"></script>
-
-    <div id="bank-transfer-info" style="display:none; max-width:600px; margin:2rem auto; background:#f8f6f3; border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:2rem;">
-      <h3 style="color:#1E3A8A; margin-bottom:1rem;"><i class="fas fa-university"></i> Paiement par virement bancaire</h3>
-      <p style="color:#666; margin-bottom:1rem;">Vous pouvez aussi payer par virement :</p>
-      <div style="background:white; padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #e0d5c0;">
-        <h4 style="color:#D4AF37; margin:0 0 0.5rem;">🇫🇷 Virement France</h4>
-        <p style="font-size:0.85rem; color:#333; margin:0; line-height:1.6;">
-          <strong>Titulaire :</strong> Mme Joelle Ifrah<br>
-          <strong>IBAN :</strong> FR76 1652 8001 7100 0004 3621 064<br>
-          <strong>BIC :</strong> SMOEFRP1<br>
-          <strong>Banque :</strong> France Pay, 10 rue de Penthièvre, 75008 Paris
-        </p>
-      </div>
-      <div style="background:white; padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #e0d5c0;">
-        <h4 style="color:#D4AF37; margin:0 0 0.5rem;">🇮🇱 Virement Israël</h4>
-        <p style="font-size:0.85rem; color:#333; margin:0; line-height:1.6;">
-          <strong>Titulaire :</strong> Joelle Ifrah (ג'ואל יפרח)<br>
-          <strong>Banque :</strong> הבינלאומי (Beinleumi) — Code 031<br>
-          <strong>Agence :</strong> 012<br>
-          <strong>N° compte :</strong> 904597
-        </p>
-      </div>
-      <p style="font-size:0.8rem; color:#888;">Mentionnez votre nom et email en référence du virement.</p>
-    </div>
-    <div style="max-width:600px; margin:1.5rem auto; background:#f8f6f3; border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:2rem;">
-      <h3 style="color:#1E3A8A; margin-bottom:1rem;"><i class="fas fa-money-check-alt"></i> Paiement par chèque</h3>
-      <p style="color:#666; margin-bottom:1rem;">Vous pouvez envoyer un chèque à l'ordre de :</p>
-      <div style="background:white; padding:1rem; border-radius:8px; border:1px solid #e0d5c0;">
-        <p style="font-size:0.9rem; color:#333; margin:0; line-height:1.8;">
-          <strong>À l'ordre de :</strong> Mme Joelle Ifrah<br>
-          <strong>Adresse :</strong> Esther Ifrah — Librairie Breslev<br>
-          <strong>Montant :</strong> Le total de votre commande en EUR<br>
-        </p>
-        <p style="font-size:0.8rem; color:#888; margin-top:0.5rem;">Inscrivez votre email au dos du chèque. La commande sera traitée à réception du chèque. Contactez-nous pour l'adresse d'envoi.</p>
-      </div>
-    </div>
-    <script>
-      // Show bank transfer after cart loads
-      setTimeout(function(){ var el=document.getElementById('bank-transfer-info'); if(el) el.style.display='block'; }, 1500);
-    </script>
   `;
   res.send(getLayout(content, "Panier & Checkout"));
 });
 
-// Route pour le lecteur numerique (PDF.js flipbook)
+// Route pour le lecteur FlipHTML5 (Likouté Moharan Tome 1)
 app.get("/reader/:bookSlug", (req, res) => {
   const { bookSlug } = req.params;
-  const book = catalog.find(b => (b.slug || b.id) === bookSlug || b.id == bookSlug);
-
-  if (!book) {
-    return res.status(404).send(getLayout(
-      '<div class="container mt-12 mb-12 text-center"><h1>Livre non trouvé</h1><a href="/collections/all" class="btn btn-primary mt-4">Retour à la bibliothèque</a></div>',
-      'Livre non trouvé'
-    ));
-  }
-
-  const bookTitle = book.title_fr || book.title || bookSlug;
-  const bookAuthor = book.author || '';
-  const pdfFile = book.pdf_file || '';
-  const coverImage = book.cover_image || FALLBACK_COVER;
-
-  // Check if user is logged in or in testing mode
-  const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
-  const isTesting = true; // Full access for all users during testing phase
-
-  if (!pdfFile) {
-    // Book has no PDF — show cover with message
-    const content = `
-      <div class="container mt-12 mb-12" style="text-align: center;">
-        <div style="margin-bottom: 1.5rem;">
-          <a href="/products/${book.id}" style="color: var(--color-gold); text-decoration: none;"><i class="fas fa-arrow-left"></i> Retour au livre</a>
-        </div>
-        <img src="${coverImage}" alt="${bookTitle}" style="max-width: 300px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 2rem;">
-        <h2 style="color: #1E3A8A;">${bookTitle}</h2>
-        <p style="color: #666; margin-bottom: 2rem;">La version numérique de ce livre sera bientôt disponible.</p>
-        <a href="/products/${book.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Acheter le livre physique</a>
-      </div>
-    `;
-    return res.send(getLayout(content, "Lecteur - " + bookTitle));
-  }
+  const { generateFlipHTML5Iframe } = require("./assets/fliphtml5-reader.js");
 
   const content = `
-    <link rel="stylesheet" href="/flipbook-styles.css">
-    <script src="/page-flip.browser.js"></script>
-    <script src="/flipbook-viewer.js"></script>
-
-    <div class="container mt-8 mb-12">
-      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <a href="/products/${book.id}" style="color: var(--color-gold); text-decoration: none;"><i class="fas fa-arrow-left"></i> Retour au livre</a>
-        <a href="/collections/all" style="color: #666; text-decoration: none; font-size: 0.9rem;"><i class="fas fa-th"></i> Tous les livres</a>
-      </div>
-
-      <div style="max-width: 900px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); padding: 1.5rem 2rem; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 1rem;">
-          <i class="fas fa-book-open" style="color: #D4AF37; font-size: 1.5rem;"></i>
-          <div>
-            <h2 style="color: #D4AF37; margin: 0; font-family: Cinzel, serif; font-size: 1.3rem;">${bookTitle}</h2>
-            ${bookAuthor ? '<p style="color: rgba(255,255,255,0.7); margin: 0.25rem 0 0; font-size: 0.9rem;">' + bookAuthor + '</p>' : ''}
-          </div>
-        </div>
-
-        <div style="background: #f8f6f3; border: 1px solid rgba(212,175,55,0.2); border-top: none; border-radius: 0 0 12px 12px; padding: 2rem; min-height: 500px;">
-          <div id="flipbook-container"></div>
-        </div>
-
+    <link rel="stylesheet" href="/checkout-styles.css">
+    <script src="/fliphtml5-reader.js"></script>
+    
+    <div class="container mt-12 mb-12">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <div id="fliphtml5-reader"></div>
+        
+        <script>
+          loadFlipHTML5Reader('fliphtml5-reader', '${bookSlug}');
+        </script>
+        
         <div style="margin-top: 2rem; text-align: center;">
-          <a href="/products/${book.id}" class="btn btn-primary" style="margin-right: 1rem;">
+          <a href="/products/1" class="btn btn-primary">
             <i class="fas fa-shopping-cart"></i> Acheter ce livre
-          </a>
-          <a href="/collections/all" class="btn btn-outline" style="border-color: var(--color-gold); color: var(--color-gold);">
-            <i class="fas fa-books"></i> Voir tous les livres
           </a>
         </div>
       </div>
     </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initFlipbook === 'function') {
-          initFlipbook('flipbook-container', '${pdfFile}', {
-            isPaid: ${isLoggedIn || isTesting},
-            userName: 'Lecteur'
-          });
-        }
-      });
-    </script>
   `;
-  res.send(getLayout(content, "Lire - " + bookTitle));
+
+  res.send(getLayout(content, "Lecteur numérique"));
 });
 
 // PayPal: Créer commande
 app.post("/api/paypal/create-order", async (req, res) => {
-  if (rateLimit(req.ip + ':paypal', 5)) return res.status(429).json({ error: 'Trop de requêtes' });
   try {
     const { amount, currency } = req.body;
-    if (!amount || amount < 100 || amount > 100000) {
-      return res.status(400).json({ error: "Montant invalide" });
-    }
     const accessToken = await getPayPalAccessToken();
+
+    if (!accessToken) {
+      return res.status(500).json({ error: 'PayPal auth failed — credentials may need updating' });
+    }
 
     const response = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
       method: "POST",
@@ -2503,7 +2195,7 @@ app.post("/api/paypal/create-order", async (req, res) => {
         purchase_units: [
           {
             amount: {
-              currency_code: currency || "EUR",
+              currency_code: currency || "ILS",
               value: (amount / 100).toFixed(2),
             },
           },
@@ -2512,6 +2204,9 @@ app.post("/api/paypal/create-order", async (req, res) => {
     });
 
     const order = await response.json();
+    if (!order.id) {
+      console.error('[PayPal] create-order failed:', JSON.stringify(order), '| API:', PAYPAL_API, '| token prefix:', accessToken.substring(0, 20));
+    }
     res.json(order);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -2520,7 +2215,6 @@ app.post("/api/paypal/create-order", async (req, res) => {
 
 // PayPal: Capturer paiement
 app.post("/api/paypal/capture-order", async (req, res) => {
-  if (rateLimit(req.ip + ':paypal-capture', 5)) return res.status(429).json({ error: 'Trop de requêtes' });
   try {
     const { orderID } = req.body;
     const accessToken = await getPayPalAccessToken();
@@ -2543,6 +2237,39 @@ app.post("/api/paypal/capture-order", async (req, res) => {
   }
 });
 
+// Virement / Chèque order confirmation
+app.post("/api/virement-order", async (req, res) => {
+  try {
+    const { email, name, total, cart, shipping } = req.body;
+    // Send confirmation email with virement instructions
+    if (email && sendEmail) {
+      const itemsList = (cart || []).map(i => `<li>${i.title || i.name} × ${i.quantity} — ${(i.price || 0).toFixed(2)} €</li>`).join('');
+      await sendEmail({
+        to: email,
+        subject: 'Votre commande — instructions de paiement — Breslev by Esther Ifrah',
+        html: `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;">
+          <h2 style="color:#8B6914;">Confirmation de commande</h2>
+          <p>Bonjour ${name || ''},</p>
+          <p>Votre commande a bien été enregistrée. Pour finaliser, veuillez effectuer votre paiement :</p>
+          <ul>${itemsList}</ul>
+          <p><strong>Total : ${total} €</strong></p>
+          <hr>
+          <h3>Par virement bancaire</h3>
+          <p>Bénéficiaire : <strong>Mme Joelle Ifrah</strong><br>
+          Les coordonnées bancaires vous seront communiquées par retour de mail.</p>
+          <h3>Par chèque</h3>
+          <p>À l'ordre de <strong>Mme Joelle Ifrah</strong><br>
+          L'adresse d'envoi vous sera communiquée par retour de mail.</p>
+          <p style="color:#666;font-size:0.9em;">Pour toute question : <a href="https://wa.me/33612345678">WhatsApp</a></p>
+        </div>`
+      });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: true }); // Don't fail the order on email error
+  }
+});
+
 app.post("/cart/add", (req, res) => res.redirect("/cart"));
 
 // Page de succès après abonnement
@@ -2556,11 +2283,21 @@ app.get("/subscription-success", async (req, res) => {
       const session = await stripe.checkout.sessions.retrieve(session_id);
       subscriptionInfo = {
         email: session.customer_email,
-        plan: session.amount_total === 99000 ? "annuel" : "mensuel",
+        plan: session.amount_total === 27900 ? "annuel" : "mensuel",
       };
 
-      // Subscription is saved by the webhook handler — no duplicate insert here
-      if (false) {
+      // Sauvegarder l'abonnement dans Supabase
+      if (supabase && session.customer_email) {
+        const { error } = await supabase.from("subscriptions").insert([
+          {
+            email: session.customer_email,
+            plan_type: subscriptionInfo.plan,
+            status: "active",
+            stripe_subscription_id: session.subscription,
+            stripe_customer_id: session.customer,
+            created_at: new Date().toISOString(),
+          },
+        ]);
         if (error) console.error("Erreur sauvegarde abonnement:", error);
       }
     } catch (err) {
@@ -2624,9 +2361,9 @@ app.get("/search", (req, res) => {
         '<img src="' + img + '" alt="" style="width:80px;height:120px;object-fit:contain;border-radius:8px;background:#f8f7f4;" loading="lazy">' +
         '<div><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:#8B7355;margin-bottom:0.3rem;">' + (b.author || '') + '</div>' +
         '<div style="font-family:Cinzel,serif;font-size:1.1rem;color:#1a1a2e;margin-bottom:0.3rem;">' + (b.title_fr || b.title || '') + '</div>' +
-        '<div style="color:#92400e;font-weight:600;">' + (b.price_physical || '') + '₪</div></div></a>';
+        '<div style="color:#92400e;font-weight:600;">' + (b.price_eur || b.price_physical || '') + '€</div></div></a>';
     }).join('')
-    : (q ? '<div style="text-align:center;padding:3rem;color:#6B7280;"><p style="font-size:1.2rem;">Aucun résultat pour "' + q.replace(/</g,'&lt;') + '"</p><a href="/collections/all" style="color:#D4AF37;">Voir tous les livres</a></div>' : '<div style="text-align:center;padding:2rem 0;"><p style="color:#6B7280;font-size:1.1rem;margin-bottom:1.5rem;">Tapez un titre, un auteur ou un mot-cl\u00e9 pour trouver un livre.</p><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.75rem;"><a href="/search?q=Likout%C3%A9" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Likout\u00e9 Moharan</a><a href="/search?q=Nachman" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Rabbi Nachman</a><a href="/search?q=pri%C3%A8re" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Pri\u00e8re</a><a href="/search?q=Torah" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Torah</a><a href="/search?q=Breslev" style="padding:0.5rem 1rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;color:#1E3A8A;text-decoration:none;font-size:0.9rem;">Breslev</a></div></div>');
+    : (q ? '<div style="text-align:center;padding:3rem;color:#6B7280;"><p style="font-size:1.2rem;">Aucun résultat pour "' + q.replace(/</g,'&lt;') + '"</p><a href="/collections/all" style="color:#D4AF37;">Voir tous les livres</a></div>' : '');
 
   const content = '<div class="container" style="max-width:800px;margin:0 auto;padding:3rem 1rem;">' +
     '<h1 style="font-family:Cinzel,serif;color:#1E3A8A;font-size:2rem;margin-bottom:2rem;">' + (q ? 'Résultats pour "' + q.replace(/</g,'&lt;') + '"' : 'Recherche') + '</h1>' +
@@ -2748,7 +2485,42 @@ app.get("/account", (req, res) => {
   res.send(getLayout(content, "Mon Compte"));
 });
 
-// /test-account removed for security — was giving admin access to anyone
+// Page compte test pour Esther IFRAH
+app.get("/test-account", (req, res) => {
+  const content = `
+    <div class="container mt-12 mb-12" style="text-align: center;">
+      <div style="max-width: 500px; margin: 0 auto; background: var(--color-bg-card); border: 2px solid var(--color-gold); border-radius: 16px; padding: 3rem;">
+        <h1 style="margin-bottom: 2rem;">Compte Test Esther IFRAH</h1>
+        <p class="text-muted mb-6">Ce bouton vous connecte automatiquement avec un compte de test administrateur.</p>
+
+        <button onclick="loginAsEsther()" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+          <i class="fas fa-sign-in-alt"></i> Se connecter comme Esther IFRAH
+        </button>
+
+        <p class="text-muted" style="font-size: 0.8rem;">Email: estherifra@breslev.com</p>
+      </div>
+    </div>
+
+    <script>
+      function loginAsEsther() {
+        // Créer un utilisateur test
+        const testUser = {
+          id: 'test-esther-ifra',
+          email: 'estherifra@breslev.com',
+          created_at: new Date().toISOString(),
+          user_metadata: { full_name: 'Esther IFRAH' }
+        };
+
+        localStorage.setItem('breslev_user', JSON.stringify(testUser));
+        localStorage.setItem('breslev_session', JSON.stringify({ access_token: 'test-token' }));
+
+        alert('Connecté en tant que Esther IFRAH (Admin)');
+        window.location.href = '/account';
+      }
+    </script>
+  `;
+  res.send(getLayout(content, "Compte Test"));
+});
 
 // Route callback Google OAuth
 app.get("/auth/callback", (req, res) => {
@@ -2850,16 +2622,11 @@ app.get("/contact", (req, res) => {
         </form>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
           <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📧</div>
           <div style="font-family: 'Cinzel', serif; color: #D4AF37; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Email</div>
           <div style="color: rgba(255,255,255,0.85); font-size: 0.9rem;">breslevbyesther@gmail.com</div>
-        </div>
-        <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
-          <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📱</div>
-          <div style="font-family: 'Cinzel', serif; color: #D4AF37; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">WhatsApp</div>
-          <div style="color: rgba(255,255,255,0.85); font-size: 0.9rem;"><a href="https://wa.me/972585148500" style="color: rgba(255,255,255,0.85); text-decoration: none;">+972 58-514-8500</a></div>
         </div>
         <div style="background: linear-gradient(135deg, #0F172A, #1E3A8A); border-radius: 16px; padding: 1.5rem; text-align: center;">
           <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">⏰</div>
@@ -2910,7 +2677,6 @@ app.get("/contact", (req, res) => {
 
 // API: Contact form — REAL email sending
 app.post("/api/contact", async (req, res) => {
-  if (rateLimit(req.ip + ':contact', 5)) return res.status(429).json({error: 'Trop de requêtes'});
   const { name, email, subject, message } = req.body;
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Nom, email et message requis" });
@@ -2934,7 +2700,7 @@ app.post("/api/contact", async (req, res) => {
         '<hr style="border:1px solid #D4AF37;margin:1rem 0;">' +
         '<p style="white-space:pre-wrap;">' + message.replace(/</g, '&lt;') + '</p>' +
         '<hr style="border:1px solid #eee;margin:1rem 0;">' +
-        '<p style="color:#999;font-size:0.85rem;">Via breslev-books-testing.vercel.app</p></div>'
+        '<p style="color:#999;font-size:0.85rem;">Via breslev-books-preview.vercel.app</p></div>'
     });
 
     // Auto-reply to sender
@@ -2978,7 +2744,7 @@ app.get("/a-propos", (req, res) => {
           Ma collection comprend aujourd'hui ${catalog.length} ouvrages : les huit tomes du Likoutey Moharan, les Sipourey Maasiot (Contes de Rabbi Nachman), le Tikoun HaKlali, le Likouté Tefilot, et bien d'autres trésors de la tradition hassidique de Breslev.
         </p>
         <p style="color: #374151; line-height: 1.9; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;">
-          En parallèle des livres, je propose des cours audio sur le Likoutey Moharan — actuellement 36 enseignements disponibles en ligne — pour accompagner l'étude quotidienne de chacun, où qu'il soit dans le monde.
+          En parallèle des livres, je propose des cours audio — 123 enseignements sur la Cacheroute et l'Emounah disponibles en ligne — pour accompagner l'étude quotidienne de chacun, où qu'il soit dans le monde.
         </p>
       </div>
 
@@ -2996,7 +2762,6 @@ app.get("/a-propos", (req, res) => {
       <div style="background: white; border: 1px solid rgba(212,175,55,0.2); border-radius: 20px; padding: 2.5rem; box-shadow: 0 4px 30px rgba(30,58,138,0.06);">
         <h2 style="font-family: 'Cinzel', serif; color: #1E3A8A; font-size: 1.4rem; margin-bottom: 1.5rem;">Coordonnées</h2>
         <p style="color: #374151; line-height: 1.8;"><strong>Email :</strong> <a href="mailto:breslevbyesther@gmail.com" style="color: #D4AF37;">breslevbyesther@gmail.com</a></p>
-        <p style="margin-top:1rem;"><strong>📞 Téléphone / WhatsApp :</strong> <a href="https://wa.me/972585148500" style="color: var(--color-gold);">+972 58-514-8500</a></p>
         <p style="color: #374151; line-height: 1.8;"><strong>Adresse :</strong> 110, rue Méa Chéarim, Jérusalem, Israël</p>
         <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
           <a href="https://www.facebook.com/profile.php?id=100089800498498" target="_blank" rel="noopener" style="color: #1E3A8A; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
@@ -3264,20 +3029,20 @@ app.get("/audio/:categoryId", (req, res) => {
         ${tracks
           .map(
             (track, index) => `
-          <div class="audio-track-item" style="background: white; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease;">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-              <div style="width: 50px; height: 50px; background: linear-gradient(135deg, ${category.color} 0%, ${category.color}99 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; flex-shrink: 0;">
-                ${track.url ? '<i class="fas fa-play"></i>' : '<i class="fas fa-clock"></i>'}
-              </div>
-              <div style="flex: 1;">
-                <h4 style="color: #2c3e50; margin-bottom: 0.25rem;">${track.title}</h4>
-                <p style="color: #888; font-size: 0.9rem; margin: 0;">${track.description}</p>
-              </div>
-              <div style="text-align: right; flex-shrink: 0;">
-                <div style="color: ${category.color}; font-weight: 600;">${track.duration}</div>
-              </div>
+          <div class="audio-track-item" style="background: white; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; transition: all 0.3s ease;">
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, ${category.color} 0%, ${category.color}99 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; flex-shrink: 0;">
+              <i class="fas fa-play"></i>
             </div>
-            ${track.url ? '<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(212,175,55,0.1);"><audio controls preload="none" controlsList="nodownload" style="width: 100%; height: 40px;"><source src="' + track.url + '" type="audio/' + (track.url.endsWith('.ogg') ? 'ogg' : track.url.endsWith('.opus') ? 'ogg' : 'mpeg') + '">Votre navigateur ne supporte pas le lecteur audio.</audio></div>' : '<div style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: rgba(212,175,55,0.08); border-radius: 8px; text-align: center;"><span style="color: #B8860B; font-size: 0.85rem;"><i class="fas fa-clock"></i> Bientôt disponible</span></div>'}
+            <div style="flex: 1;">
+              <h4 style="color: #2c3e50; margin-bottom: 0.25rem;">${track.title}</h4>
+              <p style="color: #888; font-size: 0.9rem; margin: 0;">${track.description}</p>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="color: ${category.color}; font-weight: 600;">${track.duration}</div>
+              <button class="play-audio-btn" data-track-id="${track.id}" data-url="${track.url}" style="background: ${category.color}20; color: ${category.color}; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-top: 0.5rem; font-size: 0.85rem;">
+                <i class="fas fa-headphones"></i> Écouter
+              </button>
+            </div>
           </div>
         `,
           )
@@ -3301,6 +3066,105 @@ app.get("/audio/:categoryId", (req, res) => {
       </div>
     </div>
 
+    <!-- Player Audio Fixe -->
+    <div id="audio-player-bar" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); padding: 1rem 2rem; box-shadow: 0 -5px 25px rgba(0,0,0,0.3); z-index: 1000; border-top: 3px solid var(--color-gold);">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 1rem; color: white; margin-bottom: 0.5rem;">
+          <button id="audio-play-pause" style="background: linear-gradient(135deg, #D4AF37, #F5E6A3); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="fas fa-play" id="play-icon" style="color: #1a1a2e; font-size: 1.1rem; margin-left: 2px;"></i>
+          </button>
+          <div style="flex: 1; min-width: 0;">
+            <h4 id="audio-player-title" style="margin: 0; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h4>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;">
+              <span id="audio-current-time" style="font-size: 0.75rem; color: rgba(255,255,255,0.6); min-width: 40px;">0:00</span>
+              <input type="range" id="audio-progress" min="0" max="100" value="0" style="flex: 1; height: 4px; accent-color: #D4AF37; cursor: pointer;">
+              <span id="audio-duration" style="font-size: 0.75rem; color: rgba(255,255,255,0.6); min-width: 40px;">0:00</span>
+            </div>
+          </div>
+          <button id="audio-close" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const playerBar = document.getElementById('audio-player-bar');
+      const playerTitle = document.getElementById('audio-player-title');
+      const playPauseBtn = document.getElementById('audio-play-pause');
+      const playIcon = document.getElementById('play-icon');
+      const progressBar = document.getElementById('audio-progress');
+      const currentTimeEl = document.getElementById('audio-current-time');
+      const durationEl = document.getElementById('audio-duration');
+      const closeBtn = document.getElementById('audio-close');
+      let currentAudio = null;
+
+      function formatTime(s) {
+        if (isNaN(s)) return '0:00';
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+
+      document.querySelectorAll('.play-audio-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const url = this.dataset.url;
+          const trackContainer = this.closest('.audio-track-item');
+          const title = trackContainer.querySelector('h4').innerText;
+
+          if (!url) {
+            alert('Ce cours sera disponible prochainement.');
+            return;
+          }
+
+          if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+          currentAudio = new Audio(url);
+          playerTitle.innerText = title;
+          playerBar.style.display = 'block';
+          playIcon.className = 'fas fa-spinner fa-spin';
+
+          currentAudio.addEventListener('loadedmetadata', () => {
+            durationEl.innerText = formatTime(currentAudio.duration);
+            progressBar.max = Math.floor(currentAudio.duration);
+          });
+          currentAudio.addEventListener('canplay', () => {
+            playIcon.className = 'fas fa-pause';
+            currentAudio.play();
+          });
+          currentAudio.addEventListener('timeupdate', () => {
+            progressBar.value = Math.floor(currentAudio.currentTime);
+            currentTimeEl.innerText = formatTime(currentAudio.currentTime);
+          });
+          currentAudio.addEventListener('ended', () => {
+            playIcon.className = 'fas fa-play';
+          });
+          currentAudio.addEventListener('error', () => {
+            playIcon.className = 'fas fa-exclamation-triangle';
+            playerTitle.innerText = 'Erreur de chargement — ' + title;
+          });
+        });
+      });
+
+      playPauseBtn.addEventListener('click', () => {
+        if (!currentAudio) return;
+        if (currentAudio.paused) {
+          currentAudio.play();
+          playIcon.className = 'fas fa-pause';
+        } else {
+          currentAudio.pause();
+          playIcon.className = 'fas fa-play';
+        }
+      });
+
+      progressBar.addEventListener('input', () => {
+        if (currentAudio) currentAudio.currentTime = progressBar.value;
+      });
+
+      closeBtn.addEventListener('click', () => {
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        playerBar.style.display = 'none';
+      });
+    </script>
   `;
   res.send(getLayout(content, category.name + " | Audio"));
 });
@@ -3372,18 +3236,15 @@ app.get("/cours", async (req, res) => {
     console.error("Erreur de lecture audioLessons:", e);
   }
 
-  // Séparer cours Thora (OGG) et messages PTT
-  const thoraCours = coursList.filter(c => c.url && c.url.includes('.ogg'));
-  const pttCours = coursList.filter(c => c.url && !c.url.includes('.ogg'));
-
-  // Rotation quotidienne : cours du jour parmi les Thora OGG uniquement
+  // Tous les cours sont maintenant de vrais fichiers ESTHER_*.mp3
+  // Rotation quotidienne : cours du jour
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  const todayIndex = thoraCours.length > 0 ? dayOfYear % thoraCours.length : 0;
-  const today = thoraCours.length > 0 ? thoraCours[todayIndex] : (coursList.length > 0 ? coursList[0] : null);
+  const todayIndex = coursList.length > 0 ? dayOfYear % coursList.length : 0;
+  const today = coursList.length > 0 ? coursList[todayIndex] : null;
 
-  // Afficher Thora OGG en premier, puis PTT (sans le cours du jour)
-  const thoraOthers = thoraCours.filter((_, i) => i !== todayIndex);
-  const others = [...thoraOthers, ...pttCours];
+  // Tous les autres cours (sans le cours du jour)
+  const others = coursList.filter((_, i) => i !== todayIndex);
+
 
   const todayHTML = today ? `
     <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border-radius: 24px; padding: 3rem; margin-bottom: 3rem; color: white; box-shadow: 0 20px 60px rgba(30,58,138,0.3);">
@@ -3404,25 +3265,19 @@ app.get("/cours", async (req, res) => {
       <h3 style="font-family: 'Cinzel', serif; color: #1E3A8A; font-size: 1.6rem; font-weight: 600;">Aucun cours disponible</h3>
     </div>`;
 
-  const thoraOthersCount = thoraOthers.length;
   const coursCards = others.map((c, i) => {
-    const isOgg = c.url && c.url.includes('.ogg');
-    const cardColor = isOgg
+    const isEmounah = c.series && c.series.includes('Emounah');
+    const cardColor = isEmounah
       ? 'border: 1px solid rgba(212,175,55,0.4); background: linear-gradient(to right, #fffef7, white);'
-      : 'border: 1px solid rgba(196,160,82,0.15); background: white;';
-    const badgeHTML = isOgg
-      ? `<span style="background: rgba(212,175,55,0.15); color: #8B6914; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 10px; text-transform: uppercase; margin-left: 0.5rem;">Likoutei Moharan</span>`
+      : 'border: 1px solid rgba(30,58,138,0.15); background: white;';
+    const badgeHTML = c.series
+      ? `<span style="background: ${isEmounah ? 'rgba(212,175,55,0.15)' : 'rgba(30,58,138,0.1)'}; color: ${isEmounah ? '#8B6914' : '#1E3A8A'}; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 10px; text-transform: uppercase; margin-left: 0.5rem;">${c.series}</span>`
       : '';
-    // Section header for PTT messages
-    const sectionHeader = (i === thoraOthersCount && pttCours.length > 0)
-      ? `<div style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(212,175,55,0.2);">
-           <h4 style="color: #666; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Enseignements WhatsApp</h4>
-         </div>`
-      : '';
-    return `${sectionHeader}
+    
+    return `
     <div class="cours-card" data-index="${i}" data-title="${(c.title || '').toLowerCase()}" style="${cardColor} border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); display: ${i < 20 ? 'flex' : 'none'}; flex-direction: column; gap: 1rem; transition: all 0.3s ease;">
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <div style="width: 48px; height: 48px; background: ${isOgg ? 'linear-gradient(135deg, #D4AF37, #8B6914)' : 'linear-gradient(135deg, #1E3A8A, #3B82F6)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 0.9rem;">${isOgg ? (i + 1) : c.id}</div>
+        <div style="width: 48px; height: 48px; background: ${isEmounah ? 'linear-gradient(135deg, #D4AF37, #8B6914)' : 'linear-gradient(135deg, #1E3A8A, #3B82F6)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 0.9rem;">${c.id}</div>
         <div style="flex: 1; min-width: 0;">
           <div style="font-weight: 600; color: #2c3e50; font-size: 1.05rem;">${c.title}${badgeHTML}</div>
           <div style="font-size: 0.82rem; color: #888;">${new Date(c.date).toLocaleDateString("fr-FR")} &middot; ${c.duration}</div>
@@ -3453,8 +3308,8 @@ app.get("/cours", async (req, res) => {
       </div>
 
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <h3 style="color: #1E3A8A; border-bottom: 2px solid var(--color-gold, #D4AF37); padding-bottom: 0.5rem; display: inline-block; margin: 0;">Cours Likoutei Moharan <span style="color: var(--color-gold)">${thoraOthers.length + 1}</span></h3>
-        <span style="font-size: 0.85rem; color: #888;">${others.length} enseignements au total</span>
+        <h3 style="color: #1E3A8A; border-bottom: 2px solid var(--color-gold, #D4AF37); padding-bottom: 0.5rem; display: inline-block; margin: 0;">Tous les enseignements <span style="color: var(--color-gold)">${coursList.length}</span></h3>
+        <span style="font-size: 0.85rem; color: #888;">Cacheroute &amp; Emounah</span>
       </div>
 
       <div id="coursList" style="display: grid; gap: 1rem;">
@@ -3498,24 +3353,6 @@ app.get("/cours", async (req, res) => {
           document.getElementById('loadMoreContainer').style.display = q ? 'none' : (coursVisible < totalCours ? 'block' : 'none');
         });
       })();
-    </script>
-
-    <section style="padding: 3rem 2rem; background: linear-gradient(180deg, #f8f6f3 0%, #eee8de 100%); border-radius: 20px; margin-top: 3rem;">
-      <h2 style="font-family: Cinzel, serif; color: #1E3A8A; text-align: center; margin-bottom: 0.5rem;"><i class="fas fa-book-reader" style="color: #D4AF37;"></i> Mini-Cours par Sujet</h2>
-      <p style="text-align: center; color: #666; margin-bottom: 2rem;">123 leçons de cacheroute et émounah par Esther Ifrah</p>
-      <div id="cours-par-sujet" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto;"></div>
-    </section>
-    <script>
-    fetch('/api/cours-par-sujet').then(r=>r.json()).then(cours=>{
-      const c=document.getElementById('cours-par-sujet');if(!c)return;
-      const themes={'Cacheroute générale':cours.filter(x=>x.id<=6),'Lait et produits laitiers':cours.filter(x=>x.id>=7&&x.id<=13),'Le vin':cours.filter(x=>x.id>=14&&x.id<=20),'Les poissons':cours.filter(x=>x.id>=21&&x.id<=25),'Les œufs':cours.filter(x=>x.id>=26&&x.id<=28),'Viande et shéhita':cours.filter(x=>x.id>=29&&x.id<=32),'Organisation cuisine':cours.filter(x=>x.id>=33&&x.id<=36),'La cuisson':cours.filter(x=>x.id>=37&&x.id<=46),'Intervalles viande-lait':cours.filter(x=>x.id>=47&&x.id<=55),'Accidents et mélanges':cours.filter(x=>x.id>=56&&x.id<=63),'Immersion ustensiles':cours.filter(x=>x.id>=64&&x.id<=77),'Insectes alimentaires':cours.filter(x=>x.id>=78&&x.id<=91),'Œufs (avancé)':cours.filter(x=>x.id>=92&&x.id<=100),'Non-juifs et cacheroute':cours.filter(x=>x.id>=101&&x.id<=108),'Émounah':cours.filter(x=>x.id>=109&&x.id<=123)};
-      for(const[theme,items]of Object.entries(themes)){if(!items.length)continue;
-        const card=document.createElement('div');card.style.cssText='background:white;border-radius:12px;padding:1.5rem;border:1px solid rgba(212,175,55,0.2);box-shadow:0 2px 8px rgba(0,0,0,0.05);';
-        let h='<h3 style="color:#1E3A8A;font-family:Cinzel,serif;font-size:1rem;margin:0 0 1rem;border-bottom:2px solid #D4AF37;padding-bottom:0.5rem;">'+theme+' <span style="color:#D4AF37;font-size:0.8rem;">('+items.length+')</span></h3>';
-        h+='<div style="display:flex;flex-direction:column;gap:0.5rem;">';
-        for(const i of items){h+='<div style="padding:0.4rem 0;border-bottom:1px solid #f0ece4;"><div style="font-size:0.8rem;color:#333;margin-bottom:0.3rem;">'+i.titre+'</div><audio controls preload="none" controlsList="nodownload" style="width:100%;height:32px;"><source src="'+i.file+'" type="audio/mpeg"></audio></div>';}
-        h+='</div>';card.innerHTML=h;c.appendChild(card);}
-    });
     </script>`;
 
   res.send(getLayout(content, "Cours Audio — " + coursList.length + " enseignements"));
@@ -3557,7 +3394,7 @@ app.get("/admin/login", (req, res) => {
 
 app.post("/admin/login", express.urlencoded({ extended: false }), (req, res) => {
   if (req.body.password === ADMIN_PASSWORD) {
-    res.setHeader("Set-Cookie", `admin_token=${ADMIN_TOKEN}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=86400`);
+    res.setHeader("Set-Cookie", `admin_token=${ADMIN_TOKEN}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`);
     res.redirect("/admin");
   } else {
     res.redirect("/admin/login?error=1");
@@ -3585,7 +3422,7 @@ app.get("/admin", async (req, res) => {
         <td style="padding:1rem;font-weight:600">${c.titre}</td>
         <td style="padding:1rem"><span style="background:#e8f4fd;color:#1E3A8A;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem">${c.categorie||"-"}</span></td>
         <td style="padding:1rem">${c.fichier?`<a href="/uploads/cours/${c.fichier}" target="_blank" style="color:#1E3A8A">📎 ${c.fichier.slice(0,20)}...</a>`:"Texte seulement"}</td>
-        <td style="padding:1rem"><form method="POST" action="/admin/delete-cours/${c.id}" style="display:inline" onsubmit="return confirm('Supprimer ?')"><button type="submit" style="background:none;border:none;color:#ef4444;font-size:0.85rem;cursor:pointer">🗑️ Suppr.</button></form></td>
+        <td style="padding:1rem"><a href="/admin/delete-cours/${c.id}" onclick="return confirm('Supprimer ?')" style="color:#ef4444;font-size:0.85rem">🗑️ Suppr.</a></td>
       </tr>`).join("")
     : `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#888">Aucun cours encore</td></tr>`;
 
@@ -3723,7 +3560,7 @@ app.post("/api/admin/upload-cours", (req, res, next) => {
 });
 
 // API: Delete cours
-app.post("/admin/delete-cours/:id", async (req, res) => {
+app.get("/admin/delete-cours/:id", async (req, res) => {
   const token = req.cookies?.admin_token;
   if (token !== ADMIN_TOKEN) return res.redirect("/admin/login");
   await deleteCoursDB(req.params.id);
@@ -3748,16 +3585,6 @@ app.get("/api/audio-files", (req, res) => {
   }
 });
 
-// API: cours par sujet (123 mini-cours cacheroute + emounah)
-app.get("/api/cours-par-sujet", (req, res) => {
-  try {
-    const data = JSON.parse(fs.readFileSync(path.join(__dirname, "db/cours-par-sujet.json"), "utf8"));
-    res.json(data);
-  } catch(e) {
-    res.json([]);
-  }
-});
-
 // API: get audioLessons DB
 app.get("/api/audio-lessons", (req, res) => {
   try {
@@ -3766,17 +3593,6 @@ app.get("/api/audio-lessons", (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).send(getLayout('<div class="container mt-12 mb-12" style="text-align:center"><h1>Page non trouvée</h1><p class="text-muted">La page que vous cherchez n\'existe pas.</p><a href="/" class="btn btn-primary mt-4">Retour à l\'accueil</a></div>', '404 - Page non trouvée'));
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error('[ERROR]', err.stack || err.message || err);
-  res.status(500).send(getLayout('<div class="container mt-12 mb-12" style="text-align:center"><h1>Erreur serveur</h1><p class="text-muted">Une erreur est survenue. Veuillez réessayer.</p><a href="/" class="btn btn-primary mt-4">Retour à l\'accueil</a></div>', 'Erreur'));
 });
 
 if (require.main === module) {
