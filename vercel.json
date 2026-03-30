@@ -11,16 +11,13 @@
           "assets/*.css",
           "assets/*.svg",
           "assets/*.png",
-          "assets/images/**",
           "assets/livres/**",
-          "assets/pdfs/**",
           "public/*.html",
           "public/*.json",
           "public/*.js",
           "public/*.png",
           "public/*.ico",
           "public/*.svg",
-          "public/images/**",
           "public/pdfs/**"
         ]
       }
