@@ -2295,7 +2295,7 @@ app.get("/cart", (req, res) => {
     <script>
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
-    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS"></script>` : ''}
+    ${paypalClientId ? `<script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR"></script>` : ''}
     <script src="/checkout-system.js"></script>
 
     <div id="bank-transfer-info" style="display:none; max-width:600px; margin:2rem auto; background:#f8f6f3; border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:2rem;">
@@ -2436,7 +2436,7 @@ app.post("/api/paypal/create-order", async (req, res) => {
         purchase_units: [
           {
             amount: {
-              currency_code: currency || "ILS",
+              currency_code: currency || "EUR",
               value: (amount / 100).toFixed(2),
             },
           },
