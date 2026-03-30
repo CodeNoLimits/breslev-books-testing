@@ -3,3 +3,4 @@
 node_modules/
 covers/
 package-lock.json
+assets/images/*.png
