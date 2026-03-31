@@ -4,39 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Esther — Assistante Vocale</title>
-<script type="importmap">
-{"imports": {"@google/genai": "https://esm.run/@google/genai@1.47.0"}}
-</script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: linear-gradient(135deg, #1E3A8A 0%, #0f172a 100%);
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  font-family: 'Segoe UI', sans-serif; color: white; padding: 1rem;
-}
-#avatar { font-size: 3.5rem; margin-bottom: 0.8rem; transition: all 0.3s; }
-#avatar.listening { animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
-#status { font-size: 0.85rem; color: #D4AF37; margin-bottom: 1.5rem; min-height: 1.2rem; text-align: center; }
-#transcript {
-  background: rgba(255,255,255,0.08); border-radius: 12px; padding: 0.8rem 1rem;
-  width: 100%; max-width: 300px; min-height: 60px; font-size: 0.85rem;
-  color: rgba(255,255,255,0.8); margin-bottom: 1.2rem; text-align: center;
-  border: 1px solid rgba(212,175,55,0.15);
-}
-#title { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; color: #D4AF37; }
-#subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; }
-#btn {
-  width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer;
-  background: linear-gradient(135deg, #D4AF37, #B8960C);
-  font-size: 1.6rem; box-shadow: 0 4px 20px rgba(212,175,55,0.4);
-  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
-}
-#btn:hover { transform: scale(1.08); }
-#btn.active { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 1s infinite; }
-#btn:disabled { opacity: 0.5; cursor: not-allowed; }
-#error { color: #ef4444; font-size: 0.75rem; margin-top: 0.8rem; max-width: 300px; text-align: center; word-break: break-word; min-height: 1rem; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(135deg,#1E3A8A 0%,#0f172a 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;color:white;padding:1rem}
+#avatar{font-size:3.5rem;margin-bottom:.8rem;transition:all .3s}
+#avatar.listening{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+#status{font-size:.85rem;color:#D4AF37;margin-bottom:1.5rem;min-height:1.2rem;text-align:center}
+#transcript{background:rgba(255,255,255,.08);border-radius:12px;padding:.8rem 1rem;width:100%;max-width:300px;min-height:60px;font-size:.85rem;color:rgba(255,255,255,.8);margin-bottom:1.2rem;text-align:center;border:1px solid rgba(212,175,55,.15)}
+#title{font-size:1rem;font-weight:600;margin-bottom:.2rem;color:#D4AF37}
+#subtitle{font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1.5rem}
+#btn{width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#D4AF37,#B8960C);font-size:1.6rem;box-shadow:0 4px 20px rgba(212,175,55,.4);transition:all .2s;display:flex;align-items:center;justify-content:center}
+#btn:hover{transform:scale(1.08)}
+#btn.active{background:linear-gradient(135deg,#ef4444,#dc2626);animation:pulse 1s infinite}
+#btn:disabled{opacity:.5;cursor:not-allowed}
+#error{color:#ef4444;font-size:.75rem;margin-top:.8rem;max-width:300px;text-align:center;word-break:break-word;min-height:1rem}
 </style>
 </head>
 <body>
@@ -45,201 +27,154 @@ body {
 <div id="subtitle">Assistante vocale IA</div>
 <div id="status">Chargement...</div>
 <div id="transcript">Je suis la pour vous aider a decouvrir les livres de Rabbi Nachman de Breslev.</div>
-<button id="btn" onclick="toggleCall()" disabled>🎙️</button>
+<button id="btn" onclick="toggle()" disabled>🎙️</button>
 <div id="error"></div>
 
-<script type="module">
-import { GoogleGenAI } from '@google/genai';
+<script>
+var SYSTEM = "Tu es Esther, l'assistante vocale de la librairie Breslev. Tu parles UNIQUEMENT en francais, avec chaleur. CATALOGUE: Likoutey Moharane Tomes 1-8: 26 euros, Cahiers du Coeur/Likoutey Halakhot/Age d'Or/Likoute Tefilot: 29 euros, Tikoun Haklali: 7 euros, Voyage Rabbi Nahman: 22 euros. PAIEMENT: PayPal ou Virement IBAN FR76 1652 8001 7100 0004 3621 064. CONTACT: info@hayil.fr. Reponds en 1-2 phrases.";
+var WS_BASE = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
+var MODEL = "models/gemini-3.1-flash-live-preview";
 
-const SYSTEM = `Tu es Esther, l'assistante vocale de la librairie Breslev (librairie-breslev.com).
-Tu parles UNIQUEMENT en francais, avec chaleur et bienveillance.
-Tu connais tous les livres de Rabbi Nachman de Breslev traduits par Esther Ifrah.
+var ws = null, active = false, apiKey = null, micStream = null, audioCtx = null, playCtx = null, playQueue = [], playing = false;
+var btn = document.getElementById("btn");
+var statusEl = document.getElementById("status");
+var transcript = document.getElementById("transcript");
+var avatarEl = document.getElementById("avatar");
+var errorEl = document.getElementById("error");
 
-CATALOGUE (livraison mondiale incluse dans le prix):
-- Likoutey Moharane Tomes 1-8: 26 euros chacun
-- Les Cahiers du Coeur, Likoutey Halakhot, L'Age d'Or, Likoute Tefilot: 29 euros
-- Tikoun Haklali: 7 euros
-- Le Voyage de Rabbi Nahman: 22 euros
-- Chemot Atsadikim, La Vie d'un Breslever, Conversations des Anges T1/T2: 26 euros
+function setS(t){statusEl.textContent=t}
+function setE(t){errorEl.textContent=t;if(t)console.error("[Voice]",t)}
 
-PAIEMENT: PayPal (en ligne) ou Virement EUR: IBAN FR76 1652 8001 7100 0004 3621 064 BIC SMOEFRP1
-CONTACT: info@hayil.fr | WhatsApp: +972 58-514-8500
-LIVRAISON: 7-14 jours depuis Jerusalem
+fetch("/api/voice-key").then(function(r){return r.json()}).then(function(d){
+  if(!d.key)throw new Error("Cle manquante");
+  apiKey=d.key;btn.disabled=false;setS("Cliquez pour parler");
+}).catch(function(e){setS("Indisponible");setE(e.message)});
 
-Reponds en 1-2 phrases maximum. Sois chaleureuse et spirituelle.`;
+function toggle(){if(!active)start();else stop()}
 
-const MODEL = 'models/gemini-3.1-flash-live-preview';
+async function start(){
+  setE("");setS("Acces micro...");
+  try{micStream=await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1}})}
+  catch(e){setS("Micro refuse");setE("Autorisez le microphone");return}
 
-let ai = null;
-let session = null;
-let isActive = false;
-let audioCtx = null;
-let micStream = null;
+  setS("Connexion a Esther...");
+  var url=WS_BASE+"?key="+apiKey;
+  ws=new WebSocket(url);
 
-const btn = document.getElementById('btn');
-const statusEl = document.getElementById('status');
-const transcript = document.getElementById('transcript');
-const avatar = document.getElementById('avatar');
-const errorEl = document.getElementById('error');
-
-function setStatus(t) { statusEl.textContent = t; }
-function setError(t) { errorEl.textContent = t; if (t) console.error('[Voice]', t); }
-
-async function init() {
-  try {
-    const resp = await fetch('/api/voice-key');
-    if (!resp.ok) throw new Error('Assistante vocale non configuree');
-    const data = await resp.json();
-    if (!data.key) throw new Error('Cle API manquante');
-    ai = new GoogleGenAI({ apiKey: data.key });
-    btn.disabled = false;
-    setStatus('Cliquez pour parler');
-  } catch (e) {
-    setStatus('Indisponible');
-    setError(e.message);
-  }
-}
-
-async function toggleCall() {
-  if (!isActive) await startCall(); else await stopCall();
-}
-
-async function startCall() {
-  if (!ai) { setError('SDK non initialise'); return; }
-  setError('');
-  setStatus('Acces micro...');
-
-  try {
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
-  } catch (e) {
-    setStatus('Micro refuse');
-    setError('Autorisez le microphone.');
-    return;
-  }
-
-  setStatus('Connexion a Esther...');
-  try {
-    session = await ai.live.connect({
-      model: MODEL,
-      callbacks: {
-        onopen: function() {
-          console.log('[Voice] Connected');
-          setStatus('Connecte — Parlez !');
-          btn.classList.add('active');
-          btn.textContent = '🔴';
-          avatar.classList.add('listening');
-          isActive = true;
-          startMic();
+  ws.onopen=function(){
+    var setup={
+      setup:{
+        model:MODEL,
+        generation_config:{
+          response_modalities:["AUDIO"],
+          speech_config:{voice_config:{prebuilt_voice_config:{voice_name:"Kore"}}}
         },
-        onmessage: function(msg) {
-          try {
-            if (msg.serverContent && msg.serverContent.modelTurn && msg.serverContent.modelTurn.parts) {
-              var parts = msg.serverContent.modelTurn.parts;
-              for (var i = 0; i < parts.length; i++) {
-                if (parts[i].text) transcript.textContent = parts[i].text;
-                if (parts[i].inlineData && parts[i].inlineData.data) playPCM(parts[i].inlineData);
-              }
-            }
-          } catch (e) { console.warn('[Voice] msg parse:', e); }
-        },
-        onerror: function(e) {
-          console.error('[Voice] WS error:', e);
-          setError('Erreur: ' + (e.message || 'inconnue'));
-          resetUI();
-        },
-        onclose: function(e) {
-          console.log('[Voice] WS closed', e);
-          var code = e && e.code ? e.code : '?';
-          if (isActive) {
-            setStatus('Connexion perdue');
-            setError('Code: ' + code);
-          } else {
-            setStatus('Terminee. Cliquez pour recommencer.');
-          }
-          resetUI();
-        }
-      },
-      config: {
-        systemInstruction: SYSTEM,
-        responseModalities: ['AUDIO', 'TEXT'],
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } }
+        system_instruction:{parts:[{text:SYSTEM}]}
       }
-    });
-  } catch (e) {
-    console.error('[Voice] Connect fail:', e);
-    setStatus('Echec connexion');
-    setError(e.message || String(e));
-    cleanupMic();
-    return;
-  }
-}
-
-function startMic() {
-  if (!micStream) return;
-  audioCtx = new AudioContext({ sampleRate: 16000 });
-  var source = audioCtx.createMediaStreamSource(micStream);
-  var proc = audioCtx.createScriptProcessor(4096, 1, 1);
-  proc.onaudioprocess = function(e) {
-    if (!isActive || !session) return;
-    var input = e.inputBuffer.getChannelData(0);
-    var pcm = new Int16Array(input.length);
-    for (var i = 0; i < input.length; i++) pcm[i] = Math.max(-32768, Math.min(32767, input[i] * 32768));
-    var bytes = new Uint8Array(pcm.buffer);
-    var bin = '';
-    for (var j = 0; j < bytes.length; j++) bin += String.fromCharCode(bytes[j]);
-    try { session.sendRealtimeInput({ media: { mimeType: 'audio/pcm;rate=16000', data: btoa(bin) } }); }
-    catch (ex) {}
+    };
+    ws.send(JSON.stringify(setup));
   };
-  source.connect(proc);
-  proc.connect(audioCtx.destination);
+
+  ws.onmessage=function(evt){
+    var data=JSON.parse(evt.data);
+    if(data.setupComplete){
+      setS("Connecte — Parlez !");
+      btn.classList.add("active");btn.textContent="🔴";
+      avatarEl.classList.add("listening");active=true;
+      startMic();
+      return;
+    }
+    var sc=data.serverContent||{};
+    var parts=(sc.modelTurn||{}).parts||[];
+    for(var i=0;i<parts.length;i++){
+      if(parts[i].inlineData&&parts[i].inlineData.data){
+        queueAudio(parts[i].inlineData.data);
+      }
+    }
+    if(sc.turnComplete){
+      transcript.textContent="(Esther a repondu)";
+    }
+  };
+
+  ws.onerror=function(e){
+    console.error("[Voice] WS error",e);
+    setE("Erreur connexion");resetUI();
+  };
+
+  ws.onclose=function(e){
+    if(active){setS("Connexion perdue");setE("Code: "+(e.code||"?"));}
+    else{setS("Terminee. Cliquez pour recommencer.");}
+    resetUI();
+  };
 }
 
-function playPCM(inlineData) {
-  try {
-    var raw = atob(inlineData.data);
-    var buf = new ArrayBuffer(raw.length);
-    var v = new Uint8Array(buf);
-    for (var i = 0; i < raw.length; i++) v[i] = raw.charCodeAt(i);
-    var ctx = audioCtx || new AudioContext({ sampleRate: 24000 });
-    var samples = new Int16Array(buf);
-    var f32 = new Float32Array(samples.length);
-    for (var j = 0; j < samples.length; j++) f32[j] = samples[j] / 32768;
-    var ab = ctx.createBuffer(1, f32.length, 24000);
+function startMic(){
+  if(!micStream)return;
+  audioCtx=new AudioContext({sampleRate:16000});
+  var source=audioCtx.createMediaStreamSource(micStream);
+  var proc=audioCtx.createScriptProcessor(4096,1,1);
+  proc.onaudioprocess=function(e){
+    if(!active||!ws||ws.readyState!==1)return;
+    var input=e.inputBuffer.getChannelData(0);
+    var pcm=new Int16Array(input.length);
+    for(var i=0;i<input.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,input[i]*32768));
+    var bytes=new Uint8Array(pcm.buffer);
+    var bin="";for(var j=0;j<bytes.length;j++)bin+=String.fromCharCode(bytes[j]);
+    var b64=btoa(bin);
+    try{
+      ws.send(JSON.stringify({
+        realtime_input:{
+          media_chunks:[{mime_type:"audio/pcm;rate=16000",data:b64}]
+        }
+      }));
+    }catch(ex){}
+  };
+  source.connect(proc);proc.connect(audioCtx.destination);
+}
+
+function queueAudio(b64data){
+  playQueue.push(b64data);
+  if(!playing)playNext();
+}
+
+function playNext(){
+  if(playQueue.length===0){playing=false;return;}
+  playing=true;
+  var b64=playQueue.shift();
+  try{
+    var raw=atob(b64);
+    var buf=new ArrayBuffer(raw.length);
+    var v=new Uint8Array(buf);
+    for(var i=0;i<raw.length;i++)v[i]=raw.charCodeAt(i);
+    if(!playCtx)playCtx=new AudioContext({sampleRate:24000});
+    var samples=new Int16Array(buf);
+    var f32=new Float32Array(samples.length);
+    for(var j=0;j<samples.length;j++)f32[j]=samples[j]/32768;
+    var ab=playCtx.createBuffer(1,f32.length,24000);
     ab.getChannelData(0).set(f32);
-    var src = ctx.createBufferSource();
-    src.buffer = ab;
-    src.connect(ctx.destination);
+    var src=playCtx.createBufferSource();
+    src.buffer=ab;
+    src.connect(playCtx.destination);
+    src.onended=playNext;
     src.start();
-  } catch (e) {}
+  }catch(e){playing=false;playNext();}
 }
 
-function cleanupMic() {
-  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+function resetUI(){
+  active=false;btn.classList.remove("active");btn.textContent="🎙️";avatarEl.classList.remove("listening");
+  if(micStream){micStream.getTracks().forEach(function(t){t.stop()});micStream=null}
+  ws=null;playQueue=[];playing=false;
 }
 
-function resetUI() {
-  isActive = false;
-  btn.classList.remove('active');
-  btn.textContent = '🎙️';
-  avatar.classList.remove('listening');
-  cleanupMic();
-  session = null;
+function stop(){
+  active=false;
+  if(ws){try{ws.close()}catch(e){}}ws=null;
+  if(audioCtx){try{audioCtx.close()}catch(e){}}audioCtx=null;
+  if(micStream){micStream.getTracks().forEach(function(t){t.stop()});micStream=null}
+  btn.classList.remove("active");btn.textContent="🎙️";avatarEl.classList.remove("listening");
+  setS("Terminee. Cliquez pour recommencer.");setE("");
+  playQueue=[];playing=false;
 }
-
-async function stopCall() {
-  isActive = false;
-  if (session) { try { session.close(); } catch(e) {} session = null; }
-  if (audioCtx) { try { await audioCtx.close(); } catch(e) {} audioCtx = null; }
-  cleanupMic();
-  btn.classList.remove('active');
-  btn.textContent = '🎙️';
-  avatar.classList.remove('listening');
-  setStatus('Terminee. Cliquez pour recommencer.');
-  setError('');
-}
-
-window.toggleCall = toggleCall;
-init();
 </script>
 </body>
 </html>
