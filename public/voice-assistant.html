@@ -75,8 +75,12 @@ async function start(){
     ws.send(JSON.stringify(setup));
   };
 
-  ws.onmessage=function(evt){
-    var data=JSON.parse(evt.data);
+  ws.onmessage=async function(evt){
+    var text;
+    if(evt.data instanceof Blob){text=await evt.data.text();}
+    else{text=evt.data;}
+    var data;
+    try{data=JSON.parse(text);}catch(e){console.warn("[Voice] parse error",e);return;}
     if(data.setupComplete){
       setS("Connecte — Parlez !");
       btn.classList.add("active");btn.textContent="🔴";
