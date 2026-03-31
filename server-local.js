@@ -2146,12 +2146,13 @@ app.get("/cart", (req, res) => {
       window.STRIPE_PUBLISHABLE_KEY = '${stripeKey}';
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&disable-funding=credit,card"></script>
     <script src="/checkout-system.js"></script>
   `;
   res.send(getLayout(content, "Panier & Checkout"));
 });
+
+app.get("/checkout", (req, res) => res.redirect(301, "/cart"));
 
 // Route pour le lecteur FlipHTML5 (Likouté Moharan Tome 1)
 app.get("/reader/:bookSlug", (req, res) => {
