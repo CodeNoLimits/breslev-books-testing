@@ -31,7 +31,7 @@ async function sendEmail({ to, subject, html }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'Breslev by Esther Ifrah <contact@breslev-books.com>',
+        from: 'Breslev by Esther Ifrah <info@hayil.fr>',
         to, subject, html
       })
     });
@@ -518,7 +518,7 @@ app.post("/api/auth/signup", async (req, res) => {
       <h1 style="color:#D4AF37;">Bienvenue, ${fullName || email} !</h1>
       <p style="margin:16px 0;">Votre compte est créé sur <strong>Breslev by Esther Ifrah</strong>.</p>
       <p style="color:#aaa;">Explorez notre catalogue de livres de Rabbi Nachman de Breslev en français.</p>
-      <a href="https://breslev-books-preview.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
+      <a href="https://librairie-breslev.com" style="display:inline-block;background:#D4AF37;color:#0a0e27;padding:14px 28px;border-radius:8px;text-decoration:none;margin:20px 0;font-weight:bold;">Découvrir la boutique</a>
       <p style="color:#555;font-size:0.85rem;margin-top:30px;border-top:1px solid #333;padding-top:16px;">Na Nach Nachma Nachman MeUman</p>
     </div>`
   });
@@ -1704,7 +1704,7 @@ app.get("/products/:id", (req, res) => {
                 data-product-id="${product.id}"
                 data-product-title="${product.title_fr}"
                 data-product-author="${product.author}"
-                data-product-price="${product.price_physical}"
+                data-product-price="${product.price_eur}"
                 data-product-image="${product.cover_image}"
                 style="background: transparent; border: 1px solid #1a1a2e; color: #1a1a2e; font-weight: 600; letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.background='#1a1a2e';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#1a1a2e'">
                 <i class="fas fa-shopping-cart"></i> Ajouter au panier
@@ -1770,6 +1770,7 @@ app.get("/products/:id", (req, res) => {
     }
     ${product.pdf_file ? `
     <link rel="stylesheet" href="/flipbook-styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="/page-flip.browser.js"></script>
     <script src="/flipbook-viewer.js"></script>
     <script>

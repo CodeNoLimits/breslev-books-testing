@@ -114,7 +114,10 @@ class BresledCart {
     notification.innerHTML = `
       <div class="cart-notification-content">
         <i class="fas fa-check-circle"></i>
-        <span>${message}</span>
+        <div class="cart-notification-text">
+          <strong>Ajouté au panier !</strong>
+          <span>${message}</span>
+        </div>
       </div>
     `;
     document.body.appendChild(notification);

@@ -254,23 +254,54 @@ class CheckoutManager {
               <div id="paypal-button-container" style="min-height:50px;"></div>
             </div>
 
-            <!-- Virement bancaire -->
+            <!-- Virement bancaire / Chèque -->
             <div id="virement-payment" class="payment-form">
-              <div style="background:#f8f9fa; border-radius:8px; padding:1.5rem; margin-bottom:1rem;">
-                <h4 style="color:#d4af37; margin-bottom:1rem;"><i class="fas fa-university"></i> Coordonnées bancaires</h4>
-                <table style="width:100%; border-collapse:collapse;">
-                  <tr><td style="padding:0.4rem 0; color:#666; width:40%;">Bénéficiaire</td><td style="font-weight:600;">Esther Ifrah</td></tr>
-                  <tr><td style="padding:0.4rem 0; color:#666;">IBAN</td><td style="font-family:monospace; font-weight:600;">IL76 0125 5000 0000 0012 345</td></tr>
-                  <tr><td style="padding:0.4rem 0; color:#666;">BIC/SWIFT</td><td style="font-weight:600;">LUMIILIT</td></tr>
-                  <tr><td style="padding:0.4rem 0; color:#666;">Banque</td><td>Leumi Bank, Israël</td></tr>
-                  <tr><td style="padding:0.4rem 0; color:#666;">Référence</td><td>Breslev-${Date.now().toString().slice(-6)}</td></tr>
-                </table>
-                <div style="margin-top:1rem; padding:0.75rem; background:#fff3cd; border-radius:6px; font-size:0.9rem; color:#856404;">
-                  <i class="fas fa-info-circle"></i> Après votre virement, envoyez votre preuve de paiement à <strong>contact@breslev-books.com</strong>. Votre commande sera expédiée sous 2-3 jours ouvrés à réception du paiement.
+              <!-- Sous-onglets : Virement EUR | Chèque Israël -->
+              <div style="display:flex; gap:0.5rem; margin-bottom:1.2rem;">
+                <button id="tab-virement-eur" onclick="checkoutManager.switchVirementTab('eur')" style="flex:1; padding:0.6rem 1rem; border:2px solid #d4af37; border-radius:8px; background:#d4af37; color:#0a0e27; font-weight:700; cursor:pointer; font-size:0.9rem;">
+                  <i class="fas fa-euro-sign"></i> Virement en Euros
+                </button>
+                <button id="tab-virement-il" onclick="checkoutManager.switchVirementTab('il')" style="flex:1; padding:0.6rem 1rem; border:2px solid #d4af37; border-radius:8px; background:#fff; color:#0a0e27; font-weight:600; cursor:pointer; font-size:0.9rem;">
+                  <i class="fas fa-shekel-sign"></i> Chèque / Virement Israël
+                </button>
+              </div>
+
+              <!-- EUR -->
+              <div id="virement-eur-content">
+                <div style="background:#f8f9fa; border-radius:8px; padding:1.5rem; margin-bottom:1rem;">
+                  <h4 style="color:#d4af37; margin-bottom:1rem;"><i class="fas fa-university"></i> Coordonnées bancaires — France</h4>
+                  <table style="width:100%; border-collapse:collapse;">
+                    <tr><td style="padding:0.4rem 0; color:#666; width:45%;">Titulaire</td><td style="font-weight:600;">Mme Joelle Ifrah</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">IBAN</td><td style="font-family:monospace; font-weight:600; font-size:0.9rem;">FR76 1652 8001 7100 0004 3621 064</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">BIC/SWIFT</td><td style="font-weight:600;">SMOEFRP1</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Banque</td><td>France Pay — 10 Rue de Penthièvre, 75008 Paris</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Référence</td><td style="font-weight:600;">Breslev-${Date.now().toString().slice(-6)}</td></tr>
+                  </table>
+                  <div style="margin-top:1rem; padding:0.75rem; background:#fff3cd; border-radius:6px; font-size:0.9rem; color:#856404;">
+                    <i class="fas fa-info-circle"></i> Après votre virement, envoyez votre preuve à <strong>info@hayil.fr</strong>. Expédition sous 2-3 jours ouvrés.
+                  </div>
                 </div>
               </div>
+
+              <!-- Chèque / Israël -->
+              <div id="virement-il-content" style="display:none;">
+                <div style="background:#f8f9fa; border-radius:8px; padding:1.5rem; margin-bottom:1rem;">
+                  <h4 style="color:#d4af37; margin-bottom:1rem;"><i class="fas fa-university"></i> Chèque ou Virement — Israël</h4>
+                  <table style="width:100%; border-collapse:collapse;">
+                    <tr><td style="padding:0.4rem 0; color:#666; width:45%;">Titulaire</td><td style="font-weight:600;">Joelle Ifrah / ג'ואל יפרח</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Banque</td><td style="font-weight:600;">הבנק הבינלאומי לישראל (Beinleumi)</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Numéro banque</td><td style="font-weight:600;">031</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Succursale (Snif)</td><td style="font-weight:600;">012</td></tr>
+                    <tr><td style="padding:0.4rem 0; color:#666;">Numéro de compte</td><td style="font-family:monospace; font-weight:600;">904597</td></tr>
+                  </table>
+                  <div style="margin-top:1rem; padding:0.75rem; background:#fff3cd; border-radius:6px; font-size:0.9rem; color:#856404;">
+                    <i class="fas fa-info-circle"></i> Chèque à l'ordre de <strong>Joelle Ifrah</strong>. Envoyez votre preuve à <strong>info@hayil.fr</strong>. Expédition sous 2-3 jours ouvrés.
+                  </div>
+                </div>
+              </div>
+
               <button class="btn btn-primary btn-pay" onclick="checkoutManager.handleVirementConfirmation()">
-                <i class="fas fa-check"></i> Confirmer ma commande (virement)
+                <i class="fas fa-check"></i> Confirmer ma commande
               </button>
             </div>
           </div>
@@ -407,6 +438,25 @@ class CheckoutManager {
     }).render('#paypal-button-container');
   }
 
+  switchVirementTab(tab) {
+    const eurContent = document.getElementById('virement-eur-content');
+    const ilContent = document.getElementById('virement-il-content');
+    const eurBtn = document.getElementById('tab-virement-eur');
+    const ilBtn = document.getElementById('tab-virement-il');
+    if (!eurContent || !ilContent) return;
+    if (tab === 'eur') {
+      eurContent.style.display = 'block';
+      ilContent.style.display = 'none';
+      eurBtn.style.background = '#d4af37'; eurBtn.style.color = '#0a0e27'; eurBtn.style.fontWeight = '700';
+      ilBtn.style.background = '#fff'; ilBtn.style.color = '#0a0e27'; ilBtn.style.fontWeight = '600';
+    } else {
+      eurContent.style.display = 'none';
+      ilContent.style.display = 'block';
+      ilBtn.style.background = '#d4af37'; ilBtn.style.color = '#0a0e27'; ilBtn.style.fontWeight = '700';
+      eurBtn.style.background = '#fff'; eurBtn.style.color = '#0a0e27'; eurBtn.style.fontWeight = '600';
+    }
+  }
+
   handleVirementConfirmation() {
     const shipping = this.checkoutData.shipping || {};
     this.handlePaymentSuccess({
@@ -437,7 +487,7 @@ class CheckoutManager {
           <div style="background:#fff3cd; padding:1.5rem; border-radius:8px; margin-bottom:2rem; text-align:left;">
             <h4><i class="fas fa-university"></i> En attente de votre virement</h4>
             <p>Référence : <strong>${this.checkoutData.payment?.reference || ''}</strong></p>
-            <p>Envoyez votre preuve de paiement à <strong>contact@breslev-books.com</strong></p>
+            <p>Envoyez votre preuve de paiement à <strong>info@hayil.fr</strong></p>
             <p>Votre commande sera expédiée dès réception du virement (2-3 jours ouvrés).</p>
           </div>
         ` : `

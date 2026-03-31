@@ -6,8 +6,7 @@
  */
 (function() {
   const PREVIEW_PAGES = 5;
-  const PDF_JS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
-  const PDF_JS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+  const PDF_JS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
   window.initFlipbook = async function(containerId, pdfUrl, options = {}) {
     const container = document.getElementById(containerId);
@@ -20,8 +19,9 @@
     container.innerHTML = '<div class="flipbook-loading"><div class="flipbook-spinner"></div><p>Chargement du livre...</p></div>';
 
     try {
-      // Load PDF.js dynamically
-      const pdfjsLib = await import(PDF_JS_CDN);
+      // Use PDF.js loaded globally via <script> tag
+      const pdfjsLib = window.pdfjsLib;
+      if (!pdfjsLib) throw new Error('PDF.js non disponible');
       pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_JS_WORKER;
 
       const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
