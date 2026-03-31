@@ -875,11 +875,7 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
       <link rel="stylesheet" href="/checkout-styles.css" media="print" onload="this.media='all'">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
       <noscript><link rel="stylesheet" href="/premium-upgrades.css"><link rel="stylesheet" href="/checkout-styles.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
-      <!-- Stripe Integration — loaded async, only init on payment pages -->
-      <script src="https://js.stripe.com/v3/" async></script>
-      <script>
-        window.STRIPE_PUBLISHABLE_KEY = "${process.env.STRIPE_PUBLIC_KEY || 'pk_live_JbJRtjb23Aujij7TTHOft6jR008MOj8TLY'}";
-      </script>
+      <!-- PayPal loaded only on cart page -->
 
       <script src="/cart-system.js" defer></script>
       <script src="/shipping-config.js" defer></script>
@@ -2143,7 +2139,6 @@ app.get("/cart", (req, res) => {
     </div>
 
     <script>
-      window.STRIPE_PUBLISHABLE_KEY = '${stripeKey}';
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
     <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&disable-funding=credit,card"></script>
