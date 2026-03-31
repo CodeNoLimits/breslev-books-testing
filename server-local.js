@@ -250,6 +250,7 @@ app.use("/videos", express.static(path.join(__dirname, "public/videos"), mediaOp
 app.use("/audios", express.static(path.join(__dirname, "assets/audios"), mediaOpts));
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), staticOpts));
 app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts));
+app.use("/images/editions", express.static(path.join(__dirname, "assets/images/editions"), mediaOpts));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -2149,33 +2150,9 @@ app.get("/cart", (req, res) => {
 
 app.get("/checkout", (req, res) => res.redirect(301, "/cart"));
 
-// Route pour le lecteur FlipHTML5 (Likouté Moharan Tome 1)
+// Redirect old FlipHTML5 reader → product page with custom flipbook
 app.get("/reader/:bookSlug", (req, res) => {
-  const { bookSlug } = req.params;
-  const { generateFlipHTML5Iframe } = require("./assets/fliphtml5-reader.js");
-
-  const content = `
-    <link rel="stylesheet" href="/checkout-styles.css">
-    <script src="/fliphtml5-reader.js"></script>
-    
-    <div class="container mt-12 mb-12">
-      <div style="max-width: 1200px; margin: 0 auto;">
-        <div id="fliphtml5-reader"></div>
-        
-        <script>
-          loadFlipHTML5Reader('fliphtml5-reader', '${bookSlug}');
-        </script>
-        
-        <div style="margin-top: 2rem; text-align: center;">
-          <a href="/products/1" class="btn btn-primary">
-            <i class="fas fa-shopping-cart"></i> Acheter ce livre
-          </a>
-        </div>
-      </div>
-    </div>
-  `;
-
-  res.send(getLayout(content, "Lecteur numérique"));
+  res.redirect(301, "/products/2");
 });
 
 // PayPal: Créer commande
