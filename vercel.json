@@ -2,14 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "public/images/livres/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/images/editions/**",
-      "use": "@vercel/static"
-    },
-    {
       "src": "server-local.js",
       "use": "@vercel/node",
       "config": {
@@ -36,16 +28,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/images/livres/(.*)",
-      "dest": "/public/images/livres/$1",
-      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
-    },
-    {
-      "src": "/images/editions/(.*)",
-      "dest": "/public/images/editions/$1",
-      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
-    },
     {
       "src": "/audios/(.*)",
       "dest": "server-local.js",

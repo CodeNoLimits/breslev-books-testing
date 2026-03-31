@@ -237,9 +237,20 @@ app.post(
 
 const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
+
+// ==========================================
+// IMAGES VIA jsDelivr CDN (GitHub-backed, free, global)
+// ==========================================
+const JSDELIVR = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@main';
+app.get('/images/livres/:filename', (req, res) => {
+  res.redirect(301, `${JSDELIVR}/public/images/livres/${req.params.filename}`);
+});
+app.get('/images/editions/:filename', (req, res) => {
+  res.redirect(301, `${JSDELIVR}/public/images/editions/${req.params.filename}`);
+});
+
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
-// Images: public/images/ first (catalog covers), fallback to assets/images/
-app.use("/images", express.static(path.join(__dirname, "public/images"), mediaOpts));
+// Other images: fallback via assets/images/
 app.use("/images", express.static(path.join(__dirname, "assets/images"), mediaOpts));
 app.use("/videos", express.static(path.join(__dirname, "public/videos"), mediaOpts));
 app.use("/audios", express.static(path.join(__dirname, "assets/audios"), mediaOpts));
