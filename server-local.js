@@ -3770,7 +3770,7 @@ app.get("/api/audio-lessons", (req, res) => {
 
 // Voice assistant: API key endpoint (keeps key out of client HTML)
 app.get('/api/voice-key', (req, res) => {
-  const key = process.env.GEMINI_API_KEY;
+  const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) return res.status(503).json({ error: 'Voice assistant not configured' });
   res.json({ key });
 });
