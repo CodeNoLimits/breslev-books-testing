@@ -3640,6 +3640,28 @@ app.get("/api/audio-lessons", (req, res) => {
   }
 });
 
+// SEO: robots.txt
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain").send(
+    "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: https://librairie-breslev.com/sitemap.xml\n"
+  );
+});
+
+// SEO: sitemap.xml
+app.get("/sitemap.xml", (req, res) => {
+  const base = "https://librairie-breslev.com";
+  const today = new Date().toISOString().slice(0, 10);
+  const staticPages = ["/", "/catalogue", "/cours", "/audio/cacheroute", "/audio/emounah", "/a-propos", "/contact", "/temoignages"];
+  const productPages = catalog.map(p => `/products/${p.id}`);
+  const allPages = [...staticPages, ...productPages];
+  const urls = allPages.map(p =>
+    `  <url><loc>${base}${p}</loc><lastmod>${today}</lastmod><changefreq>${p === "/" ? "daily" : "weekly"}</changefreq><priority>${p === "/" ? "1.0" : p.startsWith("/products/") ? "0.8" : "0.6"}</priority></url>`
+  ).join("\n");
+  res.type("application/xml").send(
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`
+  );
+});
+
 if (require.main === module) {
   app.listen(PORT, () => {
     const audioCount = fs.readdirSync(path.join(__dirname, "assets/audios")).filter(f => f.endsWith(".opus") || f.endsWith(".ogg")).length;
