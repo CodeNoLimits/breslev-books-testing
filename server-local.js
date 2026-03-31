@@ -3310,136 +3310,205 @@ app.get("/cours", async (req, res) => {
 
 
   const todayHTML = today ? `
-    <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border-radius: 24px; padding: 3rem; margin-bottom: 3rem; color: white; box-shadow: 0 20px 60px rgba(30,58,138,0.3);">
-      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <span style="background: var(--color-gold); color: #1E3A8A; padding: 0.4rem 1.2rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">Cours du Jour</span>
-        <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">${new Date().toLocaleDateString("fr-FR", {weekday:"long",year:"numeric",month:"long",day:"numeric"})}</span>
-      </div>
-      <h2 class="text-gold-animated" style="font-size: 2rem; margin-bottom: 1rem;">${today.title}</h2>
-      <p style="color: rgba(255,255,255,0.85); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">${today.description}</p>
-      <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3);">
-        <audio controls style="width:100%; border-radius:8px; outline:none;" controlsList="nodownload">
-          <source src="${today.url}">
-          Votre navigateur ne supporte pas l'audio.
-        </audio>
+    <div style="position:relative;border-radius:24px;overflow:hidden;margin-bottom:3rem;">
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#1E3A8A 0%,#0F172A 60%,#1a1035 100%);z-index:0;"></div>
+      <div style="position:absolute;top:-50%;right:-20%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.12) 0%,transparent 70%);z-index:0;"></div>
+      <div style="position:relative;z-index:1;padding:2.5rem 3rem;">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;gap:0.4rem;background:linear-gradient(135deg,#D4AF37,#F5E6A3);color:#1E3A8A;padding:0.4rem 1.2rem;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;box-shadow:0 2px 12px rgba(212,175,55,0.3);"><i class="fas fa-sun"></i> Cours du Jour</span>
+          <span style="color:rgba(255,255,255,0.5);font-size:0.85rem;font-family:'Cormorant Garamond',serif;font-style:italic;"><i class="fas fa-calendar-alt" style="margin-right:0.3rem;color:rgba(212,175,55,0.5);"></i>${new Date().toLocaleDateString("fr-FR", {weekday:"long",year:"numeric",month:"long",day:"numeric"})}</span>
+        </div>
+        <h2 class="text-gold-animated" style="font-family:'Cinzel',serif;font-size:clamp(1.4rem,4vw,2rem);margin-bottom:0.8rem;">${today.title}</h2>
+        <p style="color:rgba(255,255,255,0.8);font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1.8;margin-bottom:1.5rem;max-width:600px;">${today.description}</p>
+        ${today.series ? `<span style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);border:1px solid rgba(212,175,55,0.3);padding:0.35rem 1rem;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">${today.series}</span>` : ''}
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(212,175,55,0.2);padding:1.2rem 1.5rem;border-radius:16px;backdrop-filter:blur(8px);margin-top:0.5rem;">
+          <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem;">
+            <button class="cours-play-btn" onclick="(function(b){var a=b.closest('.cours-hero-player').querySelector('audio');if(a.paused){a.play();b.innerHTML='<i class=\\'fas fa-pause\\'></i>'}else{a.pause();b.innerHTML='<i class=\\'fas fa-play\\'></i>'}})(this)" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#F5E6A3);border:none;color:#1E3A8A;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(212,175,55,0.35);transition:all 0.3s;"><i class="fas fa-play"></i></button>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#F5E6A3;font-weight:600;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${today.title}</div>
+              <div style="color:rgba(255,255,255,0.5);font-size:0.8rem;margin-top:0.2rem;"><i class="fas fa-clock" style="margin-right:0.3rem;"></i>${today.duration || '~1:00'}</div>
+            </div>
+          </div>
+          <audio class="cours-hero-audio" controlsList="nodownload" preload="metadata"><source src="${today.url}"></audio>
+          <div class="cours-progress" style="height:4px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden;cursor:pointer;"><div class="cours-progress-bar" style="height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,#D4AF37,#F5E6A3);transition:width 0.1s linear;"></div></div>
+        </div>
       </div>
     </div>` : `
-    <div style="text-align: center; padding: 5rem 2rem; background: #EEF0FA; border-radius: 24px; border: 1px solid rgba(212,175,55,0.25);">
-      <h3 style="font-family: 'Cinzel', serif; color: #1E3A8A; font-size: 1.6rem; font-weight: 600;">Aucun cours disponible</h3>
+    <div style="text-align:center;padding:5rem 2rem;background:linear-gradient(135deg,#FAFBFF,#F0F2FA);border-radius:24px;border:1px solid rgba(30,58,138,0.08);">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,rgba(30,58,138,0.08),rgba(212,175,55,0.08));display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem;color:#D4AF37;"><i class="fas fa-headphones"></i></div>
+      <h3 style="font-family:'Cinzel',serif;color:#1E3A8A;">Aucun cours disponible</h3>
+      <p style="color:#8B9CB6;margin-top:0.5rem;">De nouveaux enseignements arrivent bientot...</p>
     </div>`;
 
   const coursCards = others.map((c, i) => {
     const isEmounah = c.series && c.series.includes('Emounah');
-    const cardColor = isEmounah
-      ? 'border: 1px solid rgba(212,175,55,0.4); background: linear-gradient(to right, #fffef7, white);'
-      : 'border: 1px solid rgba(30,58,138,0.15); background: white;';
-    const badgeHTML = c.series
-      ? `<span style="background: ${isEmounah ? 'rgba(212,175,55,0.15)' : 'rgba(30,58,138,0.1)'}; color: ${isEmounah ? '#8B6914' : '#1E3A8A'}; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 10px; text-transform: uppercase; margin-left: 0.5rem;">${c.series}</span>`
-      : '';
-    
+    const seriesIcon = isEmounah ? 'fa-star-of-david' : 'fa-utensils';
+    const borderColor = isEmounah ? '#D4AF37' : '#1E3A8A';
+    const iconBg = isEmounah ? 'rgba(212,175,55,0.12)' : 'rgba(30,58,138,0.08)';
+    const iconColor = isEmounah ? '#D4AF37' : '#1E3A8A';
+    const cardBg = isEmounah ? 'linear-gradient(to right,#FFFDF5,white)' : 'white';
+    const badgeStyle = isEmounah ? 'background:rgba(212,175,55,0.12);color:#8B6914;border:1px solid rgba(212,175,55,0.25);' : 'background:rgba(30,58,138,0.08);color:#1E3A8A;border:1px solid rgba(30,58,138,0.2);';
     return `
-    <div class="cours-card" data-index="${i}" data-title="${(c.title || '').toLowerCase()}" style="${cardColor} border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); display: ${i < 20 ? 'flex' : 'none'}; flex-direction: column; gap: 1rem; transition: all 0.3s ease;">
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <div style="width: 48px; height: 48px; background: ${isEmounah ? 'linear-gradient(135deg, #D4AF37, #8B6914)' : 'linear-gradient(135deg, #1E3A8A, #3B82F6)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 0.9rem;">${c.id}</div>
-        <div style="flex: 1; min-width: 0;">
-          <div style="font-weight: 600; color: #2c3e50; font-size: 1.05rem;">${c.title}${badgeHTML}</div>
-          <div style="font-size: 0.82rem; color: #888;">${new Date(c.date).toLocaleDateString("fr-FR")} &middot; ${c.duration}</div>
+    <div class="cours-card" data-index="${i}" data-title="${(c.title || '').toLowerCase()}" data-series="${(c.series || '').toLowerCase()}" style="display:${i < 20 ? 'flex' : 'none'};flex-direction:column;gap:0;background:${cardBg};border:1px solid rgba(30,58,138,0.08);border-left:3px solid ${borderColor};border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:all 0.35s ease;">
+      <div style="display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 1.5rem 0.75rem;">
+        <div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem;background:${iconBg};color:${iconColor};"><i class="fas ${seriesIcon}"></i></div>
+        <div style="flex:1;min-width:0;">
+          <h4 style="font-family:'Cinzel',serif;font-weight:600;color:#2c3e50;font-size:0.95rem;line-height:1.4;margin:0 0 0.35rem;">${c.title}</h4>
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-size:0.78rem;color:#8B9CB6;">
+            <span><i class="fas fa-calendar-alt" style="font-size:0.7rem;margin-right:0.15rem;"></i>${new Date(c.date).toLocaleDateString("fr-FR")}</span>
+            <span style="width:3px;height:3px;border-radius:50%;background:#CBD5E1;flex-shrink:0;"></span>
+            <span><i class="fas fa-clock" style="font-size:0.7rem;margin-right:0.15rem;"></i>${c.duration}</span>
+            ${c.series ? `<span style="width:3px;height:3px;border-radius:50%;background:#CBD5E1;flex-shrink:0;"></span><span style="${badgeStyle}font-size:0.65rem;padding:0.2rem 0.6rem;border-radius:20px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">${c.series}</span>` : ''}
+          </div>
         </div>
       </div>
-      <audio controls style="width:100%; height:40px;" controlsList="nodownload" preload="none">
-        <source src="${c.url}">
-      </audio>
+      <div class="cours-card-player" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 1.5rem 1rem;border-top:1px solid rgba(30,58,138,0.04);margin-top:0.25rem;">
+        <button class="cours-play-btn" onclick="(function(b){var a=b.closest('.cours-card-player').querySelector('audio');document.querySelectorAll('.cours-card-player audio').forEach(function(x){if(x!==a){x.pause();var pb=x.closest('.cours-card-player').querySelector('.cours-play-btn');if(pb)pb.innerHTML='<i class=\\'fas fa-play\\'></i>'}});if(a.paused){a.play();b.innerHTML='<i class=\\'fas fa-pause\\'></i>'}else{a.pause();b.innerHTML='<i class=\\'fas fa-play\\'></i>'}})(this)" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#F5E6A3);border:none;color:#1E3A8A;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(212,175,55,0.35);transition:all 0.3s;"><i class="fas fa-play"></i></button>
+        <div class="cours-progress" style="flex:1;height:3px;background:rgba(30,58,138,0.1);border-radius:3px;overflow:hidden;cursor:pointer;"><div class="cours-progress-bar" style="height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,#D4AF37,#F5E6A3);transition:width 0.1s linear;"></div></div>
+        <span class="cours-time" style="font-size:0.75rem;color:#8B9CB6;font-variant-numeric:tabular-nums;min-width:36px;text-align:right;">0:00</span>
+        <audio preload="none" controlsList="nodownload"><source src="${c.url}"></audio>
+      </div>
     </div>`;
   }).join("");
 
+  const cachCount = others.filter(c => !c.series || !c.series.includes('Emounah')).length;
+  const emouCount = others.filter(c => c.series && c.series.includes('Emounah')).length;
+
   const content = `
-    <div class="container" style="padding: 3rem 1rem; max-width: 900px; margin: 0 auto;">
-      <div style="text-align: center; margin-bottom: 3rem;">
-        <span style="background: rgba(212,175,55,0.15); color: var(--color-gold); padding: 0.5rem 1.2rem; border-radius: 20px; font-size: 0.9rem;">ESPACE SPIRITUEL</span>
-        <h1 style="margin-top: 1rem; color: #1E3A8A; font-size: 2.5rem; font-family: 'Cinzel', serif;">Cours Audio Breslev</h1>
-        <p style="color: #666; font-size: 1.1rem; max-width: 550px; margin: 0.5rem auto;">${coursList.length} enseignements audio d'Esther Ifrah. Un nouveau cours mis en avant chaque jour.</p>
-        <div style="margin-top: 1rem;">
-          <button onclick="var a=document.getElementById('coursIntro'); a.paused?a.play():a.pause(); this.querySelector('i').classList.toggle('fa-play');this.querySelector('i').classList.toggle('fa-pause');" style="background: linear-gradient(135deg, #1E3A8A, #3B82F6); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;"><i class="fas fa-play"></i> Mot d'Esther</button>
-          <audio id="coursIntro" preload="none" src="/audios/esther-courses.mp3"></audio>
+    <style>
+      .cours-card:hover{transform:translateY(-3px)!important;box-shadow:0 8px 32px rgba(30,58,138,0.12),0 2px 8px rgba(212,175,55,0.08)!important;border-color:rgba(212,175,55,0.3)!important;}
+      .cours-play-btn:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(212,175,55,0.5);}
+      .cours-filter-btn{padding:0.55rem 1.3rem;border-radius:25px;border:1.5px solid rgba(30,58,138,0.15);background:white;color:#4a5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:inherit;display:inline-flex;align-items:center;gap:0.4rem;}
+      .cours-filter-btn:hover{border-color:rgba(212,175,55,0.4);color:#1E3A8A;}
+      .cours-filter-btn.active{background:linear-gradient(135deg,#1E3A8A,#0F172A);color:#F5E6A3;border-color:transparent;box-shadow:0 4px 16px rgba(30,58,138,0.25);}
+      .cours-filter-btn.active .cfcount{background:rgba(212,175,55,0.25);}
+      .cfcount{font-size:0.7rem;background:rgba(0,0,0,0.08);padding:0.1rem 0.45rem;border-radius:10px;}
+      @media(max-width:640px){.cours-hero-inner{padding:1.5rem!important;}.cours-card div[style*="padding:1.25rem"]{padding:1rem 1rem 0.5rem!important;}.cours-card-player{padding:0.5rem 1rem 0.75rem!important;}}
+    </style>
+    <div style="max-width:960px;margin:0 auto;padding:2rem 1.5rem 4rem;">
+
+      <div style="text-align:center;margin-bottom:3.5rem;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;">
+          <span style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,#D4AF37,transparent);"></span>
+          <span style="background:linear-gradient(135deg,#D4AF37,#F5E6A3);color:#1E3A8A;padding:0.45rem 1.4rem;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;font-family:'Cinzel',serif;">Espace Spirituel</span>
+          <span style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,#D4AF37,transparent);"></span>
         </div>
+        <h1 style="font-family:'Cinzel',serif;color:#1E3A8A;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;margin:0.5rem 0;letter-spacing:0.04em;">Cours Audio Breslev</h1>
+        <p style="font-family:'Cormorant Garamond',serif;color:#6c7a89;font-size:1.15rem;font-style:italic;max-width:520px;margin:0.5rem auto 1.5rem;line-height:1.6;">${coursList.length} enseignements d'Esther Ifrah sur la Cacheroute et l'Emounah. Un nouveau cours mis en avant chaque jour.</p>
+        <button onclick="var a=document.getElementById('coursIntro'); a.paused?a.play():a.pause(); this.querySelector('i').classList.toggle('fa-play');this.querySelector('i').classList.toggle('fa-pause');" style="display:inline-flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#0F172A,#1E3A8A);color:#F5E6A3;border:1px solid rgba(212,175,55,0.4);padding:0.75rem 2rem;border-radius:30px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:'Cinzel',serif;letter-spacing:0.05em;"><i class="fas fa-play"></i> Mot d'accueil d'Esther</button>
+        <audio id="coursIntro" preload="none" src="/audios/esther-courses.mp3"></audio>
       </div>
 
-      <!-- VIDÉOS AVATAR ESTHER -->
-      <div id="avatarVideosSection" style="margin-bottom: 3rem;">
-        <h2 style="color: #1E3A8A; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-gold, #D4AF37); padding-bottom: 0.5rem;">
-          <i class="fas fa-video" style="color: var(--color-gold, #D4AF37); margin-right: 0.5rem;"></i> Cours Vidéo par Esther
-        </h2>
-        <div id="avatarVideoGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-          <p style="color: #888;">Chargement des vidéos...</p>
-        </div>
+      <div style="display:flex;justify-content:center;gap:2.5rem;margin-bottom:3rem;flex-wrap:wrap;">
+        <div style="text-align:center;"><span style="font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#D4AF37,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${coursList.length}</span><br><span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#8B9CB6;font-weight:600;">Cours</span></div>
+        <div style="text-align:center;"><span style="font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#D4AF37,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${cachCount}</span><br><span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#8B9CB6;font-weight:600;">Cacheroute</span></div>
+        <div style="text-align:center;"><span style="font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#D4AF37,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${emouCount}</span><br><span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#8B9CB6;font-weight:600;">Emounah</span></div>
+      </div>
+
+      <div id="avatarVideosSection" style="margin-bottom:3rem;">
+        <h2 style="font-family:'Cinzel',serif;color:#1E3A8A;font-size:1.3rem;display:flex;align-items:center;gap:0.6rem;margin-bottom:1.5rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(30,58,138,0.08);"><i class="fas fa-video" style="color:#D4AF37;"></i> Cours Video par Esther</h2>
+        <div id="avatarVideoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;"><p style="color:#8B9CB6;font-style:italic;">Chargement des videos...</p></div>
       </div>
 
       ${todayHTML}
 
-      <div style="margin-bottom: 2rem;">
-        <input type="text" id="coursSearch" placeholder="Rechercher un cours..." style="width: 100%; padding: 1rem 1.5rem; border: 2px solid rgba(212,175,55,0.3); border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; font-family: inherit;" onfocus="this.style.borderColor='#D4AF37'" onblur="this.style.borderColor='rgba(212,175,55,0.3)'">
+      <div style="position:relative;margin-bottom:2rem;">
+        <i class="fas fa-search" style="position:absolute;left:1.2rem;top:50%;transform:translateY(-50%);color:#D4AF37;font-size:0.95rem;pointer-events:none;"></i>
+        <input type="text" id="coursSearch" placeholder="Rechercher un enseignement..." style="width:100%;padding:0.95rem 1.2rem 0.95rem 3rem;border:2px solid rgba(30,58,138,0.1);border-radius:16px;font-size:0.95rem;outline:none;font-family:'Cormorant Garamond',serif;background:#FAFBFF;transition:all 0.3s;" onfocus="this.style.borderColor='#D4AF37';this.style.background='white';this.style.boxShadow='0 4px 20px rgba(212,175,55,0.12)'" onblur="this.style.borderColor='rgba(30,58,138,0.1)';this.style.background='#FAFBFF';this.style.boxShadow='none'">
       </div>
 
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <h3 style="color: #1E3A8A; border-bottom: 2px solid var(--color-gold, #D4AF37); padding-bottom: 0.5rem; display: inline-block; margin: 0;">Tous les enseignements <span style="color: var(--color-gold)">${coursList.length}</span></h3>
-        <span style="font-size: 0.85rem; color: #888;">Cacheroute &amp; Emounah</span>
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;flex-wrap:wrap;">
+        <button class="cours-filter-btn active" data-filter="all" onclick="filterCours('all',this)"><i class="fas fa-layer-group"></i> Tous <span class="cfcount">${others.length}</span></button>
+        <button class="cours-filter-btn" data-filter="cacheroute" onclick="filterCours('cacheroute',this)"><i class="fas fa-utensils"></i> Cacheroute <span class="cfcount">${cachCount}</span></button>
+        <button class="cours-filter-btn" data-filter="emounah" onclick="filterCours('emounah',this)"><i class="fas fa-star-of-david"></i> Emounah <span class="cfcount">${emouCount}</span></button>
       </div>
 
-      <div id="coursList" style="display: grid; gap: 1rem;">
-        ${coursCards}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(30,58,138,0.08);">
+        <h3 style="font-family:'Cinzel',serif;color:#1E3A8A;font-size:1.3rem;margin:0;display:flex;align-items:center;gap:0.6rem;"><i class="fas fa-headphones" style="color:#D4AF37;font-size:1rem;"></i> Enseignements <span style="font-family:'Cormorant Garamond',serif;color:#D4AF37;font-style:italic;">${others.length}</span></h3>
+        <span style="font-size:0.8rem;color:#8B9CB6;font-style:italic;font-family:'Cormorant Garamond',serif;">Cacheroute & Emounah</span>
       </div>
 
-      <div id="loadMoreContainer" style="text-align: center; margin-top: 2rem; ${others.length <= 20 ? 'display:none;' : ''}">
-        <button id="loadMoreBtn" onclick="loadMoreCours()" style="background: linear-gradient(135deg, #1E3A8A, #3B82F6); color: white; border: none; padding: 1rem 2.5rem; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
-          <i class="fas fa-plus-circle"></i> Charger plus de cours
-        </button>
-        <p id="coursCount" style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">Affichage: <span id="shownCount">20</span> / ${others.length}</p>
+      <div id="coursList" style="display:grid;gap:0.75rem;">${coursCards}</div>
+
+      <div id="loadMoreContainer" style="text-align:center;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(30,58,138,0.06);${others.length <= 20 ? 'display:none;' : ''}">
+        <button id="loadMoreBtn" onclick="loadMoreCours()" style="display:inline-flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#0F172A,#1E3A8A);color:#F5E6A3;border:1px solid rgba(212,175,55,0.3);padding:0.9rem 2.5rem;border-radius:30px;font-size:0.95rem;font-weight:600;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:0.03em;transition:all 0.3s;"><i class="fas fa-chevron-down"></i> Voir plus d'enseignements</button>
+        <p style="color:#8B9CB6;font-size:0.82rem;margin-top:0.75rem;font-family:'Cormorant Garamond',serif;font-style:italic;"><span id="shownCount">20</span> sur ${others.length} cours affiches</p>
+        <div style="width:200px;height:3px;background:rgba(30,58,138,0.06);border-radius:3px;margin:0.5rem auto 0;overflow:hidden;"><div id="loadMoreBar" style="height:100%;border-radius:3px;background:linear-gradient(90deg,#D4AF37,#F5E6A3);transition:width 0.5s ease;width:${Math.round(20/others.length*100)}%;"></div></div>
       </div>
     </div>
 
     <script>
-      // Load avatar videos
-      fetch('/api/avatar-videos').then(r => r.json()).then(data => {
-        var grid = document.getElementById('avatarVideoGrid');
-        if (!data.videos || !data.videos.length) { grid.innerHTML = ''; return; }
-        grid.innerHTML = data.videos.map(function(v) {
-          return '<div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid rgba(30,58,138,0.1);">' +
-            '<video controls style="width:100%; display:block; max-height:200px; object-fit:cover;" controlsList="nodownload" preload="metadata">' +
-            '<source src="' + v.url + '" type="video/mp4"></video>' +
-            '<div style="padding: 0.8rem 1rem; font-weight: 600; color: #2c3e50; font-size: 0.9rem;">' + v.name + '</div>' +
-            '</div>';
+      fetch('/api/avatar-videos').then(function(r){return r.json()}).then(function(data){
+        var grid=document.getElementById('avatarVideoGrid');
+        if(!data.videos||!data.videos.length){grid.innerHTML='';return;}
+        grid.innerHTML=data.videos.map(function(v){
+          return '<div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid rgba(30,58,138,0.08);">'+
+            '<video controls style="width:100%;display:block;max-height:200px;object-fit:cover;" controlsList="nodownload" preload="metadata">'+
+            '<source src="'+v.url+'" type="video/mp4"></video>'+
+            '<div style="padding:0.8rem 1rem;font-weight:600;color:#2c3e50;font-size:0.9rem;font-family:Cinzel,serif;">'+v.name+'</div></div>';
         }).join('');
-      }).catch(function() {
-        document.getElementById('avatarVideosSection').style.display = 'none';
+      }).catch(function(){document.getElementById('avatarVideosSection').style.display='none';});
+
+      document.querySelectorAll('.cours-progress').forEach(function(bar){
+        var player=bar.closest('.cours-card-player')||bar.closest('[style*="backdrop-filter"]');
+        if(!player)return;
+        var audio=player.querySelector('audio');
+        var fill=bar.querySelector('.cours-progress-bar');
+        var timeEl=player.querySelector('.cours-time');
+        if(!audio||!fill)return;
+        audio.addEventListener('timeupdate',function(){
+          if(audio.duration){fill.style.width=(audio.currentTime/audio.duration*100)+'%';}
+          if(timeEl){var m=Math.floor(audio.currentTime/60);var s=Math.floor(audio.currentTime%60);timeEl.textContent=m+':'+(s<10?'0':'')+s;}
+        });
+        audio.addEventListener('ended',function(){
+          var btn=player.querySelector('.cours-play-btn');
+          if(btn)btn.innerHTML='<i class="fas fa-play"></i>';
+          fill.style.width='0%';if(timeEl)timeEl.textContent='0:00';
+        });
+        bar.addEventListener('click',function(e){
+          if(audio.duration){var rect=bar.getBoundingClientRect();audio.currentTime=((e.clientX-rect.left)/rect.width)*audio.duration;}
+        });
       });
 
-      (function() {
-        var coursVisible = 20;
-        var totalCours = ${others.length};
-        var BATCH = 20;
-
-        window.loadMoreCours = function() {
-          var cards = document.querySelectorAll('.cours-card');
-          var end = Math.min(coursVisible + BATCH, totalCours);
-          for (var i = coursVisible; i < end; i++) {
-            if (cards[i]) cards[i].style.display = 'flex';
-          }
-          coursVisible = end;
-          document.getElementById('shownCount').textContent = coursVisible;
-          if (coursVisible >= totalCours) {
-            document.getElementById('loadMoreContainer').style.display = 'none';
-          }
+      (function(){
+        var coursVisible=20;var totalCours=${others.length};var BATCH=20;
+        window.loadMoreCours=function(){
+          var cards=document.querySelectorAll('.cours-card');
+          var end=Math.min(coursVisible+BATCH,totalCours);
+          for(var i=coursVisible;i<end;i++){if(cards[i])cards[i].style.display='flex';}
+          coursVisible=end;
+          document.getElementById('shownCount').textContent=coursVisible;
+          var fill=document.getElementById('loadMoreBar');
+          if(fill)fill.style.width=Math.round(coursVisible/totalCours*100)+'%';
+          if(coursVisible>=totalCours)document.getElementById('loadMoreContainer').style.display='none';
         };
-
-        document.getElementById('coursSearch').addEventListener('input', function() {
-          var q = this.value.toLowerCase().trim();
-          var cards = document.querySelectorAll('.cours-card');
-          cards.forEach(function(card) {
-            var text = card.textContent.toLowerCase();
-            card.style.display = (!q || text.indexOf(q) !== -1) ? 'flex' : 'none';
+        document.getElementById('coursSearch').addEventListener('input',function(){
+          var q=this.value.toLowerCase().trim();
+          var cards=document.querySelectorAll('.cours-card');
+          var activeFilter=document.querySelector('.cours-filter-btn.active');
+          var filterVal=activeFilter?activeFilter.getAttribute('data-filter'):'all';
+          cards.forEach(function(card){
+            var text=card.textContent.toLowerCase();
+            var series=card.getAttribute('data-series')||'';
+            var matchFilter=filterVal==='all'||series.indexOf(filterVal)!==-1;
+            var matchSearch=!q||text.indexOf(q)!==-1;
+            card.style.display=(matchFilter&&matchSearch)?'flex':'none';
           });
-          document.getElementById('loadMoreContainer').style.display = q ? 'none' : (coursVisible < totalCours ? 'block' : 'none');
+          document.getElementById('loadMoreContainer').style.display=q?'none':(coursVisible<totalCours?'block':'none');
         });
+        window.filterCours=function(filter,btn){
+          document.querySelectorAll('.cours-filter-btn').forEach(function(b){b.classList.remove('active');});
+          btn.classList.add('active');
+          var q=document.getElementById('coursSearch').value.toLowerCase().trim();
+          var cards=document.querySelectorAll('.cours-card');
+          cards.forEach(function(card){
+            var series=card.getAttribute('data-series')||'';
+            var matchFilter=filter==='all'||series.indexOf(filter)!==-1;
+            var matchSearch=!q||card.textContent.toLowerCase().indexOf(q)!==-1;
+            card.style.display=(matchFilter&&matchSearch)?'flex':'none';
+          });
+          document.getElementById('loadMoreContainer').style.display='none';
+        };
       })();
     </script>`;
 
