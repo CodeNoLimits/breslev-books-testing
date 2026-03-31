@@ -68,8 +68,7 @@ async function start(){
         generation_config:{
           response_modalities:["AUDIO"],
           speech_config:{voice_config:{prebuilt_voice_config:{voice_name:"Kore"}}}
-        },
-        system_instruction:{parts:[{text:SYSTEM}]}
+        }
       }
     };
     ws.send(JSON.stringify(setup));
@@ -82,6 +81,7 @@ async function start(){
     var data;
     try{data=JSON.parse(text);}catch(e){console.warn("[Voice] parse error",e);return;}
     if(data.setupComplete){
+      ws.send(JSON.stringify({realtime_input:{text:SYSTEM+" Maintenant, dis bonjour en francais et presente-toi brievement."}}));
       setS("Connecte — Parlez !");
       btn.classList.add("active");btn.textContent="🔴";
       avatarEl.classList.add("listening");active=true;
