@@ -14,154 +14,228 @@ body {
   min-height: 100vh; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   font-family: 'Segoe UI', sans-serif; color: white;
+  padding: 1rem;
 }
-#avatar { font-size: 4rem; margin-bottom: 1rem; transition: all 0.3s; }
+#avatar { font-size: 3.5rem; margin-bottom: 0.8rem; transition: all 0.3s; }
 #avatar.listening { animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-#status { font-size: 0.9rem; color: #D4AF37; margin-bottom: 2rem; height: 1.2rem; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+#status { font-size: 0.85rem; color: #D4AF37; margin-bottom: 1.5rem; min-height: 1.2rem; text-align: center; }
 #transcript {
-  background: rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem;
-  width: 100%; max-width: 320px; min-height: 80px; font-size: 0.9rem;
-  color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; text-align: center;
+  background: rgba(255,255,255,0.08); border-radius: 12px; padding: 0.8rem 1rem;
+  width: 100%; max-width: 300px; min-height: 60px; font-size: 0.85rem;
+  color: rgba(255,255,255,0.8); margin-bottom: 1.2rem; text-align: center;
+  border: 1px solid rgba(212,175,55,0.15);
 }
+#title { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; color: #D4AF37; }
+#subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; }
 #btn {
-  width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer;
+  width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer;
   background: linear-gradient(135deg, #D4AF37, #B8960C);
-  font-size: 1.8rem; box-shadow: 0 4px 20px rgba(212,175,55,0.4);
-  transition: all 0.2s;
+  font-size: 1.6rem; box-shadow: 0 4px 20px rgba(212,175,55,0.4);
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
 }
-#btn:hover { transform: scale(1.05); }
+#btn:hover { transform: scale(1.08); }
 #btn.active { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 1s infinite; }
-#title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; color: #D4AF37; }
-#subtitle { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 2rem; }
+#error { color: #ef4444; font-size: 0.75rem; margin-top: 0.8rem; max-width: 300px; text-align: center; word-break: break-word; min-height: 1rem; }
 </style>
 </head>
 <body>
 <div id="avatar">🕎</div>
 <div id="title">Esther — Librairie Breslev</div>
-<div id="subtitle">Assistante vocale</div>
+<div id="subtitle">Assistante vocale IA</div>
 <div id="status">Cliquez pour parler</div>
-<div id="transcript">Je suis là pour vous aider à découvrir les livres de Rabbi Nachman de Breslev.</div>
+<div id="transcript">Je suis la pour vous aider a decouvrir les livres de Rabbi Nachman de Breslev.</div>
 <button id="btn" onclick="toggleCall()">🎙️</button>
+<div id="error"></div>
 
 <script type="module">
 import { GoogleGenAI } from '@google/genai';
 
-const SYSTEM_PROMPT = `Tu es Esther, l'assistante vocale de la librairie Breslev (librairie-breslev.com).
-Tu parles UNIQUEMENT en français, avec chaleur et bienveillance.
+const SYSTEM = `Tu es Esther, l'assistante vocale de la librairie Breslev (librairie-breslev.com).
+Tu parles UNIQUEMENT en francais, avec chaleur et bienveillance.
 Tu connais tous les livres de Rabbi Nachman de Breslev traduits par Esther Ifrah.
 
 CATALOGUE (livraison mondiale incluse dans le prix):
-- Likoutey Moharane Tomes 1-8: 26€ chacun
-- Les Cahiers du Cœur, Likoutey Halakhot, L'Âge d'Or, Likouté Tefilot: 29€
-- Tikoun Haklali: 7€
-- Le Voyage de Rabbi Nahman: 22€
-- Chemot Atsadikim, La Vie d'un Breslever, Conversations des Anges T1/T2: 26€
+- Likoutey Moharane Tomes 1-8: 26 euros chacun
+- Les Cahiers du Coeur, Likoutey Halakhot, L'Age d'Or, Likoute Tefilot: 29 euros
+- Tikoun Haklali: 7 euros
+- Le Voyage de Rabbi Nahman: 22 euros
+- Chemot Atsadikim, La Vie d'un Breslever, Conversations des Anges T1/T2: 26 euros
 
 PAIEMENT: PayPal (en ligne) ou Virement EUR: IBAN FR76 1652 8001 7100 0004 3621 064 BIC SMOEFRP1
 CONTACT: info@hayil.fr | WhatsApp: +972 58-514-8500
-LIVRAISON: 7-14 jours depuis Jérusalem
+LIVRAISON: 7-14 jours depuis Jerusalem
 
-Réponds en 1-2 phrases maximum. Sois chaleureuse et spirituelle.`;
+Reponds en 1-2 phrases maximum. Sois chaleureuse et spirituelle.`;
 
-const ai = new GoogleGenAI({ apiKey: 'AIzaSyAWe0KiAU-G8KjYBV_dZeCcQis2crxq21E' });
+const API_KEY = 'AIzaSyAWe0KiAU-G8KjYBV_dZeCcQis2crxq21E';
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 let session = null;
 let isActive = false;
-let audioContext = null;
+let audioCtx = null;
+let micStream = null;
 
 const btn = document.getElementById('btn');
-const status = document.getElementById('status');
+const statusEl = document.getElementById('status');
 const transcript = document.getElementById('transcript');
 const avatar = document.getElementById('avatar');
+const errorEl = document.getElementById('error');
+
+function setStatus(txt) { statusEl.textContent = txt; }
+function setError(txt) { errorEl.textContent = txt; console.error('[VoiceAssistant]', txt); }
 
 async function toggleCall() {
-  if (!isActive) {
-    await startCall();
-  } else {
-    await stopCall();
-  }
+  if (!isActive) { await startCall(); } else { await stopCall(); }
 }
 
 async function startCall() {
-  try {
-    status.textContent = 'Connexion...';
+  setError('');
+  setStatus('Connexion en cours...');
 
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
+  } catch (e) {
+    setStatus('Microphone refuse');
+    setError('Autorisez le microphone pour utiliser l\'assistante vocale.');
+    return;
+  }
+
+  try {
     session = await ai.live.connect({
-      model: 'gemini-2.0-flash-live-001',
+      model: 'gemini-2.0-flash-live',
       callbacks: {
-        onopen: () => {
-          status.textContent = '🟢 Connecté — Parlez !';
+        onopen: function() {
+          console.log('[VoiceAssistant] WebSocket connected');
+          setStatus('Connecte — Parlez !');
           btn.classList.add('active');
           btn.textContent = '🔴';
           avatar.classList.add('listening');
           isActive = true;
+          startMicCapture();
         },
-        onmessage: async (msg) => {
-          if (msg.serverContent?.modelTurn?.parts) {
-            for (const part of msg.serverContent.modelTurn.parts) {
-              if (part.text) {
-                transcript.textContent = part.text;
+        onmessage: function(msg) {
+          if (msg.serverContent && msg.serverContent.modelTurn && msg.serverContent.modelTurn.parts) {
+            var parts = msg.serverContent.modelTurn.parts;
+            for (var i = 0; i < parts.length; i++) {
+              if (parts[i].text) {
+                transcript.textContent = parts[i].text;
               }
-              if (part.inlineData?.data) {
-                const audio = new Audio('data:audio/pcm;base64,' + part.inlineData.data);
-                audio.play().catch(() => {});
+              if (parts[i].inlineData && parts[i].inlineData.data) {
+                playAudioChunk(parts[i].inlineData);
               }
             }
           }
         },
-        onerror: (e) => {
-          status.textContent = '❌ Erreur: ' + (e.message || 'connexion échouée');
-          stopCall();
+        onerror: function(e) {
+          console.error('[VoiceAssistant] WebSocket error:', e);
+          setError('Erreur WebSocket: ' + (e.message || e.type || 'inconnue'));
+          resetUI();
         },
-        onclose: () => {
-          status.textContent = 'Session terminée';
-          isActive = false;
-          btn.classList.remove('active');
-          btn.textContent = '🎙️';
-          avatar.classList.remove('listening');
+        onclose: function(e) {
+          console.log('[VoiceAssistant] WebSocket closed:', e);
+          if (isActive) {
+            setStatus('Connexion perdue. Recliquez pour reessayer.');
+            setError('Session fermee par le serveur (code: ' + (e.code || '?') + ')');
+          } else {
+            setStatus('Session terminee. Cliquez pour recommencer.');
+          }
+          resetUI();
         }
       },
       config: {
-        systemInstruction: SYSTEM_PROMPT,
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
-        responseModalities: ['AUDIO', 'TEXT']
+        systemInstruction: SYSTEM,
+        responseModalities: ['AUDIO', 'TEXT'],
+        speechConfig: {
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } }
+        }
       }
     });
-
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioContext = new AudioContext({ sampleRate: 16000 });
-    const source = audioContext.createMediaStreamSource(stream);
-    const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-    processor.onaudioprocess = (e) => {
-      if (!isActive || !session) return;
-      const inputData = e.inputBuffer.getChannelData(0);
-      const pcm16 = new Int16Array(inputData.length);
-      for (let i = 0; i < inputData.length; i++) {
-        pcm16[i] = Math.max(-32768, Math.min(32767, inputData[i] * 32768));
-      }
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
-      session.sendRealtimeInput({ mimeType: 'audio/pcm;rate=16000', data: base64 });
-    };
-
-    source.connect(processor);
-    processor.connect(audioContext.destination);
-
-  } catch (err) {
-    status.textContent = '❌ ' + err.message;
-    console.error(err);
+  } catch (e) {
+    console.error('[VoiceAssistant] Connect error:', e);
+    setStatus('Echec de connexion');
+    setError(e.message || String(e));
+    if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+    return;
   }
 }
 
-async function stopCall() {
-  if (session) { session.close(); session = null; }
-  if (audioContext) { await audioContext.close(); audioContext = null; }
+function startMicCapture() {
+  if (!micStream) return;
+  try {
+    audioCtx = new AudioContext({ sampleRate: 16000 });
+    var source = audioCtx.createMediaStreamSource(micStream);
+    var processor = audioCtx.createScriptProcessor(4096, 1, 1);
+
+    processor.onaudioprocess = function(e) {
+      if (!isActive || !session) return;
+      var input = e.inputBuffer.getChannelData(0);
+      var pcm16 = new Int16Array(input.length);
+      for (var i = 0; i < input.length; i++) {
+        pcm16[i] = Math.max(-32768, Math.min(32767, input[i] * 32768));
+      }
+      var bytes = new Uint8Array(pcm16.buffer);
+      var binary = '';
+      for (var j = 0; j < bytes.length; j++) {
+        binary += String.fromCharCode(bytes[j]);
+      }
+      var b64 = btoa(binary);
+      try {
+        session.sendRealtimeInput({ media: { mimeType: 'audio/pcm;rate=16000', data: b64 } });
+      } catch (ex) {
+        console.warn('[VoiceAssistant] sendRealtimeInput error:', ex);
+      }
+    };
+
+    source.connect(processor);
+    processor.connect(audioCtx.destination);
+  } catch (e) {
+    setError('Erreur micro: ' + e.message);
+  }
+}
+
+function playAudioChunk(inlineData) {
+  try {
+    var raw = atob(inlineData.data);
+    var buf = new ArrayBuffer(raw.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
+
+    var playCtx = audioCtx || new AudioContext({ sampleRate: 24000 });
+    var samples = new Int16Array(buf);
+    var float32 = new Float32Array(samples.length);
+    for (var j = 0; j < samples.length; j++) float32[j] = samples[j] / 32768;
+
+    var audioBuf = playCtx.createBuffer(1, float32.length, 24000);
+    audioBuf.getChannelData(0).set(float32);
+    var src = playCtx.createBufferSource();
+    src.buffer = audioBuf;
+    src.connect(playCtx.destination);
+    src.start();
+  } catch (e) {
+    console.warn('[VoiceAssistant] Audio playback error:', e);
+  }
+}
+
+function resetUI() {
   isActive = false;
   btn.classList.remove('active');
   btn.textContent = '🎙️';
   avatar.classList.remove('listening');
-  status.textContent = 'Session terminée. Cliquez pour recommencer.';
+  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+  session = null;
+}
+
+async function stopCall() {
+  isActive = false;
+  if (session) { try { session.close(); } catch(e) {} session = null; }
+  if (audioCtx) { try { await audioCtx.close(); } catch(e) {} audioCtx = null; }
+  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+  btn.classList.remove('active');
+  btn.textContent = '🎙️';
+  avatar.classList.remove('listening');
+  setStatus('Session terminee. Cliquez pour recommencer.');
+  setError('');
 }
 
 window.toggleCall = toggleCall;
