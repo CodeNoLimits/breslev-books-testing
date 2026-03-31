@@ -128,7 +128,7 @@ function startMic(){
     try{
       ws.send(JSON.stringify({
         realtime_input:{
-          media_chunks:[{mime_type:"audio/pcm;rate=16000",data:b64}]
+          audio:{data:b64,mime_type:"audio/pcm;rate=16000"}
         }
       }));
     }catch(ex){}
