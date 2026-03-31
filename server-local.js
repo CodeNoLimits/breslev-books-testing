@@ -1394,6 +1394,7 @@ app.get("/", (req, res) => {
 
 // Aliases pour la landing page client
 app.get("/boutique", (req, res) => res.redirect(301, "/collections/all"));
+app.get("/catalogue", (req, res) => res.redirect(301, "/collections/all"));
 app.get("/connexion", (req, res) => res.redirect(301, "/account"));
 
 app.get("/collections/all", (req, res) => {
@@ -3651,7 +3652,7 @@ app.get("/robots.txt", (req, res) => {
 app.get("/sitemap.xml", (req, res) => {
   const base = "https://librairie-breslev.com";
   const today = new Date().toISOString().slice(0, 10);
-  const staticPages = ["/", "/catalogue", "/cours", "/audio/cacheroute", "/audio/emounah", "/a-propos", "/contact", "/temoignages"];
+  const staticPages = ["/", "/collections/all", "/cours", "/audio/cacheroute", "/audio/emounah", "/a-propos", "/contact", "/temoignages", "/voyages", "/etudes"];
   const productPages = catalog.map(p => `/products/${p.id}`);
   const allPages = [...staticPages, ...productPages];
   const urls = allPages.map(p =>
