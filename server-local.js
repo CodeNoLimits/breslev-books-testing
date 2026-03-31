@@ -239,21 +239,41 @@ const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
 
 // ==========================================
-// STATIC ASSETS VIA jsDelivr CDN (GitHub-backed, free, global)
-// Images/PDFs/Audios are too large for Vercel Lambda bundle (50MB limit)
+// STATIC ASSETS VIA jsDelivr CDN — PROXY MODE
+// Redirects caused broken images in browsers (cross-origin).
+// Proxy pipes bytes directly so the browser sees same-origin responses.
 // ==========================================
+const https = require('https');
 const JSDELIVR = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@main';
+
+function proxyJsDelivr(cdnPath, res) {
+  https.get(cdnPath, (upstream) => {
+    if (upstream.statusCode >= 300 && upstream.statusCode < 400 && upstream.headers.location) {
+      https.get(upstream.headers.location, (redir) => {
+        res.set('Content-Type', redir.headers['content-type'] || 'application/octet-stream');
+        res.set('Cache-Control', 'public, max-age=2592000, immutable');
+        redir.pipe(res);
+      }).on('error', () => res.status(502).end());
+      return;
+    }
+    if (upstream.statusCode !== 200) { res.status(upstream.statusCode).end(); return; }
+    res.set('Content-Type', upstream.headers['content-type'] || 'application/octet-stream');
+    res.set('Cache-Control', 'public, max-age=2592000, immutable');
+    upstream.pipe(res);
+  }).on('error', () => res.status(502).end());
+}
+
 app.get('/images/livres/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/public/images/livres/${encodeURIComponent(req.params.filename)}`);
+  proxyJsDelivr(`${JSDELIVR}/public/images/livres/${encodeURIComponent(req.params.filename)}`, res);
 });
 app.get('/images/editions/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/public/images/editions/${encodeURIComponent(req.params.filename)}`);
+  proxyJsDelivr(`${JSDELIVR}/public/images/editions/${encodeURIComponent(req.params.filename)}`, res);
 });
 app.get('/pdfs/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/assets/pdfs/${encodeURIComponent(req.params.filename)}`);
+  proxyJsDelivr(`${JSDELIVR}/assets/pdfs/${encodeURIComponent(req.params.filename)}`, res);
 });
 app.get('/audios/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/assets/audios/${encodeURIComponent(req.params.filename)}`);
+  proxyJsDelivr(`${JSDELIVR}/assets/audios/${encodeURIComponent(req.params.filename)}`, res);
 });
 
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
