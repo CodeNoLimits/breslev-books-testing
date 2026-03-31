@@ -3305,6 +3305,16 @@ app.get("/cours", async (req, res) => {
         </div>
       </div>
 
+      <!-- VIDÉOS AVATAR ESTHER -->
+      <div id="avatarVideosSection" style="margin-bottom: 3rem;">
+        <h2 style="color: #1E3A8A; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-gold, #D4AF37); padding-bottom: 0.5rem;">
+          <i class="fas fa-video" style="color: var(--color-gold, #D4AF37); margin-right: 0.5rem;"></i> Cours Vidéo par Esther
+        </h2>
+        <div id="avatarVideoGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+          <p style="color: #888;">Chargement des vidéos...</p>
+        </div>
+      </div>
+
       ${todayHTML}
 
       <div style="margin-bottom: 2rem;">
@@ -3329,6 +3339,21 @@ app.get("/cours", async (req, res) => {
     </div>
 
     <script>
+      // Load avatar videos
+      fetch('/api/avatar-videos').then(r => r.json()).then(data => {
+        var grid = document.getElementById('avatarVideoGrid');
+        if (!data.videos || !data.videos.length) { grid.innerHTML = ''; return; }
+        grid.innerHTML = data.videos.map(function(v) {
+          return '<div style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid rgba(30,58,138,0.1);">' +
+            '<video controls style="width:100%; display:block; max-height:200px; object-fit:cover;" controlsList="nodownload" preload="metadata">' +
+            '<source src="' + v.url + '" type="video/mp4"></video>' +
+            '<div style="padding: 0.8rem 1rem; font-weight: 600; color: #2c3e50; font-size: 0.9rem;">' + v.name + '</div>' +
+            '</div>';
+        }).join('');
+      }).catch(function() {
+        document.getElementById('avatarVideosSection').style.display = 'none';
+      });
+
       (function() {
         var coursVisible = 20;
         var totalCours = ${others.length};
@@ -3574,6 +3599,22 @@ app.get("/admin/delete-cours/:id", async (req, res) => {
 // API: List cours (JSON)
 app.get("/api/cours", async (req, res) => {
   res.json(await loadCoursDB());
+});
+
+// API: list avatar videos
+app.get("/api/avatar-videos", (req, res) => {
+  const avatarDir = path.join(__dirname, "public/videos/avatar");
+  try {
+    const files = fs.readdirSync(avatarDir).filter(f => f.endsWith(".mp4")).sort();
+    const videos = files.map(f => ({
+      name: f.replace(/-/g, " ").replace(/\.\./g, ".").replace(/\.mp4$/, ""),
+      url: "/videos/avatar/" + encodeURIComponent(f),
+      filename: f,
+    }));
+    res.json({ total: videos.length, videos });
+  } catch (e) {
+    res.json({ total: 0, videos: [] });
+  }
 });
 
 // API: list all available audio files from disk

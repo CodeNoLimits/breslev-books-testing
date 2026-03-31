@@ -2,7 +2,7 @@ covers/
 assets/audios/
 assets/images/
 assets/pdfs/
-public/videos/
+public/videos/covers/
 public/images/livres/
 node_modules/
 package-lock.json
