@@ -16,7 +16,7 @@ const SHIPPING_RATES = {
       { name: 'Standard (3-5 jours)', price: Math.round(35 * SHIPPING_MARKUP), days: '3-5' },
       { name: 'Express (1-2 jours)', price: Math.round(60 * SHIPPING_MARKUP), days: '1-2' }
     ],
-    currency: 'ILS'
+    currency: 'EUR'
   },
   
   // France & Europe
@@ -27,7 +27,7 @@ const SHIPPING_RATES = {
       { name: 'Standard (7-14 jours)', price: Math.round(65 * SHIPPING_MARKUP), days: '7-14' },
       { name: 'Express (4-7 jours)', price: Math.round(120 * SHIPPING_MARKUP), days: '4-7' }
     ],
-    currency: 'ILS'
+    currency: 'EUR'
   },
   
   // USA & Canada
@@ -38,7 +38,7 @@ const SHIPPING_RATES = {
       { name: 'Standard (10-21 jours)', price: Math.round(80 * SHIPPING_MARKUP), days: '10-21' },
       { name: 'Express (5-10 jours)', price: Math.round(150 * SHIPPING_MARKUP), days: '5-10' }
     ],
-    currency: 'ILS'
+    currency: 'EUR'
   },
   
   // Reste du monde
@@ -49,7 +49,7 @@ const SHIPPING_RATES = {
       { name: 'Standard (14-28 jours)', price: Math.round(90 * SHIPPING_MARKUP), days: '14-28' },
       { name: 'Express (7-14 jours)', price: Math.round(180 * SHIPPING_MARKUP), days: '7-14' }
     ],
-    currency: 'ILS'
+    currency: 'EUR'
   }
 };
 

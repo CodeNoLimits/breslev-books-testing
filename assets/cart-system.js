@@ -142,7 +142,7 @@ class BresledCart {
     const amount = cents / 100;
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: 'ILS'
+      currency: 'EUR'
     }).format(amount);
   }
 }

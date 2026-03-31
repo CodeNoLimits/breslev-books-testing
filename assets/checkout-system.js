@@ -261,7 +261,7 @@ class CheckoutManager {
       const rateName = rate.name || 'Option de livraison';
       const rateDays = rate.days || '5-7';
       const ratePrice = rate.price !== undefined ? rate.price : 0;
-      const currency = shippingZone.currency || 'ILS';
+      const currency = shippingZone.currency || 'EUR';
       
       return `
         <label class="shipping-option" style="display: block; cursor: pointer;">
@@ -306,7 +306,7 @@ class CheckoutManager {
                 <div id="card-errors" class="payment-errors"></div>
                 
                 <button type="submit" class="btn btn-primary btn-pay" id="stripe-submit">
-                  <i class="fas fa-lock"></i> Payer ${this.calculateTotal()}₪
+                  <i class="fas fa-lock"></i> Payer ${this.calculateTotal()}€
                 </button>
               </form>
             </div>
@@ -345,7 +345,7 @@ class CheckoutManager {
     // Fallback if breslevCart not available
     const formatMoney = window.breslevCart?.formatMoney?.bind(window.breslevCart) || ((cents) => {
       const amount = cents / 100;
-      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'ILS' }).format(amount);
+      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
     });
 
     return `
@@ -374,7 +374,7 @@ class CheckoutManager {
           </div>
           <div class="summary-row">
             <span style="color: #333;">Livraison</span>
-            <span style="color: #666;">${shipping.price > 0 ? `${shipping.price} ₪` : 'Calculé à l\'étape suivante'}</span>
+            <span style="color: #666;">${shipping.price > 0 ? `${shipping.price} €` : 'Calculé à l\'étape suivante'}</span>
           </div>
           <div class="summary-row summary-total">
             <span>Total</span>
@@ -643,7 +643,7 @@ class CheckoutManager {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: Math.round(this.calculateTotal() * 100), // Convert to cents
-          currency: 'ils',
+          currency: 'eur',
           paymentMethodId: paymentMethod.id,
           cart: this.checkoutData.cart,
           shipping: this.checkoutData.shipping
@@ -675,7 +675,7 @@ class CheckoutManager {
       console.error('Stripe payment error:', error);
       errorElement.textContent = error.message || 'Une erreur est survenue lors du paiement';
       submitButton.disabled = false;
-      submitButton.innerHTML = '<i class="fas fa-lock"></i> Payer ' + this.calculateTotal() + '₪';
+      submitButton.innerHTML = '<i class="fas fa-lock"></i> Payer ' + this.calculateTotal() + '€';
     }
   }
 
@@ -703,7 +703,7 @@ class CheckoutManager {
             },
             body: JSON.stringify({
               amount: Math.round(this.calculateTotal() * 100),
-              currency: 'ILS',
+              currency: 'EUR',
               cart: this.checkoutData.cart,
               shipping: this.checkoutData.shipping
             }),
@@ -782,7 +782,7 @@ class CheckoutManager {
         <h2 style="color: #28a745; margin-bottom: 1rem;">Commande confirmée !</h2>
         <p style="font-size: 1.2rem; margin-bottom: 2rem;">Merci pour votre achat. Votre commande a été enregistrée avec succès.</p>
         <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
-          <p><strong>Montant total :</strong> ${this.calculateTotal()} ₪</p>
+          <p><strong>Montant total :</strong> ${this.calculateTotal()} €</p>
           <p><strong>Livraison à :</strong> ${this.checkoutData.shipping?.address}, ${this.checkoutData.shipping?.city}</p>
         </div>
         <a href="/collections/all" class="btn btn-primary">Continuer vos achats</a>

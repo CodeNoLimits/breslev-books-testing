@@ -285,14 +285,14 @@ const audioCategories = [
   {
     id: "cacheroute",
     name: "Halakhot Cacheroute",
-    description: "82 cours sur les lois alimentaires juives par Esther Ifrah",
+    description: "109 cours sur les lois alimentaires juives par Esther Ifrah",
     icon: "🍽️",
     color: "#1E3A8A",
   },
   {
     id: "emounah",
     name: "Emounah & Spiritualité",
-    description: "41 cours sur la foi, la confiance en Hachem et la croissance spirituelle",
+    description: "14 cours sur la foi, la confiance en Hachem et la croissance spirituelle",
     icon: "✨",
     color: "#D4AF37",
   },
@@ -383,47 +383,47 @@ const audioContent = {
     { id: 80, title: "Aliments nécessitant surveillance pour Pessah", url: "/audios/ESTHER_80_Aliments_necessitant_surveillance_pour_Pessah.mp3" },
     { id: 81, title: "Aliments avec inspection obligatoire — Catégories 1", url: "/audios/ESTHER_81_Aliments_avec_inspection_obligatoire_Categories_1.mp3" },
     { id: 82, title: "Aliments avec inspection obligatoire — Catégories 2", url: "/audios/ESTHER_82_Aliments_avec_inspection_obligatoire_Categories_2.mp3" },
+    { id: 83, title: "Obligation générale de vérifier les insectes", url: "/audios/ESTHER_83_Obligation_generale_de_verifier_les_insectes.mp3" },
+    { id: 84, title: "Vérification des aliments cuits par erreur", url: "/audios/ESTHER_84_Verification_des_aliments_cuits_par_erreur.mp3" },
+    { id: 85, title: "Choux cuits sans vérification — consultation rabbinique", url: "/audios/ESTHER_85_Choux_cuits_sans_verification_consultation_rabbini.mp3" },
+    { id: 86, title: "Détection et gestion des charançons dans les féculents", url: "/audios/ESTHER_86_Detection_et_gestion_des_charancons_dans_les_fecul.mp3" },
+    { id: 87, title: "Méthode d'examen pour détecter les charançons", url: "/audios/ESTHER_87_Methode_dexamen_pour_detecter_les_charancons.mp3" },
+    { id: 88, title: "Protection des aliments contre les insectes en été", url: "/audios/ESTHER_88_Protection_des_aliments_contre_les_insectes_en_ete.mp3" },
+    { id: 89, title: "Vérification des poissons et règles rabbiniques", url: "/audios/ESTHER_89_Verification_des_poissons_et_regles_rabbiniques.mp3" },
+    { id: 90, title: "Vérification des fruits et légumes secs", url: "/audios/ESTHER_90_Verification_des_fruits_et_legumes_secs.mp3" },
+    { id: 91, title: "Vérification et traitement des noix, amandes et pistaches", url: "/audios/ESTHER_91_Verification_et_traitement_des_noix_amandes_et_pi.mp3" },
+    { id: 92, title: "Règles générales — œufs bruns et doute", url: "/audios/ESTHER_92_Regles_generales_œufs_bruns_et_doute.mp3" },
+    { id: 93, title: "Œuf brun tréf — impact sur ustensiles et aliments", url: "/audios/ESTHER_93_Œuf_brun_tref_impact_sur_ustensiles_et_aliments.mp3" },
+    { id: 94, title: "Quand examiner les œufs bruns", url: "/audios/ESTHER_94_Quand_examiner_les_œufs_bruns.mp3" },
+    { id: 95, title: "Examen oublié ou tache découverte pendant consommation", url: "/audios/ESTHER_95_Examen_oublie_ou_tache_decouverte_pendant_consomma.mp3" },
+    { id: 96, title: "Œufs froids ou cuits — impacts ustensiles et casseroles", url: "/audios/ESTHER_96_Œufs_froids_ou_cuits_impacts_ustensiles_et_cassero.mp3" },
+    { id: 97, title: "Œufs bruns cuits — majorité pour cachérisation", url: "/audios/ESTHER_97_Œufs_bruns_cuits_majorite_pour_cacherisation.mp3" },
+    { id: 98, title: "Refroidissement des œufs cuits pour ustensiles", url: "/audios/ESTHER_98_Refroidissement_œufs_cuits_pour_ustensiles.mp3" },
+    { id: 99, title: "Œufs blancs — nature et différence avec œufs bruns", url: "/audios/ESTHER_99_Œufs_blancs_nature_et_difference_avec_œufs_bruns.mp3" },
+    { id: 100, title: "Règles spécifiques aux œufs blancs et pratique courante", url: "/audios/ESTHER_100_Regles_specifiques_aux_œufs_blancs_et_pratique_cou.mp3" },
+    { id: 101, title: "Kashrut — non-Juifs cuisinant, anecdote personnelle", url: "/audios/ESTHER_101_Kashrut_non-Juifs_cuisinant_anecdote_personnelle..mp3" },
+    { id: 102, title: "Défis de la Cacheroute avec invités non-Juifs", url: "/audios/ESTHER_102_Defis_de_la_Cacheroute_avec_invites_non-Juifs..mp3" },
+    { id: 103, title: "Première raison — manque de crainte du Ciel", url: "/audios/ESTHER_103_Premiere_raison_manque_de_crainte_du_Ciel..mp3" },
+    { id: 104, title: "Cacheroute sans crainte du Ciel — illogique", url: "/audios/ESTHER_104_Cacheroute_sans_crainte_du_Ciel_illogique..mp3" },
+    { id: 105, title: "Exemples Cacheroute — émail vs inox", url: "/audios/ESTHER_105_Exemples_Cacheroute_email_vs_inox..mp3" },
+    { id: 106, title: "Logique et Cacheroute — la crainte est clé", url: "/audios/ESTHER_106_Logique_et_Cacheroute_la_crainte_est_cle..mp3" },
+    { id: 107, title: "Deuxième raison — prévenir les mariages mixtes", url: "/audios/ESTHER_107_Deuxieme_raison_prevenir_les_mariages_mixtes..mp3" },
+    { id: 108, title: "La Cacheroute prévient l'assimilation et les mariages mixtes", url: "/audios/ESTHER_108_La_Cacheroute_previent_lassimilation_et_les_mariag.mp3" },
+    { id: 109, title: "Introduction — God took us out", url: "/audios/ESTHER_109_Introduction;_God_took_us_out.mp3" },
   ],
   "emounah": [
-    // === 41 COURS EMOUNAH & SPIRITUALITÉ par Esther Ifrah ===
-    { id: 83, title: "Toute souffrance a une raison divine", url: "/audios/ESTHER_83_Toute_souffrance_a_une_raison_divine.mp3" },
-    { id: 84, title: "Souffrance comme outil de purification de l'âme", url: "/audios/ESTHER_84_Souffrance_comme_outil_de_purification_de_lame.mp3" },
-    { id: 85, title: "Les souffrances protègent du Guéhinam", url: "/audios/ESTHER_85_Les_souffrances_protegent_du_Gehinam.mp3" },
-    { id: 86, title: "Comment traverser l'épreuve avec foi", url: "/audios/ESTHER_86_Comment_traverser_lepreuve_avec_foi.mp3" },
-    { id: 87, title: "Souffrances d'amour — concept et mérite", url: "/audios/ESTHER_87_Souffrances_damour_concept_et_merite.mp3" },
-    { id: 88, title: "Acceptation des souffrances d'amour", url: "/audios/ESTHER_88_Acceptation_des_souffrances_damour.mp3" },
-    { id: 89, title: "Limites de souffrance — quand prier", url: "/audios/ESTHER_89_Limites_de_souffrance_quand_prier.mp3" },
-    { id: 90, title: "Souffrances du juste et justice divine", url: "/audios/ESTHER_90_Souffrances_du_juste_et_justice_divine.mp3" },
-    { id: 91, title: "Méchants prospères — pourquoi", url: "/audios/ESTHER_91_Mechants_prosperes_pourquoi.mp3" },
-    { id: 92, title: "Tout est orchestré — Hashgaha Pratit", url: "/audios/ESTHER_92_Tout_est_orchestre_Hashgaha_Pratit.mp3" },
-    { id: 93, title: "Aucun mal ne vient de Hachem", url: "/audios/ESTHER_93_Aucun_mal_ne_vient_de_Hachem.mp3" },
-    { id: 94, title: "Comment le mal apparent mène au bien", url: "/audios/ESTHER_94_Comment_le_mal_apparent_mene_au_bien.mp3" },
-    { id: 95, title: "Exemples bibliques du bien caché", url: "/audios/ESTHER_95_Exemples_bibliques_du_bien_cache.mp3" },
-    { id: 96, title: "Œufs froids ou cuits — impacts ustensiles et casseroles", url: "/audios/ESTHER_96_Œufs_froids_ou_cuits_impacts_ustensiles_et_cassero.mp3" },
-    { id: 97, title: "Accepter les souffrances avec joie — bonheur", url: "/audios/ESTHER_97_Accepter_les_souffrances_avec_joie_bonheur.mp3" },
-    { id: 98, title: "Souffrances causées par nos fautes", url: "/audios/ESTHER_98_Souffrances_causees_par_nos_fautes.mp3" },
-    { id: 99, title: "Réflexion sur soi après épreuve", url: "/audios/ESTHER_99_Reflexion_sur_soi_apres_epreuve.mp3" },
-    { id: 100, title: "Souffrances et prière — guide pratique", url: "/audios/ESTHER_100_Souffrances_et_priere_guide_pratique.mp3" },
-    { id: 101, title: "Emounah simple — fondements", url: "/audios/ESTHER_101_Emounah_simple_fondements.mp3" },
-    { id: 102, title: "Emounah et intellect — harmonie", url: "/audios/ESTHER_102_Emounah_et_intellect_harmonie.mp3" },
-    { id: 103, title: "Foi en Hachem malgré les doutes", url: "/audios/ESTHER_103_Foi_en_Hachem_malgre_les_doutes.mp3" },
-    { id: 104, title: "Le monde reflète la grandeur d'Hachem", url: "/audios/ESTHER_104_Le_monde_reflete_la_grandeur_dHachem.mp3" },
-    { id: 105, title: "Emounah quotidienne — exercices pratiques", url: "/audios/ESTHER_105_Emounah_quotidienne_exercices_pratiques.mp3" },
-    { id: 106, title: "Bitahon — la confiance active en Hachem", url: "/audios/ESTHER_106_Bitahon_la_confiance_active_en_Hachem.mp3" },
-    { id: 107, title: "Bitahon dans la parnassa (subsistance)", url: "/audios/ESTHER_107_Bitahon_dans_la_parnassa_subsistance.mp3" },
-    { id: 108, title: "Prière et Hitbodédout — parler à Hachem", url: "/audios/ESTHER_108_Priere_et_Hitbodedout_parler_a_Hachem.mp3" },
-    { id: 109, title: "Gratitude quotidienne — Modé Ani", url: "/audios/ESTHER_109_Gratitude_quotidienne_Mode_Ani.mp3" },
-    { id: 110, title: "Étude de Torah avec joie", url: "/audios/ESTHER_110_Etude_de_Torah_avec_joie.mp3" },
-    { id: 111, title: "Mitsvot avec enthousiasme — Zérizout", url: "/audios/ESTHER_111_Mitsvot_avec_enthousiasme_Zerizout.mp3" },
-    { id: 112, title: "Sanctifier Hachem au quotidien", url: "/audios/ESTHER_112_Sanctifier_Hachem_au_quotidien.mp3" },
-    { id: 113, title: "Téchouva — retour sincère", url: "/audios/ESTHER_113_Techouva_retour_sincere.mp3" },
-    { id: 114, title: "Humilité — clé de la grandeur", url: "/audios/ESTHER_114_Humilite_cle_de_la_grandeur.mp3" },
-    { id: 115, title: "Ahavat Israël — amour du prochain", url: "/audios/ESTHER_115_Ahavat_Israel_amour_du_prochain.mp3" },
-    { id: 116, title: "Paix dans le foyer — Shalom Bayit", url: "/audios/ESTHER_116_Paix_dans_le_foyer_Shalom_Bayit.mp3" },
-    { id: 117, title: "Éducation des enfants avec douceur", url: "/audios/ESTHER_117_Education_des_enfants_avec_douceur.mp3" },
-    { id: 118, title: "Tsniout — la pudeur comme force", url: "/audios/ESTHER_118_Tsniout_la_pudeur_comme_force.mp3" },
-    { id: 119, title: "Shabbat — îlot de paix dans la semaine", url: "/audios/ESTHER_119_Shabbat_ilot_de_paix_dans_la_semaine.mp3" },
-    { id: 120, title: "Forces du Yetser Hara — comment résister", url: "/audios/ESTHER_120_Forces_du_Yetser_Hara_comment_resister.mp3" },
+    // === 14 COURS EMOUNAH & SPIRITUALITÉ par Esther Ifrah ===
+    { id: 110, title: "Tout est pour le bien — Hakol le Tovah", url: "/audios/ESTHER_110_Tout_est_pour_le_bien_Hakol_le_Tovah.mp3" },
+    { id: 111, title: "La vie entre rigueur et miséricorde", url: "/audios/ESTHER_111_La_vie_entre_rigueur_et_misericorde.mp3" },
+    { id: 112, title: "Pourquoi la souffrance ? La question de Job", url: "/audios/ESTHER_112_Pourquoi_la_souffrance?_La_question_de_Job.mp3" },
+    { id: 113, title: "Volonté divine — Connaissance parfaite", url: "/audios/ESTHER_113_Volonte_divine_Connaissance_parfaite.mp3" },
+    { id: 114, title: "Unité divine — Rigueur et Miséricorde", url: "/audios/ESTHER_114_Unite_divine_Rigueur_et_Misericorde.mp3" },
+    { id: 115, title: "Dieu ne produit que le bien", url: "/audios/ESTHER_115_Dieu_ne_produit_que_le_bien.mp3" },
+    { id: 116, title: "Analyse de la pluie — Perception contre Réalité", url: "/audios/ESTHER_116_Analyse_de_la_pluie_Perception_contre_Realite.mp3" },
+    { id: 117, title: "Manque de Daat et sa rectification", url: "/audios/ESTHER_117_Manque_de_Daat_et_sa_rectification.mp3" },
+    { id: 118, title: "Crise comme catalyseur d'introspection", url: "/audios/ESTHER_118_Crise_comme_catalyseur_dintrospection.mp3" },
+    { id: 119, title: "Unité et introspection collective", url: "/audios/ESTHER_119_Unite_et_introspection_collective.mp3" },
+    { id: 120, title: "Le manque de Daat cause la souffrance", url: "/audios/ESTHER_120_Le_manque_de_Daat_cause_la_souffrance.mp3" },
     { id: 121, title: "Daat parfait — Tout est pour le bien", url: "/audios/ESTHER_121_Daat_parfait_Tout_est_pour_le_bien.mp3" },
     { id: 122, title: "Ère messianique — Seul le bien perçu", url: "/audios/ESTHER_122_Ère_messianique_Seul_le_bien_percu.mp3" },
     { id: 123, title: "Conclusion — Mériter Emounah Shéléma", url: "/audios/ESTHER_123_Conclusion_Meriter_Emunah_Shelema.mp3" },
@@ -548,7 +548,7 @@ app.post("/api/create-payment-intent", async (req, res) => {
   try {
     const params = {
       amount: amount, // Amount in cents
-      currency: currency || "ils",
+      currency: currency || "eur",
       payment_method: paymentMethodId,
       receipt_email: shipping?.email,
       metadata: {
@@ -643,12 +643,12 @@ app.post("/api/checkout", async (req, res) => {
   try {
     const line_items = items.map((item) => ({
       price_data: {
-        currency: "ils",
+        currency: "eur",
         product_data: {
           name: item.title || item.name || item.id,
           images: item.image ? [item.image.startsWith('http') ? item.image : `${req.headers.origin || "http://localhost:8000"}${item.image}`] : [],
         },
-        unit_amount: Math.round((item.price) * 100),
+        unit_amount: Math.round(item.price),
       },
       quantity: item.quantity || 1,
     }));
@@ -1459,8 +1459,11 @@ app.get("/products/:id", (req, res) => {
   const product = catalog.find((p) => p.id == req.params.id);
   if (!product) return res.status(404).send("Livre non trouvé");
 
-  // Check if user is logged in (via Supabase token cookie)
-  const isLoggedIn = !!(req.cookies?.sb_token || req.cookies?.admin_token);
+  // Accès PDF : admin OU abonnement actif OU livre démo (LM Tome 1 = id 2)
+  const isAdmin = !!(req.cookies?.admin_token);
+  const hasSubscription = !!(req.cookies?.breslev_subscription || isAdmin);
+  const isDemoBook = product.id == 2; // Likoutey Moharane Tome 1 — lecture gratuite
+  const isLoggedIn = isDemoBook || hasSubscription;
   const userName = req.cookies?.user_name || 'Lecteur';
 
   // Livres connexes (même auteur ou aléatoires)
@@ -1734,7 +1737,7 @@ app.get("/products/:id", (req, res) => {
           <i class="fas fa-book-open" style="color: #d4af37;"></i> Feuilleter le livre
         </h2>
         <p style="text-align: center; color: #666; margin-bottom: 1.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;">
-          ${isLoggedIn ? 'Bonne lecture ! Votre accès est complet.' : 'Aperçu gratuit — 5 premières pages. Achetez pour lire la suite.'}
+          ${isDemoBook ? '📖 Lecture intégrale offerte par Esther Ifrah — Na Nach Nachma Nachman !' : hasSubscription ? 'Bonne lecture ! Votre abonnement vous donne accès à tous nos livres.' : 'Aperçu gratuit — 5 premières pages. <a href="/pages/abonnement" style="color:#D4AF37;font-weight:600;">Abonnez-vous</a> pour lire l\'intégralité.'}
         </p>
         <div id="flipbook-container"></div>
       </div>
@@ -2144,7 +2147,7 @@ app.get("/cart", (req, res) => {
       window.PAYPAL_CLIENT_ID = '${paypalClientId}';
     </script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=ILS&disable-funding=credit,card"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&disable-funding=credit,card"></script>
     <script src="/checkout-system.js"></script>
   `;
   res.send(getLayout(content, "Panier & Checkout"));
@@ -2200,7 +2203,7 @@ app.post("/api/paypal/create-order", async (req, res) => {
         purchase_units: [
           {
             amount: {
-              currency_code: currency || "ILS",
+              currency_code: currency || "EUR",
               value: (amount / 100).toFixed(2),
             },
           },
@@ -2277,6 +2280,44 @@ app.post("/api/virement-order", async (req, res) => {
 
 app.post("/cart/add", (req, res) => res.redirect("/cart"));
 
+// Page de succès après paiement one-time (Stripe Checkout)
+app.get("/success", async (req, res) => {
+  const { session_id } = req.query;
+  let orderInfo = null;
+  if (stripe && session_id) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+      orderInfo = {
+        email: session.customer_details?.email || session.customer_email,
+        name: session.customer_details?.name || 'Client',
+        amount: session.amount_total ? (session.amount_total / 100).toFixed(2) + ' €' : '',
+        id: session.id,
+      };
+    } catch (e) {
+      console.error('[success] Stripe session error:', e.message);
+    }
+  }
+  const content = `
+    <div class="container" style="max-width: 640px; margin: 5rem auto; text-align: center; padding: 2rem;">
+      <div style="background: linear-gradient(135deg, #0a0e27, #0f1e50); border: 2px solid rgba(212,175,55,0.4); border-radius: 20px; padding: 3rem 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+        <h1 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-bottom: 1rem;">Commande confirmée !</h1>
+        ${orderInfo ? `
+          <p style="color: #f5f0e8; font-size: 1.1rem; margin-bottom: 0.5rem;">Merci ${orderInfo.name} pour votre commande.</p>
+          <p style="color: #aaa; margin-bottom: 1.5rem;">Montant : <strong style="color: #D4AF37;">${orderInfo.amount}</strong></p>
+          <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 2rem;">Référence : <code style="color: #D4AF37;">${orderInfo.id}</code></p>
+          <p style="color: #aaa; font-size: 0.9rem;">Un email de confirmation a été envoyé à <strong>${orderInfo.email}</strong>.</p>
+        ` : `<p style="color: #aaa;">Votre paiement a bien été reçu. Merci pour votre commande !</p>`}
+        <div style="margin-top: 2.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/collections/all" class="btn" style="background: #D4AF37; color: #0a0e27; padding: 0.9rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">Continuer mes achats</a>
+          <a href="/" class="btn" style="background: transparent; color: #D4AF37; border: 1px solid rgba(212,175,55,0.5); padding: 0.9rem 2rem; border-radius: 8px; text-decoration: none;">Accueil</a>
+        </div>
+      </div>
+    </div>
+  `;
+  res.send(getLayout(content, "Commande confirmée"));
+});
+
 // Page de succès après abonnement
 app.get("/subscription-success", async (req, res) => {
   const { session_id } = req.query;
@@ -2336,6 +2377,13 @@ app.get("/subscription-success", async (req, res) => {
       </div>
     </div>
   `;
+  // Cookie abonnement : valide 30 jours, accessible côté serveur uniquement
+  res.cookie('breslev_subscription', 'active', {
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    path: '/',
+    sameSite: 'lax'
+  });
   res.send(getLayout(content, "Abonnement activé !"));
 });
 
