@@ -520,9 +520,10 @@ const testimonials = [
 // ==========================================
 // Le catalogue de base (25 livres) chargé depuis JSON
 const FALLBACK_COVER = "/images/editions/1.png";
+const IMG_VERSION = '?v=3';
 const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, 'db/catalog.json'), 'utf8')).map(p => ({
   ...p,
-  cover_image: p.cover_image || FALLBACK_COVER
+  cover_image: (p.cover_image || FALLBACK_COVER) + IMG_VERSION
 }));
 
 // ==========================================
