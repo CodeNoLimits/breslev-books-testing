@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Esther — Assistante Vocale</title>
 <script type="importmap">
-{"imports": {"@google/genai": "https://esm.run/@google/genai@1.29.0"}}
+{"imports": {"@google/genai": "https://esm.run/@google/genai@1.47.0"}}
 </script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,8 +13,7 @@ body {
   background: linear-gradient(135deg, #1E3A8A 0%, #0f172a 100%);
   min-height: 100vh; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  font-family: 'Segoe UI', sans-serif; color: white;
-  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif; color: white; padding: 1rem;
 }
 #avatar { font-size: 3.5rem; margin-bottom: 0.8rem; transition: all 0.3s; }
 #avatar.listening { animation: pulse 1s infinite; }
@@ -36,6 +35,7 @@ body {
 }
 #btn:hover { transform: scale(1.08); }
 #btn.active { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 1s infinite; }
+#btn:disabled { opacity: 0.5; cursor: not-allowed; }
 #error { color: #ef4444; font-size: 0.75rem; margin-top: 0.8rem; max-width: 300px; text-align: center; word-break: break-word; min-height: 1rem; }
 </style>
 </head>
@@ -43,9 +43,9 @@ body {
 <div id="avatar">🕎</div>
 <div id="title">Esther — Librairie Breslev</div>
 <div id="subtitle">Assistante vocale IA</div>
-<div id="status">Cliquez pour parler</div>
+<div id="status">Chargement...</div>
 <div id="transcript">Je suis la pour vous aider a decouvrir les livres de Rabbi Nachman de Breslev.</div>
-<button id="btn" onclick="toggleCall()">🎙️</button>
+<button id="btn" onclick="toggleCall()" disabled>🎙️</button>
 <div id="error"></div>
 
 <script type="module">
@@ -68,9 +68,9 @@ LIVRAISON: 7-14 jours depuis Jerusalem
 
 Reponds en 1-2 phrases maximum. Sois chaleureuse et spirituelle.`;
 
-const API_KEY = 'AIzaSyAWe0KiAU-G8KjYBV_dZeCcQis2crxq21E';
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const MODEL = 'models/gemini-3.1-flash-live';
 
+let ai = null;
 let session = null;
 let isActive = false;
 let audioCtx = null;
@@ -82,63 +82,79 @@ const transcript = document.getElementById('transcript');
 const avatar = document.getElementById('avatar');
 const errorEl = document.getElementById('error');
 
-function setStatus(txt) { statusEl.textContent = txt; }
-function setError(txt) { errorEl.textContent = txt; console.error('[VoiceAssistant]', txt); }
+function setStatus(t) { statusEl.textContent = t; }
+function setError(t) { errorEl.textContent = t; if (t) console.error('[Voice]', t); }
+
+async function init() {
+  try {
+    const resp = await fetch('/api/voice-key');
+    if (!resp.ok) throw new Error('Assistante vocale non configuree');
+    const data = await resp.json();
+    if (!data.key) throw new Error('Cle API manquante');
+    ai = new GoogleGenAI({ apiKey: data.key });
+    btn.disabled = false;
+    setStatus('Cliquez pour parler');
+  } catch (e) {
+    setStatus('Indisponible');
+    setError(e.message);
+  }
+}
 
 async function toggleCall() {
-  if (!isActive) { await startCall(); } else { await stopCall(); }
+  if (!isActive) await startCall(); else await stopCall();
 }
 
 async function startCall() {
+  if (!ai) { setError('SDK non initialise'); return; }
   setError('');
-  setStatus('Connexion en cours...');
+  setStatus('Acces micro...');
 
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
   } catch (e) {
-    setStatus('Microphone refuse');
-    setError('Autorisez le microphone pour utiliser l\'assistante vocale.');
+    setStatus('Micro refuse');
+    setError('Autorisez le microphone.');
     return;
   }
 
+  setStatus('Connexion a Esther...');
   try {
     session = await ai.live.connect({
-      model: 'gemini-2.0-flash-live',
+      model: MODEL,
       callbacks: {
         onopen: function() {
-          console.log('[VoiceAssistant] WebSocket connected');
+          console.log('[Voice] Connected');
           setStatus('Connecte — Parlez !');
           btn.classList.add('active');
           btn.textContent = '🔴';
           avatar.classList.add('listening');
           isActive = true;
-          startMicCapture();
+          startMic();
         },
         onmessage: function(msg) {
-          if (msg.serverContent && msg.serverContent.modelTurn && msg.serverContent.modelTurn.parts) {
-            var parts = msg.serverContent.modelTurn.parts;
-            for (var i = 0; i < parts.length; i++) {
-              if (parts[i].text) {
-                transcript.textContent = parts[i].text;
-              }
-              if (parts[i].inlineData && parts[i].inlineData.data) {
-                playAudioChunk(parts[i].inlineData);
+          try {
+            if (msg.serverContent && msg.serverContent.modelTurn && msg.serverContent.modelTurn.parts) {
+              var parts = msg.serverContent.modelTurn.parts;
+              for (var i = 0; i < parts.length; i++) {
+                if (parts[i].text) transcript.textContent = parts[i].text;
+                if (parts[i].inlineData && parts[i].inlineData.data) playPCM(parts[i].inlineData);
               }
             }
-          }
+          } catch (e) { console.warn('[Voice] msg parse:', e); }
         },
         onerror: function(e) {
-          console.error('[VoiceAssistant] WebSocket error:', e);
-          setError('Erreur WebSocket: ' + (e.message || e.type || 'inconnue'));
+          console.error('[Voice] WS error:', e);
+          setError('Erreur: ' + (e.message || 'inconnue'));
           resetUI();
         },
         onclose: function(e) {
-          console.log('[VoiceAssistant] WebSocket closed:', e);
+          console.log('[Voice] WS closed', e);
+          var code = e && e.code ? e.code : '?';
           if (isActive) {
-            setStatus('Connexion perdue. Recliquez pour reessayer.');
-            setError('Session fermee par le serveur (code: ' + (e.code || '?') + ')');
+            setStatus('Connexion perdue');
+            setError('Code: ' + code);
           } else {
-            setStatus('Session terminee. Cliquez pour recommencer.');
+            setStatus('Terminee. Cliquez pour recommencer.');
           }
           resetUI();
         }
@@ -146,75 +162,59 @@ async function startCall() {
       config: {
         systemInstruction: SYSTEM,
         responseModalities: ['AUDIO', 'TEXT'],
-        speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } }
-        }
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } }
       }
     });
   } catch (e) {
-    console.error('[VoiceAssistant] Connect error:', e);
-    setStatus('Echec de connexion');
+    console.error('[Voice] Connect fail:', e);
+    setStatus('Echec connexion');
     setError(e.message || String(e));
-    if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+    cleanupMic();
     return;
   }
 }
 
-function startMicCapture() {
+function startMic() {
   if (!micStream) return;
-  try {
-    audioCtx = new AudioContext({ sampleRate: 16000 });
-    var source = audioCtx.createMediaStreamSource(micStream);
-    var processor = audioCtx.createScriptProcessor(4096, 1, 1);
-
-    processor.onaudioprocess = function(e) {
-      if (!isActive || !session) return;
-      var input = e.inputBuffer.getChannelData(0);
-      var pcm16 = new Int16Array(input.length);
-      for (var i = 0; i < input.length; i++) {
-        pcm16[i] = Math.max(-32768, Math.min(32767, input[i] * 32768));
-      }
-      var bytes = new Uint8Array(pcm16.buffer);
-      var binary = '';
-      for (var j = 0; j < bytes.length; j++) {
-        binary += String.fromCharCode(bytes[j]);
-      }
-      var b64 = btoa(binary);
-      try {
-        session.sendRealtimeInput({ media: { mimeType: 'audio/pcm;rate=16000', data: b64 } });
-      } catch (ex) {
-        console.warn('[VoiceAssistant] sendRealtimeInput error:', ex);
-      }
-    };
-
-    source.connect(processor);
-    processor.connect(audioCtx.destination);
-  } catch (e) {
-    setError('Erreur micro: ' + e.message);
-  }
+  audioCtx = new AudioContext({ sampleRate: 16000 });
+  var source = audioCtx.createMediaStreamSource(micStream);
+  var proc = audioCtx.createScriptProcessor(4096, 1, 1);
+  proc.onaudioprocess = function(e) {
+    if (!isActive || !session) return;
+    var input = e.inputBuffer.getChannelData(0);
+    var pcm = new Int16Array(input.length);
+    for (var i = 0; i < input.length; i++) pcm[i] = Math.max(-32768, Math.min(32767, input[i] * 32768));
+    var bytes = new Uint8Array(pcm.buffer);
+    var bin = '';
+    for (var j = 0; j < bytes.length; j++) bin += String.fromCharCode(bytes[j]);
+    try { session.sendRealtimeInput({ media: { mimeType: 'audio/pcm;rate=16000', data: btoa(bin) } }); }
+    catch (ex) {}
+  };
+  source.connect(proc);
+  proc.connect(audioCtx.destination);
 }
 
-function playAudioChunk(inlineData) {
+function playPCM(inlineData) {
   try {
     var raw = atob(inlineData.data);
     var buf = new ArrayBuffer(raw.length);
-    var view = new Uint8Array(buf);
-    for (var i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
-
-    var playCtx = audioCtx || new AudioContext({ sampleRate: 24000 });
+    var v = new Uint8Array(buf);
+    for (var i = 0; i < raw.length; i++) v[i] = raw.charCodeAt(i);
+    var ctx = audioCtx || new AudioContext({ sampleRate: 24000 });
     var samples = new Int16Array(buf);
-    var float32 = new Float32Array(samples.length);
-    for (var j = 0; j < samples.length; j++) float32[j] = samples[j] / 32768;
-
-    var audioBuf = playCtx.createBuffer(1, float32.length, 24000);
-    audioBuf.getChannelData(0).set(float32);
-    var src = playCtx.createBufferSource();
-    src.buffer = audioBuf;
-    src.connect(playCtx.destination);
+    var f32 = new Float32Array(samples.length);
+    for (var j = 0; j < samples.length; j++) f32[j] = samples[j] / 32768;
+    var ab = ctx.createBuffer(1, f32.length, 24000);
+    ab.getChannelData(0).set(f32);
+    var src = ctx.createBufferSource();
+    src.buffer = ab;
+    src.connect(ctx.destination);
     src.start();
-  } catch (e) {
-    console.warn('[VoiceAssistant] Audio playback error:', e);
-  }
+  } catch (e) {}
+}
+
+function cleanupMic() {
+  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
 }
 
 function resetUI() {
@@ -222,7 +222,7 @@ function resetUI() {
   btn.classList.remove('active');
   btn.textContent = '🎙️';
   avatar.classList.remove('listening');
-  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+  cleanupMic();
   session = null;
 }
 
@@ -230,15 +230,16 @@ async function stopCall() {
   isActive = false;
   if (session) { try { session.close(); } catch(e) {} session = null; }
   if (audioCtx) { try { await audioCtx.close(); } catch(e) {} audioCtx = null; }
-  if (micStream) { micStream.getTracks().forEach(function(t) { t.stop(); }); micStream = null; }
+  cleanupMic();
   btn.classList.remove('active');
   btn.textContent = '🎙️';
   avatar.classList.remove('listening');
-  setStatus('Session terminee. Cliquez pour recommencer.');
+  setStatus('Terminee. Cliquez pour recommencer.');
   setError('');
 }
 
 window.toggleCall = toggleCall;
+init();
 </script>
 </body>
 </html>
