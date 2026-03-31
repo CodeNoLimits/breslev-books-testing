@@ -544,11 +544,8 @@ a:hover { color: var(--color-gold-light); text-shadow: 0 0 8px var(--color-gold)
     font-size: 1.2rem; /* Smaller logo on mobile */
   }
   
-  .navbar__nav {
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
+  .navbar__nav:not(.active) {
+    display: none !important;
   }
   
   .navbar__nav-link {
