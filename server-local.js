@@ -238,19 +238,13 @@ app.post(
 const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
-app.use(
-  "/images/books",
-  express.static(path.join(__dirname, "assets/images/books"), mediaOpts),
-);
-app.use(
-  "/images/livres",
-  express.static(path.join(__dirname, "assets/images/livres"), mediaOpts),
-);
+// Images: public/images/ first (catalog covers), fallback to assets/images/
+app.use("/images", express.static(path.join(__dirname, "public/images"), mediaOpts));
+app.use("/images", express.static(path.join(__dirname, "assets/images"), mediaOpts));
 app.use("/videos", express.static(path.join(__dirname, "public/videos"), mediaOpts));
 app.use("/audios", express.static(path.join(__dirname, "assets/audios"), mediaOpts));
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), staticOpts));
 app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts));
-app.use("/images/editions", express.static(path.join(__dirname, "assets/images/editions"), mediaOpts));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
