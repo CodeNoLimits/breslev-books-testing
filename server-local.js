@@ -246,7 +246,7 @@ app.use(
   "/images/livres",
   express.static(path.join(__dirname, "assets/images/livres"), mediaOpts),
 );
-app.use("/videos", express.static(path.join(__dirname, "assets/videos"), mediaOpts));
+app.use("/videos", express.static(path.join(__dirname, "public/videos"), mediaOpts));
 app.use("/audios", express.static(path.join(__dirname, "assets/audios"), mediaOpts));
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), staticOpts));
 app.use("/pdfs", express.static(path.join(__dirname, "assets/pdfs"), mediaOpts));
@@ -768,7 +768,7 @@ app.get("/api/check-subscription", async (req, res) => {
 // ==========================================
 
 function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
-  const siteUrl = "https://breslev-books-preview.vercel.app";
+  const siteUrl = "https://librairie-breslev.com";
   const defaultDescription =
     "Livres et enseignements de Rabbi Nachman de Breslev traduits en francais par Esther Ifrah. Likoutey Moharan, Likoutey Tefilot et plus de 30 ouvrages authentiques.";
   const description = options.description || defaultDescription;
@@ -1118,7 +1118,7 @@ app.get("/", (req, res) => {
   const heroHTML = `
     <section class="hero-section">
       <video class="hero-video-bg" autoplay muted loop playsinline preload="metadata">
-        <source src="/videos/Une_vido_4k_202511161353_jbkex.mp4" type="video/mp4">
+        <source src="/videos/veo31/Une_vido_4k_202511161353_jbkex.mp4" type="video/mp4">
       </video>
       <div class="hero-overlay"></div>
       <div class="hero-content fade-in">
@@ -1783,7 +1783,11 @@ app.get("/products/:id", (req, res) => {
     </script>
     ` : ''}
   `;
-  res.send(getLayout(content, product.title_fr));
+  res.send(getLayout(content, product.title_fr, {
+    description: (product.description_fr || '').slice(0, 160),
+    image: product.cover_image ? `https://librairie-breslev.com${product.cover_image}` : undefined,
+    url: `https://librairie-breslev.com/products/${product.id}`,
+  }));
 });
 
 // API Endpoint for Product JSON (used by cart logic)
