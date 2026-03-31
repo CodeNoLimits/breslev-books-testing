@@ -114,26 +114,50 @@ async function start(){
 
 function startMic(){
   if(!micStream)return;
-  audioCtx=new AudioContext({sampleRate:16000});
+  audioCtx=new AudioContext();
+  var nativeSR=audioCtx.sampleRate;
   var source=audioCtx.createMediaStreamSource(micStream);
   var proc=audioCtx.createScriptProcessor(4096,1,1);
   proc.onaudioprocess=function(e){
     if(!active||!ws||ws.readyState!==1)return;
     var input=e.inputBuffer.getChannelData(0);
-    var pcm=new Int16Array(input.length);
-    for(var i=0;i<input.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,input[i]*32768));
-    var bytes=new Uint8Array(pcm.buffer);
-    var bin="";for(var j=0;j<bytes.length;j++)bin+=String.fromCharCode(bytes[j]);
-    var b64=btoa(bin);
+    var resampled=resample(input,nativeSR,16000);
+    var pcm=new Int16Array(resampled.length);
+    for(var i=0;i<resampled.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,resampled[i]*32768));
+    var b64=arrayBufferToBase64(pcm.buffer);
     try{
       ws.send(JSON.stringify({
-        realtime_input:{
-          audio:{data:b64,mime_type:"audio/pcm;rate=16000"}
-        }
+        realtime_input:{audio:{data:b64,mime_type:"audio/pcm;rate=16000"}}
       }));
     }catch(ex){}
   };
   source.connect(proc);proc.connect(audioCtx.destination);
+}
+
+function resample(input,fromRate,toRate){
+  if(fromRate===toRate)return input;
+  var ratio=fromRate/toRate;
+  var len=Math.round(input.length/ratio);
+  var out=new Float32Array(len);
+  for(var i=0;i<len;i++){
+    var idx=i*ratio;
+    var lo=Math.floor(idx);
+    var hi=Math.min(lo+1,input.length-1);
+    var frac=idx-lo;
+    out[i]=input[lo]*(1-frac)+input[hi]*frac;
+  }
+  return out;
+}
+
+function arrayBufferToBase64(buffer){
+  var bytes=new Uint8Array(buffer);
+  var len=bytes.length;
+  var result="";
+  for(var i=0;i<len;i+=1024){
+    var chunk=bytes.subarray(i,Math.min(i+1024,len));
+    result+=String.fromCharCode.apply(null,chunk);
+  }
+  return btoa(result);
 }
 
 function queueAudio(b64data){
