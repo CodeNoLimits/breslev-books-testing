@@ -2,6 +2,14 @@
   "version": 2,
   "builds": [
     {
+      "src": "public/images/livres/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/images/editions/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "server-local.js",
       "use": "@vercel/node",
       "config": {
@@ -14,9 +22,6 @@
           "assets/pdfs/**",
           "assets/audios/**",
           "assets/images/**",
-          "assets/flipbook-styles.css",
-          "assets/flipbook-viewer.js",
-          "assets/page-flip.browser.js",
           "public/*.html",
           "public/*.json",
           "public/*.js",
@@ -24,7 +29,6 @@
           "public/*.ico",
           "public/*.svg",
           "public/pdfs/**",
-          "public/images/**",
           "public/videos/avatar/**",
           "public/videos/veo31/**"
         ]
@@ -33,39 +37,39 @@
   ],
   "routes": [
     {
+      "src": "/images/livres/(.*)",
+      "dest": "/public/images/livres/$1",
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
+    },
+    {
+      "src": "/images/editions/(.*)",
+      "dest": "/public/images/editions/$1",
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
+    },
+    {
       "src": "/audios/(.*)",
       "dest": "server-local.js",
-      "headers": {
-        "Cache-Control": "public, max-age=2592000, immutable"
-      }
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
     },
     {
       "src": "/images/(.*)",
       "dest": "server-local.js",
-      "headers": {
-        "Cache-Control": "public, max-age=2592000, immutable"
-      }
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
     },
     {
       "src": "/pdfs/(.*)",
       "dest": "server-local.js",
-      "headers": {
-        "Cache-Control": "public, max-age=2592000, immutable"
-      }
+      "headers": { "Cache-Control": "public, max-age=2592000, immutable" }
     },
     {
       "src": "/(.*\\.css)",
       "dest": "server-local.js",
-      "headers": {
-        "Cache-Control": "public, max-age=604800"
-      }
+      "headers": { "Cache-Control": "public, max-age=604800" }
     },
     {
       "src": "/(.*\\.js)",
       "dest": "server-local.js",
-      "headers": {
-        "Cache-Control": "public, max-age=604800"
-      }
+      "headers": { "Cache-Control": "public, max-age=604800" }
     },
     {
       "src": "/(.*)",
