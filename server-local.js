@@ -245,7 +245,7 @@ const mediaOpts  = { maxAge: '30d', etag: true };
 // ==========================================
 const https = require('https');
 const JSDELIVR_MAIN = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@main';
-const JSDELIVR_IMG  = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@1206495';
+const JSDELIVR_IMG  = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@a014d19';
 
 function proxyJsDelivr(cdnPath, res) {
   https.get(cdnPath, (upstream) => {
