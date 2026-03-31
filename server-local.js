@@ -269,9 +269,13 @@ app.get('/images/livres/:filename', (req, res) => {
 app.get('/images/editions/:filename', (req, res) => {
   const local = path.join(__dirname, 'assets/images/editions', req.params.filename);
   if (fs.existsSync(local)) {
+    const stat = fs.statSync(local);
     res.set('Cache-Control', 'public, max-age=2592000, immutable');
+    res.set('X-Source', 'local-bundle');
+    res.set('X-File-Size', String(stat.size));
     return res.sendFile(local);
   }
+  res.set('X-Source', 'jsdelivr-proxy');
   proxyJsDelivr(`${JSDELIVR}/public/images/editions/${encodeURIComponent(req.params.filename)}`, res);
 });
 app.get('/pdfs/:filename', (req, res) => {
