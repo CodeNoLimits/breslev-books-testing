@@ -11,10 +11,6 @@
           "assets/*.css",
           "assets/*.svg",
           "assets/*.png",
-          "assets/images/**",
-          "assets/images/livres/**",
-          "assets/images/editions/**",
-          "assets/images/books/**",
           "assets/pdfs/**",
           "assets/audios/**",
           "public/*.html",
@@ -24,6 +20,7 @@
           "public/*.ico",
           "public/*.svg",
           "public/pdfs/**",
+          "public/images/**",
           "public/videos/avatar/**",
           "public/videos/veo31/**"
         ]
@@ -32,14 +29,28 @@
   ],
   "routes": [
     {
-      "src": "/audios/(.*)",
-      "dest": "server-local.js",
+      "src": "/images/livres/(.*)",
+      "dest": "/public/images/livres/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=2592000, immutable"
+      }
+    },
+    {
+      "src": "/images/editions/(.*)",
+      "dest": "/public/images/editions/$1",
       "headers": {
         "Cache-Control": "public, max-age=2592000, immutable"
       }
     },
     {
       "src": "/images/(.*)",
+      "dest": "server-local.js",
+      "headers": {
+        "Cache-Control": "public, max-age=2592000, immutable"
+      }
+    },
+    {
+      "src": "/audios/(.*)",
       "dest": "server-local.js",
       "headers": {
         "Cache-Control": "public, max-age=2592000, immutable"
