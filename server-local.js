@@ -3023,36 +3023,58 @@ app.get("/etudes", (req, res) => {
 
 // Page principale Audio
 app.get("/audio", (req, res) => {
+  const totalTracks = audioCategories.reduce((s, cat) => s + (audioContent[cat.id]?.length || 0), 0);
   const content = `
-    <div class="container mt-12 mb-12">
-      <div class="text-center mb-12">
-        <span style="background: rgba(212, 175, 55, 0.2); color: var(--color-gold); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">🎧 BIBLIOTHÈQUE AUDIO</span>
-        <h1 style="margin-top: 1rem;">Cours & Enseignements Audio</h1>
-        <p class="text-muted" style="max-width: 600px; margin: 1rem auto;">Écoutez les enseignements de Rabbi Nachman de Breslev où que vous soyez. Parfait pour le trajet, la marche ou la méditation.</p>
+    <div style="max-width:960px;margin:0 auto;padding:2rem 1.5rem 4rem;">
+
+      <div style="text-align:center;margin-bottom:3.5rem;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;">
+          <span style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,#D4AF37,transparent);"></span>
+          <span style="background:linear-gradient(135deg,#D4AF37,#F5E6A3);color:#1E3A8A;padding:0.45rem 1.4rem;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;font-family:'Cinzel',serif;">Bibliotheque Audio</span>
+          <span style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,#D4AF37,transparent);"></span>
+        </div>
+        <h1 style="font-family:'Cinzel',serif;color:#1E3A8A;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;margin:0.5rem 0;letter-spacing:0.04em;">Cours & Enseignements</h1>
+        <p style="font-family:'Cormorant Garamond',serif;color:#6c7a89;font-size:1.15rem;font-style:italic;max-width:520px;margin:0.5rem auto 1.5rem;line-height:1.6;">Ecoutez les enseignements de Rabbi Nachman ou que vous soyez. ${totalTracks} cours disponibles.</p>
       </div>
 
-      <div class="audio-categories-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
-        ${audioCategories
-          .map(
-            (cat) => `
-          <a href="/audio/${cat.id}" class="audio-category-card" style="background: linear-gradient(135deg, ${cat.color}15 0%, ${cat.color}05 100%); border: 2px solid ${cat.color}30; border-radius: 20px; padding: 2.5rem; text-decoration: none; color: inherit; transition: all 0.3s ease; display: block;">
-            <div style="font-size: 4rem; margin-bottom: 1.5rem;">${cat.icon}</div>
-            <h3 style="color: ${cat.color}; font-size: 1.5rem; margin-bottom: 0.75rem;">${cat.name}</h3>
-            <p style="color: #666; font-size: 1rem; margin-bottom: 1.5rem;">${cat.description}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: ${cat.color}; font-weight: 600;"><i class="fas fa-headphones"></i> ${audioContent[cat.id]?.length || 0} cours</span>
-              <span style="background: ${cat.color}; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">Écouter →</span>
+      <div style="display:flex;justify-content:center;gap:2.5rem;margin-bottom:3rem;flex-wrap:wrap;">
+        <div style="text-align:center;"><span style="font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#D4AF37,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${totalTracks}</span><br><span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#8B9CB6;font-weight:600;">Cours audio</span></div>
+        <div style="text-align:center;"><span style="font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#D4AF37,#8B6914);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${audioCategories.length}</span><br><span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#8B9CB6;font-weight:600;">Categories</span></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-bottom:3rem;">
+        ${audioCategories.map(cat => {
+          const count = audioContent[cat.id]?.length || 0;
+          return `
+          <a href="/audio/${cat.id}" style="text-decoration:none;color:inherit;display:block;position:relative;border-radius:24px;overflow:hidden;transition:all 0.35s ease;border:1px solid rgba(30,58,138,0.08);box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#1E3A8A 0%,#0F172A 100%);z-index:0;"></div>
+            <div style="position:absolute;top:-30%;right:-15%;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,${cat.color}20 0%,transparent 70%);z-index:0;"></div>
+            <div style="position:relative;z-index:1;padding:2.5rem;">
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+                <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,${cat.color},${cat.color}99);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">${cat.icon}</div>
+                <div>
+                  <h3 style="color:#F5E6A3;font-family:'Cinzel',serif;font-size:1.3rem;margin:0;">${cat.name}</h3>
+                  <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);">${count} enseignements</span>
+                </div>
+              </div>
+              <p style="color:rgba(255,255,255,0.75);font-family:'Cormorant Garamond',serif;font-size:1rem;line-height:1.6;margin-bottom:1.5rem;">${cat.description}</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="display:inline-flex;align-items:center;gap:0.4rem;color:#D4AF37;font-weight:600;font-size:0.9rem;"><i class="fas fa-headphones"></i> ${count} cours</span>
+                <span style="background:linear-gradient(135deg,#D4AF37,#F5E6A3);color:#1E3A8A;padding:0.5rem 1.2rem;border-radius:25px;font-size:0.8rem;font-weight:700;letter-spacing:0.05em;">ECOUTER <i class="fas fa-arrow-right" style="font-size:0.7rem;margin-left:0.3rem;"></i></span>
+              </div>
             </div>
-          </a>
-        `,
-          )
-          .join("")}
+          </a>`;
+        }).join("")}
       </div>
 
-      <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border-radius: 20px; padding: 3rem; margin-top: 4rem; text-align: center; color: white;">
-        <h3 class="text-gold-animated" style="margin-bottom: 1rem;">🎁 Accès illimité avec l'abonnement</h3>
-        <p style="color: rgba(255,255,255,0.8); margin-bottom: 2rem;">Débloquez tous les cours audio et les livres numériques avec notre abonnement mensuel ou annuel.</p>
-        <a href="/pages/abonnement" class="btn btn-primary hover-glow" style="background: var(--color-gold); color: #1E3A8A;">Découvrir les abonnements</a>
+      <div style="position:relative;border-radius:24px;overflow:hidden;text-align:center;">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 100%);z-index:0;"></div>
+        <div style="position:relative;z-index:1;padding:3rem;">
+          <div style="font-size:2.5rem;margin-bottom:1rem;">🎁</div>
+          <h3 style="font-family:'Cinzel',serif;background:linear-gradient(to right,#D4AF37,#F5E6A3,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.5rem;margin-bottom:1rem;">Acces illimite</h3>
+          <p style="color:rgba(255,255,255,0.75);font-family:'Cormorant Garamond',serif;font-size:1.1rem;max-width:450px;margin:0 auto 2rem;line-height:1.6;">Debloquez tous les cours audio et les livres numeriques avec notre abonnement.</p>
+          <a href="/pages/abonnement" style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#D4AF37,#F5E6A3);color:#1E3A8A;padding:0.85rem 2.5rem;border-radius:30px;font-weight:700;font-family:'Cinzel',serif;text-decoration:none;font-size:0.9rem;letter-spacing:0.05em;transition:all 0.3s;box-shadow:0 4px 16px rgba(212,175,55,0.35);">Decouvrir les abonnements</a>
+        </div>
       </div>
     </div>
   `;
