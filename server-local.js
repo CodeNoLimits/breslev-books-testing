@@ -239,14 +239,21 @@ const staticOpts = { maxAge: '7d', etag: true };
 const mediaOpts  = { maxAge: '30d', etag: true };
 
 // ==========================================
-// IMAGES VIA jsDelivr CDN (GitHub-backed, free, global)
+// STATIC ASSETS VIA jsDelivr CDN (GitHub-backed, free, global)
+// Images/PDFs/Audios are too large for Vercel Lambda bundle (50MB limit)
 // ==========================================
 const JSDELIVR = 'https://cdn.jsdelivr.net/gh/CodeNoLimits/breslev-books-testing@main';
 app.get('/images/livres/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/public/images/livres/${req.params.filename}`);
+  res.redirect(301, `${JSDELIVR}/public/images/livres/${encodeURIComponent(req.params.filename)}`);
 });
 app.get('/images/editions/:filename', (req, res) => {
-  res.redirect(301, `${JSDELIVR}/public/images/editions/${req.params.filename}`);
+  res.redirect(301, `${JSDELIVR}/public/images/editions/${encodeURIComponent(req.params.filename)}`);
+});
+app.get('/pdfs/:filename', (req, res) => {
+  res.redirect(301, `${JSDELIVR}/assets/pdfs/${encodeURIComponent(req.params.filename)}`);
+});
+app.get('/audios/:filename', (req, res) => {
+  res.redirect(301, `${JSDELIVR}/assets/audios/${encodeURIComponent(req.params.filename)}`);
 });
 
 app.use(express.static(path.join(__dirname, "assets"), staticOpts));
