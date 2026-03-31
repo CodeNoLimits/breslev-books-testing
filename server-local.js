@@ -1114,6 +1114,8 @@ function getLayout(content, title = "Breslev Esther IFRAH", options = {}) {
           <div class="footer__bottom">&copy; 2026 Breslev by Esther Ifrah &nbsp;·&nbsp; <a href="/admin" style="color:rgba(255,255,255,0.45);font-size:0.78rem;">Admin</a></div>
         </div>
       </footer>
+      <button onclick="document.getElementById('vp').style.display=document.getElementById('vp').style.display==='none'?'block':'none'" style="position:fixed;bottom:90px;right:20px;z-index:9998;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1E3A8A,#D4AF37);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(30,58,138,.4);font-size:1.4rem;display:flex;align-items:center;justify-content:center;" aria-label="Assistante vocale">🤖</button>
+      <div id="vp" style="display:none;position:fixed;bottom:160px;right:20px;z-index:9997;width:340px;height:460px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)"><iframe src="/voice-assistant" style="width:100%;height:100%;border:none" title="Assistante vocale Esther"></iframe></div>
     </body>
     </html>
   `;
@@ -3673,6 +3675,11 @@ app.get("/api/audio-lessons", (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+// Voice assistant page
+app.get('/voice-assistant', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'voice-assistant.html'));
 });
 
 // SEO: robots.txt

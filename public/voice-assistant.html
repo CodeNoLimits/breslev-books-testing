@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esther — Assistante Vocale</title>
+<script type="importmap">
+{"imports": {"@google/genai": "https://esm.run/@google/genai@1.29.0"}}
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: linear-gradient(135deg, #1E3A8A 0%, #0f172a 100%);
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Segoe UI', sans-serif; color: white;
+}
+#avatar { font-size: 4rem; margin-bottom: 1rem; transition: all 0.3s; }
+#avatar.listening { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+#status { font-size: 0.9rem; color: #D4AF37; margin-bottom: 2rem; height: 1.2rem; }
+#transcript {
+  background: rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem;
+  width: 100%; max-width: 320px; min-height: 80px; font-size: 0.9rem;
+  color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; text-align: center;
+}
+#btn {
+  width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer;
+  background: linear-gradient(135deg, #D4AF37, #B8960C);
+  font-size: 1.8rem; box-shadow: 0 4px 20px rgba(212,175,55,0.4);
+  transition: all 0.2s;
+}
+#btn:hover { transform: scale(1.05); }
+#btn.active { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 1s infinite; }
+#title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; color: #D4AF37; }
+#subtitle { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+<div id="avatar">🕎</div>
+<div id="title">Esther — Librairie Breslev</div>
+<div id="subtitle">Assistante vocale</div>
+<div id="status">Cliquez pour parler</div>
+<div id="transcript">Je suis là pour vous aider à découvrir les livres de Rabbi Nachman de Breslev.</div>
+<button id="btn" onclick="toggleCall()">🎙️</button>
+
+<script type="module">
+import { GoogleGenAI } from '@google/genai';
+
+const SYSTEM_PROMPT = `Tu es Esther, l'assistante vocale de la librairie Breslev (librairie-breslev.com).
+Tu parles UNIQUEMENT en français, avec chaleur et bienveillance.
+Tu connais tous les livres de Rabbi Nachman de Breslev traduits par Esther Ifrah.
+
+CATALOGUE (livraison mondiale incluse dans le prix):
+- Likoutey Moharane Tomes 1-8: 26€ chacun
+- Les Cahiers du Cœur, Likoutey Halakhot, L'Âge d'Or, Likouté Tefilot: 29€
+- Tikoun Haklali: 7€
+- Le Voyage de Rabbi Nahman: 22€
+- Chemot Atsadikim, La Vie d'un Breslever, Conversations des Anges T1/T2: 26€
+
+PAIEMENT: PayPal (en ligne) ou Virement EUR: IBAN FR76 1652 8001 7100 0004 3621 064 BIC SMOEFRP1
+CONTACT: info@hayil.fr | WhatsApp: +972 58-514-8500
+LIVRAISON: 7-14 jours depuis Jérusalem
+
+Réponds en 1-2 phrases maximum. Sois chaleureuse et spirituelle.`;
+
+const ai = new GoogleGenAI({ apiKey: 'AIzaSyAWe0KiAU-G8KjYBV_dZeCcQis2crxq21E' });
+
+let session = null;
+let isActive = false;
+let audioContext = null;
+
+const btn = document.getElementById('btn');
+const status = document.getElementById('status');
+const transcript = document.getElementById('transcript');
+const avatar = document.getElementById('avatar');
+
+async function toggleCall() {
+  if (!isActive) {
+    await startCall();
+  } else {
+    await stopCall();
+  }
+}
+
+async function startCall() {
+  try {
+    status.textContent = 'Connexion...';
+
+    session = await ai.live.connect({
+      model: 'gemini-2.0-flash-live-001',
+      callbacks: {
+        onopen: () => {
+          status.textContent = '🟢 Connecté — Parlez !';
+          btn.classList.add('active');
+          btn.textContent = '🔴';
+          avatar.classList.add('listening');
+          isActive = true;
+        },
+        onmessage: async (msg) => {
+          if (msg.serverContent?.modelTurn?.parts) {
+            for (const part of msg.serverContent.modelTurn.parts) {
+              if (part.text) {
+                transcript.textContent = part.text;
+              }
+              if (part.inlineData?.data) {
+                const audio = new Audio('data:audio/pcm;base64,' + part.inlineData.data);
+                audio.play().catch(() => {});
+              }
+            }
+          }
+        },
+        onerror: (e) => {
+          status.textContent = '❌ Erreur: ' + (e.message || 'connexion échouée');
+          stopCall();
+        },
+        onclose: () => {
+          status.textContent = 'Session terminée';
+          isActive = false;
+          btn.classList.remove('active');
+          btn.textContent = '🎙️';
+          avatar.classList.remove('listening');
+        }
+      },
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
+        responseModalities: ['AUDIO', 'TEXT']
+      }
+    });
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioContext = new AudioContext({ sampleRate: 16000 });
+    const source = audioContext.createMediaStreamSource(stream);
+    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+    processor.onaudioprocess = (e) => {
+      if (!isActive || !session) return;
+      const inputData = e.inputBuffer.getChannelData(0);
+      const pcm16 = new Int16Array(inputData.length);
+      for (let i = 0; i < inputData.length; i++) {
+        pcm16[i] = Math.max(-32768, Math.min(32767, inputData[i] * 32768));
+      }
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
+      session.sendRealtimeInput({ mimeType: 'audio/pcm;rate=16000', data: base64 });
+    };
+
+    source.connect(processor);
+    processor.connect(audioContext.destination);
+
+  } catch (err) {
+    status.textContent = '❌ ' + err.message;
+    console.error(err);
+  }
+}
+
+async function stopCall() {
+  if (session) { session.close(); session = null; }
+  if (audioContext) { await audioContext.close(); audioContext = null; }
+  isActive = false;
+  btn.classList.remove('active');
+  btn.textContent = '🎙️';
+  avatar.classList.remove('listening');
+  status.textContent = 'Session terminée. Cliquez pour recommencer.';
+}
+
+window.toggleCall = toggleCall;
+</script>
+</body>
+</html>
