@@ -9,9 +9,13 @@
 body{background:linear-gradient(135deg,#1E3A8A 0%,#0f172a 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;color:white;padding:1rem}
 #avatar{font-size:3.5rem;margin-bottom:.8rem;transition:all .3s}
 #avatar.listening{animation:pulse 1s infinite}
+#avatar.speaking{animation:speak .6s infinite alternate}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-#status{font-size:.85rem;color:#D4AF37;margin-bottom:1.5rem;min-height:1.2rem;text-align:center}
-#transcript{background:rgba(255,255,255,.08);border-radius:12px;padding:.8rem 1rem;width:100%;max-width:300px;min-height:60px;font-size:.85rem;color:rgba(255,255,255,.8);margin-bottom:1.2rem;text-align:center;border:1px solid rgba(212,175,55,.15)}
+@keyframes speak{0%{transform:scale(1)}100%{transform:scale(1.1) rotate(2deg)}}
+#status{font-size:.85rem;color:#D4AF37;margin-bottom:1rem;min-height:1.2rem;text-align:center}
+#transcript{background:rgba(255,255,255,.08);border-radius:12px;padding:.8rem 1rem;width:100%;max-width:300px;min-height:60px;font-size:.85rem;color:rgba(255,255,255,.8);margin-bottom:1.2rem;text-align:center;border:1px solid rgba(212,175,55,.15);transition:border-color .3s}
+#transcript.active-mic{border-color:rgba(239,68,68,.5)}
+#transcript.active-speak{border-color:rgba(212,175,55,.5)}
 #title{font-size:1rem;font-weight:600;margin-bottom:.2rem;color:#D4AF37}
 #subtitle{font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1.5rem}
 #btn{width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#D4AF37,#B8960C);font-size:1.6rem;box-shadow:0 4px 20px rgba(212,175,55,.4);transition:all .2s;display:flex;align-items:center;justify-content:center}
@@ -19,6 +23,8 @@ body{background:linear-gradient(135deg,#1E3A8A 0%,#0f172a 100%);min-height:100vh
 #btn.active{background:linear-gradient(135deg,#ef4444,#dc2626);animation:pulse 1s infinite}
 #btn:disabled{opacity:.5;cursor:not-allowed}
 #error{color:#ef4444;font-size:.75rem;margin-top:.8rem;max-width:300px;text-align:center;word-break:break-word;min-height:1rem}
+#level{width:120px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:.5rem;overflow:hidden}
+#levelBar{height:100%;width:0%;background:#D4AF37;border-radius:2px;transition:width 50ms}
 </style>
 </head>
 <body>
@@ -26,24 +32,21 @@ body{background:linear-gradient(135deg,#1E3A8A 0%,#0f172a 100%);min-height:100vh
 <div id="title">Esther — Librairie Breslev</div>
 <div id="subtitle">Assistante vocale IA</div>
 <div id="status">Chargement...</div>
-<div id="transcript">Je suis la pour vous aider a decouvrir les livres de Rabbi Nachman de Breslev.</div>
+<div id="transcript">Cliquez sur le micro, parlez, puis attendez ma reponse.</div>
 <button id="btn" onclick="toggle()" disabled>🎙️</button>
+<div id="level"><div id="levelBar"></div></div>
 <div id="error"></div>
 
 <script>
-var SYSTEM = "Tu es Esther, l'assistante vocale de la librairie Breslev. Tu parles UNIQUEMENT en francais, avec chaleur. CATALOGUE: Likoutey Moharane Tomes 1-8: 26 euros, Cahiers du Coeur/Likoutey Halakhot/Age d'Or/Likoute Tefilot: 29 euros, Tikoun Haklali: 7 euros, Voyage Rabbi Nahman: 22 euros. PAIEMENT: PayPal ou Virement IBAN FR76 1652 8001 7100 0004 3621 064. CONTACT: info@hayil.fr. Reponds en 1-2 phrases.";
+var SYSTEM = "Tu es Esther, l'assistante vocale de la librairie Breslev (librairie-breslev.com). Parle UNIQUEMENT en francais, avec chaleur et bienveillance. CATALOGUE: Likoutey Moharane Tomes 1-8: 26 euros chacun, Cahiers du Coeur/Likoutey Halakhot/Age d'Or/Likoute Tefilot: 29 euros, Tikoun Haklali: 7 euros, Voyage Rabbi Nahman: 22 euros. PAIEMENT: PayPal ou Virement IBAN FR76 1652 8001 7100 0004 3621 064. CONTACT: info@hayil.fr. Reponds en 1-2 phrases courtes.";
 var WS_BASE = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
 var MODEL = "models/gemini-3.1-flash-live-preview";
 
-var ws = null, active = false, apiKey = null, micStream = null, audioCtx = null, playCtx = null, playQueue = [], playing = false;
-var btn = document.getElementById("btn");
-var statusEl = document.getElementById("status");
-var transcript = document.getElementById("transcript");
-var avatarEl = document.getElementById("avatar");
-var errorEl = document.getElementById("error");
+var ws=null,active=false,apiKey=null,micStream=null,audioCtx=null,playCtx=null,playQueue=[],playing=false,micSending=false;
+var btn=document.getElementById("btn"),statusEl=document.getElementById("status"),transcript=document.getElementById("transcript"),avatarEl=document.getElementById("avatar"),errorEl=document.getElementById("error"),levelBar=document.getElementById("levelBar");
 
 function setS(t){statusEl.textContent=t}
-function setE(t){errorEl.textContent=t;if(t)console.error("[Voice]",t)}
+function setE(t){errorEl.textContent=t}
 
 fetch("/api/voice-key").then(function(r){return r.json()}).then(function(d){
   if(!d.key)throw new Error("Cle manquante");
@@ -54,15 +57,14 @@ function toggle(){if(!active)start();else stop()}
 
 async function start(){
   setE("");setS("Acces micro...");
-  try{micStream=await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1}})}
+  try{micStream=await navigator.mediaDevices.getUserMedia({audio:true})}
   catch(e){setS("Micro refuse");setE("Autorisez le microphone");return}
 
-  setS("Connexion a Esther...");
-  var url=WS_BASE+"?key="+apiKey;
-  ws=new WebSocket(url);
+  setS("Connexion...");
+  ws=new WebSocket(WS_BASE+"?key="+apiKey);
 
   ws.onopen=function(){
-    var setup={
+    ws.send(JSON.stringify({
       setup:{
         model:MODEL,
         generation_config:{
@@ -70,44 +72,55 @@ async function start(){
           speech_config:{voice_config:{prebuilt_voice_config:{voice_name:"Kore"}}}
         }
       }
-    };
-    ws.send(JSON.stringify(setup));
+    }));
   };
 
   ws.onmessage=async function(evt){
     var text;
-    if(evt.data instanceof Blob){text=await evt.data.text();}
-    else{text=evt.data;}
+    if(evt.data instanceof Blob){text=await evt.data.text()}else{text=evt.data}
     var data;
-    try{data=JSON.parse(text);}catch(e){console.warn("[Voice] parse error",e);return;}
+    try{data=JSON.parse(text)}catch(e){return}
+
     if(data.setupComplete){
-      ws.send(JSON.stringify({realtime_input:{text:SYSTEM+" Maintenant, dis bonjour en francais et presente-toi brievement."}}));
-      setS("Connecte — Parlez !");
+      active=true;
       btn.classList.add("active");btn.textContent="🔴";
-      avatarEl.classList.add("listening");active=true;
       startMic();
+      setS("Pret ! Parlez a Esther...");
+      avatarEl.classList.add("listening");
+      transcript.textContent="Je vous ecoute. Posez votre question sur les livres de Rabbi Nachman.";
       return;
     }
+
     var sc=data.serverContent||{};
     var parts=(sc.modelTurn||{}).parts||[];
+    if(parts.length>0){
+      micSending=false;
+      avatarEl.classList.remove("listening");
+      avatarEl.classList.add("speaking");
+      setS("Esther parle...");
+      transcript.classList.remove("active-mic");
+      transcript.classList.add("active-speak");
+    }
     for(var i=0;i<parts.length;i++){
       if(parts[i].inlineData&&parts[i].inlineData.data){
         queueAudio(parts[i].inlineData.data);
       }
     }
     if(sc.turnComplete){
-      transcript.textContent="(Esther a repondu)";
+      avatarEl.classList.remove("speaking");
+      avatarEl.classList.add("listening");
+      micSending=true;
+      setS("A vous ! Parlez...");
+      transcript.classList.remove("active-speak");
+      transcript.classList.add("active-mic");
+      transcript.textContent="Je vous ecoute...";
     }
   };
 
-  ws.onerror=function(e){
-    console.error("[Voice] WS error",e);
-    setE("Erreur connexion");resetUI();
-  };
-
+  ws.onerror=function(){setE("Erreur connexion");resetUI()};
   ws.onclose=function(e){
-    if(active){setS("Connexion perdue");setE("Code: "+(e.code||"?"));}
-    else{setS("Terminee. Cliquez pour recommencer.");}
+    if(active){setS("Connexion perdue");setE("Code: "+(e.code||"?"))}
+    else{setS("Terminee. Cliquez pour recommencer.")}
     resetUI();
   };
 }
@@ -117,81 +130,71 @@ function startMic(){
   audioCtx=new AudioContext();
   var nativeSR=audioCtx.sampleRate;
   var source=audioCtx.createMediaStreamSource(micStream);
+  var analyser=audioCtx.createAnalyser();
+  analyser.fftSize=512;
+  source.connect(analyser);
   var proc=audioCtx.createScriptProcessor(4096,1,1);
+  var analyserData=new Uint8Array(analyser.frequencyBinCount);
+
+  micSending=true;
+
   proc.onaudioprocess=function(e){
-    if(!active||!ws||ws.readyState!==1)return;
+    analyser.getByteFrequencyData(analyserData);
+    var sum=0;for(var k=0;k<analyserData.length;k++)sum+=analyserData[k];
+    var avg=sum/analyserData.length;
+    levelBar.style.width=Math.min(100,avg*1.5)+"%";
+
+    if(!active||!ws||ws.readyState!==1||!micSending)return;
+
     var input=e.inputBuffer.getChannelData(0);
     var resampled=resample(input,nativeSR,16000);
     var pcm=new Int16Array(resampled.length);
     for(var i=0;i<resampled.length;i++)pcm[i]=Math.max(-32768,Math.min(32767,resampled[i]*32768));
-    var b64=arrayBufferToBase64(pcm.buffer);
-    try{
-      ws.send(JSON.stringify({
-        realtime_input:{audio:{data:b64,mime_type:"audio/pcm;rate=16000"}}
-      }));
-    }catch(ex){}
+    var b64=ab2b64(pcm.buffer);
+    try{ws.send(JSON.stringify({realtime_input:{audio:{data:b64,mime_type:"audio/pcm;rate=16000"}}}))}catch(ex){}
   };
   source.connect(proc);proc.connect(audioCtx.destination);
 }
 
-function resample(input,fromRate,toRate){
-  if(fromRate===toRate)return input;
-  var ratio=fromRate/toRate;
-  var len=Math.round(input.length/ratio);
-  var out=new Float32Array(len);
-  for(var i=0;i<len;i++){
-    var idx=i*ratio;
-    var lo=Math.floor(idx);
-    var hi=Math.min(lo+1,input.length-1);
-    var frac=idx-lo;
-    out[i]=input[lo]*(1-frac)+input[hi]*frac;
-  }
+function resample(input,from,to){
+  if(from===to)return input;
+  var r=from/to,len=Math.round(input.length/r),out=new Float32Array(len);
+  for(var i=0;i<len;i++){var idx=i*r,lo=Math.floor(idx),hi=Math.min(lo+1,input.length-1),f=idx-lo;out[i]=input[lo]*(1-f)+input[hi]*f}
   return out;
 }
 
-function arrayBufferToBase64(buffer){
-  var bytes=new Uint8Array(buffer);
-  var len=bytes.length;
-  var result="";
-  for(var i=0;i<len;i+=1024){
-    var chunk=bytes.subarray(i,Math.min(i+1024,len));
-    result+=String.fromCharCode.apply(null,chunk);
-  }
-  return btoa(result);
+function ab2b64(buf){
+  var bytes=new Uint8Array(buf),r="";
+  for(var i=0;i<bytes.length;i+=1024){var c=bytes.subarray(i,Math.min(i+1024,bytes.length));r+=String.fromCharCode.apply(null,c)}
+  return btoa(r);
 }
 
-function queueAudio(b64data){
-  playQueue.push(b64data);
-  if(!playing)playNext();
-}
+function queueAudio(b64){playQueue.push(b64);if(!playing)playNext()}
 
 function playNext(){
-  if(playQueue.length===0){playing=false;return;}
+  if(!playQueue.length){playing=false;return}
   playing=true;
   var b64=playQueue.shift();
   try{
-    var raw=atob(b64);
-    var buf=new ArrayBuffer(raw.length);
-    var v=new Uint8Array(buf);
+    var raw=atob(b64),buf=new ArrayBuffer(raw.length),v=new Uint8Array(buf);
     for(var i=0;i<raw.length;i++)v[i]=raw.charCodeAt(i);
     if(!playCtx)playCtx=new AudioContext({sampleRate:24000});
-    var samples=new Int16Array(buf);
-    var f32=new Float32Array(samples.length);
-    for(var j=0;j<samples.length;j++)f32[j]=samples[j]/32768;
-    var ab=playCtx.createBuffer(1,f32.length,24000);
-    ab.getChannelData(0).set(f32);
+    var s=new Int16Array(buf),f=new Float32Array(s.length);
+    for(var j=0;j<s.length;j++)f[j]=s[j]/32768;
+    var ab=playCtx.createBuffer(1,f.length,24000);
+    ab.getChannelData(0).set(f);
     var src=playCtx.createBufferSource();
-    src.buffer=ab;
-    src.connect(playCtx.destination);
-    src.onended=playNext;
-    src.start();
-  }catch(e){playing=false;playNext();}
+    src.buffer=ab;src.connect(playCtx.destination);
+    src.onended=playNext;src.start();
+  }catch(e){playing=false;playNext()}
 }
 
 function resetUI(){
-  active=false;btn.classList.remove("active");btn.textContent="🎙️";avatarEl.classList.remove("listening");
+  active=false;micSending=false;btn.classList.remove("active");btn.textContent="🎙️";
+  avatarEl.classList.remove("listening","speaking");
+  transcript.classList.remove("active-mic","active-speak");
   if(micStream){micStream.getTracks().forEach(function(t){t.stop()});micStream=null}
-  ws=null;playQueue=[];playing=false;
+  ws=null;playQueue=[];playing=false;levelBar.style.width="0%";
 }
 
 function stop(){
@@ -199,9 +202,11 @@ function stop(){
   if(ws){try{ws.close()}catch(e){}}ws=null;
   if(audioCtx){try{audioCtx.close()}catch(e){}}audioCtx=null;
   if(micStream){micStream.getTracks().forEach(function(t){t.stop()});micStream=null}
-  btn.classList.remove("active");btn.textContent="🎙️";avatarEl.classList.remove("listening");
+  btn.classList.remove("active");btn.textContent="🎙️";
+  avatarEl.classList.remove("listening","speaking");
+  transcript.classList.remove("active-mic","active-speak");
   setS("Terminee. Cliquez pour recommencer.");setE("");
-  playQueue=[];playing=false;
+  playQueue=[];playing=false;levelBar.style.width="0%";
 }
 </script>
 </body>
